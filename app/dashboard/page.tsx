@@ -308,7 +308,6 @@ export default function Dashboard() {
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
               <span className={styles.metricTitle}>Total Earnings</span>
-              <span className={styles.metricPercentage}>+12% this month</span>
             </div>
             <h3 className={styles.metricValue}>${totalEarnings.toFixed(2)}</h3>
           </Card>
@@ -316,7 +315,6 @@ export default function Dashboard() {
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
               <span className={styles.metricTitle}>Direct Income</span>
-              <span className={styles.metricPercentage}>+12% this month</span>
             </div>
             <h3 className={styles.metricValue}>${directSum.toFixed(2)}</h3>
           </Card>
@@ -324,7 +322,6 @@ export default function Dashboard() {
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
               <span className={styles.metricTitle}>Level Income</span>
-              <span className={styles.metricPercentage}>+12% this month</span>
             </div>
             <h3 className={styles.metricValue}>${levelSum.toFixed(2)}</h3>
           </Card>
@@ -332,7 +329,6 @@ export default function Dashboard() {
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
               <span className={styles.metricTitle}>Team Members</span>
-              <span className={styles.metricPercentage}>+12% this month</span>
             </div>
             <h3 className={styles.metricValue}>{stats.teamCount}</h3>
           </Card>
