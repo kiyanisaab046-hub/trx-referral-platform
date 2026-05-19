@@ -3,24 +3,19 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { 
-  CubeTransparentIcon,
-  BoltIcon,
-  GlobeAltIcon,
-  RocketLaunchIcon,
-  FireIcon,
   SparklesIcon,
   StarIcon,
   CurrencyDollarIcon,
   TrophyIcon,
   BanknotesIcon,
-  ChartPieIcon,
-  CpuChipIcon
+  WalletIcon,
+  GiftIcon,
+  CreditCardIcon
 } from "@heroicons/react/24/outline";
 
 const icons = [
-  CubeTransparentIcon, BoltIcon, GlobeAltIcon, RocketLaunchIcon, 
-  FireIcon, SparklesIcon, StarIcon, CurrencyDollarIcon, 
-  TrophyIcon, BanknotesIcon, ChartPieIcon, CpuChipIcon
+  SparklesIcon, StarIcon, CurrencyDollarIcon, TrophyIcon, 
+  BanknotesIcon, WalletIcon, GiftIcon, CreditCardIcon
 ];
 
 function generateRandomConfig() {

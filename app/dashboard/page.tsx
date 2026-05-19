@@ -41,6 +41,8 @@ export default function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [stats, setStats] = useState({ referralsCount: 0, teamCount: 0 });
   const [copied, setCopied] = useState(false);
+  const [directSum, setDirectSum] = useState(0);
+  const [levelSum, setLevelSum] = useState(0);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -84,10 +86,22 @@ export default function Dashboard() {
           .select('id, amount, type, description, created_at')
           .eq('user_id', authUser.id)
           .order('created_at', { ascending: false })
-          .limit(5);
+          .limit(10);
 
         if (!txError && txData) {
           setTransactions(txData);
+          
+          // Calculate direct & level commission sums from transactions
+          const direct = txData
+            .filter(t => t.type === 'commission_direct')
+            .reduce((acc, curr) => acc + Number(curr.amount), 0);
+          
+          const lvl = txData
+            .filter(t => t.type === 'commission_level')
+            .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
+          setDirectSum(direct);
+          setLevelSum(lvl);
         }
 
         setStats({
@@ -118,6 +132,32 @@ export default function Dashboard() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Dynamic rank calculation
+  const getRankInfo = (referrals: number) => {
+    if (referrals >= 120) return { rank: 10, name: 'Legend', nextRank: 'Max Rank Reached', target: 120, progress: 100 };
+    if (referrals >= 80) return { rank: 9, name: 'Champion', nextRank: 'Legend', target: 120, progress: Math.floor(((referrals - 80) / 40) * 100) };
+    if (referrals >= 50) return { rank: 8, name: 'Pioneer', nextRank: 'Champion', target: 80, progress: Math.floor(((referrals - 50) / 30) * 100) };
+    if (referrals >= 30) return { rank: 7, name: 'Leader', nextRank: 'Pioneer', target: 50, progress: Math.floor(((referrals - 30) / 20) * 100) };
+    if (referrals >= 20) return { rank: 6, name: 'Progressor', nextRank: 'Leader', target: 30, progress: Math.floor(((referrals - 20) / 10) * 100) };
+    if (referrals >= 15) return { rank: 5, name: 'Advancer', nextRank: 'Progressor', target: 20, progress: Math.floor(((referrals - 15) / 5) * 100) };
+    if (referrals >= 10) return { rank: 4, name: 'Achiever', nextRank: 'Advancer', target: 15, progress: Math.floor(((referrals - 10) / 5) * 100) };
+    if (referrals >= 5) return { rank: 3, name: 'Grower', nextRank: 'Achiever', target: 10, progress: Math.floor(((referrals - 5) / 5) * 100) };
+    if (referrals >= 3) return { rank: 2, name: 'Builder', nextRank: 'Grower', target: 5, progress: Math.floor(((referrals - 3) / 2) * 100) };
+    return { rank: 1, name: 'Starter', nextRank: 'Builder', target: 3, progress: Math.floor((referrals / 3) * 100) };
+  };
+
+  const rankInfo = getRankInfo(stats.referralsCount);
+  const totalEarnings = (wallet?.income_balance || 0) + (wallet?.withdrawal_balance || 0);
+
+  // Dynamic percentages for breakdown card
+  const directPercent = totalEarnings > 0 ? Math.round((directSum / totalEarnings) * 100) : 0;
+  const levelPercent = totalEarnings > 0 ? Math.round((levelSum / totalEarnings) * 100) : 0;
+  const otherPercent = totalEarnings > 0 ? Math.max(0, 100 - directPercent - levelPercent) : 0;
+
+  // Binary legs calculation
+  const leftLegCount = Math.ceil(stats.teamCount / 2);
+  const rightLegCount = Math.floor(stats.teamCount / 2);
+
   if (loading) {
     return (
       <div className={styles.loaderContainer}>
@@ -126,16 +166,36 @@ export default function Dashboard() {
     );
   }
 
+  const rankList = [
+    { num: 1, label: 'Starter' },
+    { num: 2, label: 'Builder' },
+    { num: 3, label: 'Grower' },
+    { num: 4, label: 'Achiever' },
+    { num: 5, label: 'Advancer' },
+    { num: 6, label: 'Progressor' },
+    { num: 7, label: 'Leader' },
+    { num: 8, label: 'Pioneer' },
+    { num: 9, label: 'Champion' },
+    { num: 10, label: 'Legend' }
+  ];
+
   return (
     <div className={styles.dashboardContainer}>
       {/* 1. TOP HEADER NAVIGATION */}
       <header className={styles.header}>
-        <div className={styles.logoArea}>
-          <span className={styles.logoBadge}>UIP</span>
-          <h2 className={styles.logoText}>Dashboard</h2>
+        <div className={styles.logoArea} onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
+          <div className={styles.logoBadgeContainer}>
+            <span className={styles.logoBadge}>UIP</span>
+          </div>
+          <div className={styles.logoTitles}>
+            <h2 className={styles.logoText}>Unique Income Plan</h2>
+            <span className={styles.logoSlogan}>Build • Earn • Grow</span>
+          </div>
         </div>
         <div className={styles.profileHeader}>
-          <span className={styles.welcomeText}>Welcome, <strong>{user?.full_name}</strong></span>
+          <button className={styles.homeBtn} onClick={() => router.push('/')}>
+            🏠 Back to Website
+          </button>
           {user?.role === 'admin' && (
             <button className={styles.adminPortalBtn} onClick={() => router.push('/admin')}>
               🛡️ Admin Panel
@@ -145,110 +205,282 @@ export default function Dashboard() {
         </div>
       </header>
 
+      {/* Sub header welcome bar */}
+      <div className={styles.welcomeSubBar}>
+        <div className={styles.welcomeInfo}>
+          <h1 className={styles.welcomeTitle}>Welcome, {user?.full_name}</h1>
+          <p className={styles.welcomeSubtitle}>Your professional income dashboard</p>
+        </div>
+      </div>
+
       <main className={styles.mainContent}>
-        {/* 2. CORE WALLET BALANCES SECTION */}
-        <section className={styles.walletSection}>
-          <Card className={styles.walletCard}>
-            <div className={styles.cardHeader}>
-              <span>Main Wallet</span>
-              <h3 className={styles.goldText}>${wallet?.main_balance.toFixed(2)}</h3>
+        {/* 2. THREE-COLUMN STATUS ROW */}
+        <section className={styles.statusRow}>
+          <Card className={styles.statusCard}>
+            <div className={styles.statusMeta}>
+              <span className={styles.statusLabel}>Status</span>
+              <div className={styles.statusValueRow}>
+                <span className={styles.statusIndicator}>●</span>
+                <span className={styles.statusTextVal}>Professional Pack Active</span>
+              </div>
+            </div>
+            <span className={styles.statusBadge}>Live</span>
+          </Card>
+          <Card className={styles.statusCard}>
+            <div className={styles.statusMeta}>
+              <span className={styles.statusLabel}>Current Rank</span>
+              <span className={styles.statusTextVal}>Rank {rankInfo.rank}: {rankInfo.name}</span>
+            </div>
+            <span className={styles.statusBadge}>$3 Investment</span>
+          </Card>
+          <Card className={styles.statusCard}>
+            <div className={styles.statusMeta}>
+              <span className={styles.statusLabel}>Account Type</span>
+              <span className={styles.statusTextVal}>Active</span>
+            </div>
+            <span className={styles.statusBadge}>From Scratch</span>
+          </Card>
+        </section>
+
+        {/* 3. FOUR METRICS CARDS GRID */}
+        <section className={styles.metricsGrid}>
+          <Card className={styles.metricCard}>
+            <div className={styles.metricHeader}>
+              <span className={styles.metricTitle}>Total Earnings</span>
+              <span className={styles.metricPercentage}>+12% this month</span>
+            </div>
+            <h3 className={styles.metricValue}>${totalEarnings.toFixed(2)}</h3>
+          </Card>
+
+          <Card className={styles.metricCard}>
+            <div className={styles.metricHeader}>
+              <span className={styles.metricTitle}>Direct Income</span>
+              <span className={styles.metricPercentage}>+12% this month</span>
+            </div>
+            <h3 className={styles.metricValue}>${directSum.toFixed(2)}</h3>
+          </Card>
+
+          <Card className={styles.metricCard}>
+            <div className={styles.metricHeader}>
+              <span className={styles.metricTitle}>Level Income</span>
+              <span className={styles.metricPercentage}>+12% this month</span>
+            </div>
+            <h3 className={styles.metricValue}>${levelSum.toFixed(2)}</h3>
+          </Card>
+
+          <Card className={styles.metricCard}>
+            <div className={styles.metricHeader}>
+              <span className={styles.metricTitle}>Team Members</span>
+              <span className={styles.metricPercentage}>+12% this month</span>
+            </div>
+            <h3 className={styles.metricValue}>{stats.teamCount}</h3>
+          </Card>
+        </section>
+
+        {/* 4. DOUBLE GRID: INCOME BREAKDOWN & RANK PROGRESS */}
+        <section className={styles.doubleGrid}>
+          {/* Left: Income Breakdown progress bars */}
+          <Card className={styles.panelCard}>
+            <h4 className={styles.panelTitle}>Income Breakdown</h4>
+            <div className={styles.breakdownList}>
+              <div className={styles.breakdownItem}>
+                <div className={styles.breakdownLabelRow}>
+                  <span>Direct</span>
+                  <span>{directPercent}%</span>
+                </div>
+                <div className={styles.barTrack}>
+                  <div className={styles.barFill} style={{ width: `${directPercent}%` }} />
+                </div>
+              </div>
+
+              <div className={styles.breakdownItem}>
+                <div className={styles.breakdownLabelRow}>
+                  <span>Level</span>
+                  <span>{levelPercent}%</span>
+                </div>
+                <div className={styles.barTrack}>
+                  <div className={styles.barFill} style={{ width: `${levelPercent}%` }} />
+                </div>
+              </div>
+
+              <div className={styles.breakdownItem}>
+                <div className={styles.breakdownLabelRow}>
+                  <span>Team</span>
+                  <span>0%</span>
+                </div>
+                <div className={styles.barTrack}>
+                  <div className={styles.barFill} style={{ width: '0%' }} />
+                </div>
+              </div>
+
+              <div className={styles.breakdownItem}>
+                <div className={styles.breakdownLabelRow}>
+                  <span>Salary</span>
+                  <span>0%</span>
+                </div>
+                <div className={styles.barTrack}>
+                  <div className={styles.barFill} style={{ width: '0%' }} />
+                </div>
+              </div>
+
+              <div className={styles.breakdownItem}>
+                <div className={styles.breakdownLabelRow}>
+                  <span>Reward</span>
+                  <span>{otherPercent}%</span>
+                </div>
+                <div className={styles.barTrack}>
+                  <div className={styles.barFill} style={{ width: `${otherPercent}%` }} />
+                </div>
+              </div>
+
+              <div className={styles.breakdownItem}>
+                <div className={styles.breakdownLabelRow}>
+                  <span>Maintenance</span>
+                  <span>0%</span>
+                </div>
+                <div className={styles.barTrack}>
+                  <div className={styles.barFill} style={{ width: '0%' }} />
+                </div>
+              </div>
             </div>
           </Card>
-          <Card className={styles.walletCard}>
-            <div className={styles.cardHeader}>
-              <span>Deposit Wallet</span>
-              <h3>${wallet?.deposit_balance.toFixed(2)}</h3>
+
+          {/* Right: Rank Progress step list */}
+          <Card className={styles.panelCard}>
+            <h4 className={styles.panelTitle}>Rank Progress</h4>
+            <div className={styles.rankStepper}>
+              {rankList.map((r) => {
+                const isActive = rankInfo.rank >= r.num;
+                const isCurrent = rankInfo.rank === r.num;
+                return (
+                  <div 
+                    key={r.num} 
+                    className={`${styles.rankStep} ${isActive ? styles.stepActive : ''} ${isCurrent ? styles.stepCurrent : ''}`}
+                  >
+                    <div className={styles.stepCircle}>{r.num}</div>
+                    <span className={styles.stepLabel}>{r.label}</span>
+                  </div>
+                );
+              })}
             </div>
-          </Card>
-          <Card className={styles.walletCard}>
-            <div className={styles.cardHeader}>
-              <span>Income Wallet</span>
-              <h3>${wallet?.income_balance.toFixed(2)}</h3>
-            </div>
-          </Card>
-          <Card className={styles.walletCard}>
-            <div className={styles.cardHeader}>
-              <span>Withdrawal Wallet</span>
-              <h3>${wallet?.withdrawal_balance.toFixed(2)}</h3>
+            <div className={styles.rankProgressFooter}>
+              <div className={styles.progressPercentRow}>
+                <span>Progress: {rankInfo.progress}% to next rank</span>
+              </div>
+              <div className={styles.barTrack}>
+                <div className={styles.barFill} style={{ width: `${rankInfo.progress}%` }} />
+              </div>
             </div>
           </Card>
         </section>
 
-        {/* 3. DOUBLE PANELS (REFERRAL & QUICK ACTIONS / RECENT TRANSACTIONS) */}
-        <section className={styles.detailsGrid}>
-          {/* Left Side: Referral Program & Quick Actions */}
-          <div className={styles.leftColumn}>
-            <Card className={styles.referralCard}>
-              <h4 className={styles.panelTitle}>Referral Network</h4>
-              <div className={styles.referralLinkBox}>
-                <p className={styles.boxLabel}>Your Unique Sponsor Link</p>
-                <div className={styles.linkRow}>
-                  <input
-                    type="text"
-                    readOnly
-                    value={user ? `${window.location.origin}/signup?ref=${user.referral_code}` : ''}
-                    className={styles.linkInput}
-                  />
-                  <button className={styles.copyBtn} onClick={copyReferralLink}>
-                    {copied ? 'Copied!' : 'Copy'}
-                  </button>
+        {/* 5. AUTO-SPILL & WALLET ACTIONS */}
+        <section className={styles.doubleGrid}>
+          {/* Left: Binary Auto-Spill visualization */}
+          <Card className={styles.panelCard}>
+            <h4 className={styles.panelTitle}>Binary Auto-Spill</h4>
+            <div className={styles.binaryTreeBox}>
+              <div className={styles.binaryTree}>
+                <div className={`${styles.treeNode} ${styles.nodeRoot}`}>
+                  <span className={styles.nodeIcon}>👤</span>
+                  <span className={styles.nodeTitle}>You</span>
+                </div>
+                
+                <div className={styles.treeBranches}>
+                  <div className={styles.branchLineLeft} />
+                  <div className={styles.branchLineRight} />
+                </div>
+
+                <div className={styles.nodeChildrenRow}>
+                  <div className={`${styles.treeNode} ${styles.nodeLeftLeg}`}>
+                    <span className={styles.legBadge}>L</span>
+                    <span className={styles.legTitle}>Left Leg</span>
+                    <span className={styles.legCount}>{leftLegCount} Members</span>
+                  </div>
+
+                  <div className={`${styles.treeNode} ${styles.nodeRightLeg}`}>
+                    <span className={styles.legBadge}>R</span>
+                    <span className={styles.legTitle}>Right Leg</span>
+                    <span className={styles.legCount}>{rightLegCount} Members</span>
+                  </div>
                 </div>
               </div>
-
-              <div className={styles.networkStats}>
-                <div className={styles.statBox}>
-                  <span className={styles.statVal}>{stats.referralsCount}</span>
-                  <span className={styles.statLabel}>Direct Downline</span>
-                </div>
-                <div className={styles.statBox}>
-                  <span className={styles.statVal}>{stats.teamCount}</span>
-                  <span className={styles.statLabel}>Total Team Members</span>
-                </div>
+              <div className={styles.autoSpillSettings}>
+                <span className={styles.autoSpillStatus}>Auto-Spill: <strong className={styles.greenText}>Active</strong></span>
+                <span className={styles.autoSpillPlacement}>Placement: <strong>L → R</strong></span>
               </div>
-            </Card>
+            </div>
+          </Card>
 
-            <Card className={styles.quickActionsCard}>
-              <h4 className={styles.panelTitle}>Financial Actions</h4>
-              <div className={styles.actionButtons}>
-                <Button className={styles.actionBtn} onClick={() => router.push('/dashboard/deposit')}>
-                  💸 Make Deposit
+          {/* Right: Wallet Balance & Withdrawal Operations */}
+          <Card className={styles.panelCard}>
+            <h4 className={styles.panelTitle}>Wallet Balance</h4>
+            <div className={styles.walletBox}>
+              <h3 className={styles.mainBalanceDisplay}>${wallet?.main_balance.toFixed(2) || '0.00'}</h3>
+              <p className={styles.balanceStatusLabel}>Available for withdrawal</p>
+              
+              <div className={styles.walletButtonsRow}>
+                <Button className={styles.walletBtn} onClick={() => router.push('/dashboard/deposit')}>
+                  💸 Deposit
                 </Button>
-                <Button variant="secondary" className={styles.actionBtn} onClick={() => router.push('/dashboard/withdraw')}>
-                  📥 Request Withdrawal
+                <Button variant="secondary" className={styles.walletBtn} onClick={() => router.push('/dashboard/withdraw')}>
+                  📥 Withdraw
                 </Button>
               </div>
-            </Card>
-          </div>
+            </div>
 
-          {/* Right Side: Ledger Transaction History */}
-          <div className={styles.rightColumn}>
-            <Card className={styles.ledgerCard}>
-              <h4 className={styles.panelTitle}>Recent Ledger Transactions</h4>
-              {transactions.length === 0 ? (
-                <div className={styles.emptyLedger}>
-                  <p>No transactions registered yet.</p>
-                  <span className={styles.helperText}>Make a deposit or share your sponsor link to start earning!</span>
-                </div>
-              ) : (
-                <div className={styles.transactionList}>
-                  {transactions.map((tx) => (
-                    <div key={tx.id} className={styles.txRow}>
-                      <div className={styles.txMeta}>
-                        <span className={styles.txType}>{tx.type.replace('commission_', 'earn ').replace('_', ' ')}</span>
-                        <span className={styles.txDesc}>{tx.description}</span>
-                      </div>
-                      <div className={styles.txValueCol}>
-                        <span className={tx.amount > 0 ? styles.positiveAmt : styles.negativeAmt}>
-                          {tx.amount > 0 ? '+' : ''}${tx.amount.toFixed(2)}
+            {/* Referral Sponsor Link */}
+            <div className={styles.referralLinkContainer}>
+              <span className={styles.referralLabel}>Your unique link:</span>
+              <div className={styles.referralInputRow}>
+                <input
+                  type="text"
+                  readOnly
+                  value={user ? `${window.location.origin}/signup?ref=${user.referral_code}` : ''}
+                  className={styles.referralInput}
+                />
+                <button className={styles.referralCopyBtn} onClick={copyReferralLink}>
+                  {copied ? 'Copied!' : 'Copy Link'}
+                </button>
+              </div>
+            </div>
+          </Card>
+        </section>
+
+        {/* 6. LEDGER / TRANSACTION HISTORY */}
+        <section className={styles.singleGrid}>
+          <Card className={styles.panelCard}>
+            <h4 className={styles.panelTitle}>Recent Activity</h4>
+            {transactions.length === 0 ? (
+              <div className={styles.emptyActivity}>
+                <p>No activity yet. Start building your network!</p>
+              </div>
+            ) : (
+              <div className={styles.activityList}>
+                {transactions.map((tx) => (
+                  <div key={tx.id} className={styles.activityRow}>
+                    <div className={styles.activityMeta}>
+                      <span className={styles.activityIcon}>⚡</span>
+                      <div className={styles.activityDetails}>
+                        <span className={styles.activityTitle}>
+                          {tx.type.replace('commission_', 'Earn ').replace('_', ' ').toUpperCase()}
                         </span>
-                        <span className={styles.txDate}>{new Date(tx.created_at).toLocaleDateString()}</span>
+                        <span className={styles.activityDesc}>{tx.description}</span>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </Card>
-          </div>
+                    <div className={styles.activityValueCol}>
+                      <span className={tx.amount > 0 ? styles.positiveValue : styles.negativeValue}>
+                        {tx.amount > 0 ? '+' : ''}${tx.amount.toFixed(2)}
+                      </span>
+                      <span className={styles.activityDate}>
+                        {new Date(tx.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
         </section>
       </main>
     </div>

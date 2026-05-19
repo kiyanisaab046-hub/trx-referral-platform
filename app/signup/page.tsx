@@ -23,6 +23,16 @@ export default function SignUp() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get('ref');
+      if (ref) {
+        setSponsorCode(ref.toUpperCase());
+      }
+    }
+  }, []);
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
