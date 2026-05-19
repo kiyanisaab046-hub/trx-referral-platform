@@ -1,5 +1,5 @@
 {
-  "name": "trx",
+  "name": "unique-income-plan",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,27 +9,18 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@headlessui/react": "^2.2.10",
-    "@heroicons/react": "^2.2.0",
-    "@lottiefiles/react-lottie-player": "^3.6.0",
-    "@supabase/ssr": "^0.10.3",
-    "framer-motion": "^12.38.0",
-    "gsap": "^3.15.0",
-    "lenis": "^1.3.23",
     "next": "16.2.6",
     "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "three": "^0.184.0",
-    "zustand": "^5.0.13"
+    "react-dom": "19.2.4"
   },
   "devDependencies": {
-    "@supabase/supabase-js": "^2.106.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "tailwindcss": "^4",
     "typescript": "^5"
   }
 }
