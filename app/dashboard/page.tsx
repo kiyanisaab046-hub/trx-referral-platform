@@ -120,10 +120,8 @@ export default function Dashboard() {
             .eq('sponsor_id', authUser.id)
             .eq('level', 1);
 
-          const { count: teamCount, error: teamError } = await supabase
-            .from('referrals')
-            .select('id', { count: 'exact', head: true })
-            .eq('sponsor_id', authUser.id);
+          const { data: teamCount, error: teamError } = await supabase
+            .rpc('get_team_size', { user_uuid: authUser.id });
 
           if (refError || teamError) {
             const errMsg = (refError?.message || '') + (teamError?.message || '');
