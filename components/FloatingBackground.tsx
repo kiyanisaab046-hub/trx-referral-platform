@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { 
   SparklesIcon,
   StarIcon,
@@ -18,106 +17,94 @@ const icons = [
   BanknotesIcon, WalletIcon, GiftIcon, CreditCardIcon
 ];
 
-function generateRandomConfig() {
-  // Pick a random icon
-  const Icon = icons[Math.floor(Math.random() * icons.length)];
-  const size = Math.random() * 25 + 15; // 15px to 40px
-  
-  // Decide which of the 4 edges it starts from
-  const edge = Math.floor(Math.random() * 4);
-  let startX, startY, endX, endY;
-  
-  // Random coordinates for crossing the screen
-  const randomCrossPos1 = Math.random() * 100;
-  const randomCrossPos2 = Math.random() * 100;
-  
-  if (edge === 0) { // Start Top, go Bottom
-    startX = randomCrossPos1 + "vw";
-    startY = "-10vh";
-    endX = randomCrossPos2 + "vw";
-    endY = "110vh";
-  } else if (edge === 1) { // Start Right, go Left
-    startX = "110vw";
-    startY = randomCrossPos1 + "vh";
-    endX = "-10vw";
-    endY = randomCrossPos2 + "vh";
-  } else if (edge === 2) { // Start Bottom, go Top
-    startX = randomCrossPos1 + "vw";
-    startY = "110vh";
-    endX = randomCrossPos2 + "vw";
-    endY = "-10vh";
-  } else { // Start Left, go Right
-    startX = "-10vw";
-    startY = randomCrossPos1 + "vh";
-    endX = "110vw";
-    endY = randomCrossPos2 + "vh";
-  }
-
-  // Fast speed: 4s to 12s per full screen cross
-  const duration = Math.random() * 8 + 4; 
-  
-  // Random rotation direction
-  const rotationTarget = Math.random() > 0.5 ? 360 : -360;
-
-  return { Icon, size, startX, startY, endX, endY, duration, rotationTarget, key: Math.random() };
-}
-
-function FloatingParticle({ delay }: { delay: number }) {
-  const [config, setConfig] = useState<any>(null);
-  const [started, setStarted] = useState(false);
-
-  useEffect(() => {
-    // Generate initial config
-    setConfig(generateRandomConfig());
-    
-    // Start after the staggered delay
-    const timer = setTimeout(() => {
-      setStarted(true);
-    }, delay * 1000);
-    
-    return () => clearTimeout(timer);
-  }, [delay]);
-
-  // If not started yet, don't render
-  if (!started || !config) return null;
-
-  return (
-    <motion.div
-      // Changing the key forces framer-motion to completely restart with the new config
-      key={config.key}
-      className="absolute top-0 left-0 text-[#D4AF37] opacity-[0.06]"
-      initial={{ x: config.startX, y: config.startY, rotate: 0 }}
-      animate={{ x: config.endX, y: config.endY, rotate: config.rotationTarget }}
-      transition={{ duration: config.duration, ease: "linear" }}
-      // When it goes off-screen, generate a completely new icon/path!
-      onAnimationComplete={() => setConfig(generateRandomConfig())}
-      style={{ width: config.size, height: config.size }}
-    >
-      <config.Icon 
-        className="w-full h-full" 
-        style={{ filter: "drop-shadow(0 0 3px rgba(212,175,55,0.15))" }} 
-      />
-    </motion.div>
-  );
-}
-
 export default function FloatingBackground() {
   const [mounted, setMounted] = useState(false);
-  
-  // Prevent hydration errors by only rendering on client
-  useEffect(() => setMounted(true), []);
+  const [particles, setParticles] = useState<any[]>([]);
+
+  useEffect(() => {
+    setMounted(true);
+    // Generate a fixed set of 12 particles (fewer nodes, faster rendering)
+    const generated = Array.from({ length: 12 }).map((_, i) => {
+      const Icon = icons[Math.floor(Math.random() * icons.length)];
+      const size = Math.random() * 20 + 15; // 15px to 35px
+      const left = Math.random() * 100; // 0% to 100%
+      const duration = Math.random() * 15 + 15; // 15s to 30s
+      const delay = Math.random() * -30; // negative delay to start immediately at random points
+      return { id: i, Icon, size, left, duration, delay };
+    });
+    setParticles(generated);
+  }, []);
+
   if (!mounted) return null;
 
-  // Render 45 particles for a dense luxury feel
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none z-[1]">
-      {/* Subtle luxury glow in the center */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[rgba(212,175,55,0.03)] via-transparent to-transparent"></div>
+    <div className="floating-bg-container">
+      <style>{`
+        .floating-bg-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          overflow: hidden;
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        .luxury-center-glow {
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle at center, rgba(212, 175, 55, 0.02) 0%, transparent 70%);
+        }
+
+        .floating-particle {
+          position: absolute;
+          bottom: -50px;
+          color: #D4AF37;
+          opacity: 0;
+          will-change: transform, opacity;
+          animation: floatUp linear infinite;
+          filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.1));
+        }
+
+        @keyframes floatUp {
+          0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0;
+          }
+          10% {
+            opacity: 0.05;
+          }
+          90% {
+            opacity: 0.05;
+          }
+          100% {
+            transform: translateY(-110vh) rotate(360deg);
+            opacity: 0;
+          }
+        }
+      `}</style>
       
-      {Array.from({ length: 20 }).map((_, i) => (
-        // Stagger the initial start times so they don't all spawn at once
-        <FloatingParticle key={i} delay={Math.random() * 5} />
-      ))}
+      <div className="luxury-center-glow" />
+      
+      {particles.map((p) => {
+        const IconComponent = p.Icon;
+        return (
+          <div
+            key={p.id}
+            className="floating-particle"
+            style={{
+              left: `${p.left}%`,
+              width: `${p.size}px`,
+              height: `${p.size}px`,
+              animationDuration: `${p.duration}s`,
+              animationDelay: `${p.delay}s`,
+            }}
+          >
+            <IconComponent className="w-full h-full" />
+          </div>
+        );
+      })}
     </div>
   );
 }

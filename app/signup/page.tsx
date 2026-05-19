@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '../../lib/supabase/client';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
-import FloatingBackground from '../../components/FloatingBackground';
 import styles from './signup.module.css';
 import Link from 'next/link';
 
@@ -96,9 +95,6 @@ export default function SignUp() {
 
   return (
     <div className={styles.container}>
-      {/* High-end luxury floating gold icons */}
-      <FloatingBackground />
-
       {/* Decorative ambient gold radial light blobs */}
       <div className={styles.glowBlob1} />
       <div className={styles.glowBlob2} />
