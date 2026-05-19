@@ -1,13 +1,42 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { createClient } from "../lib/supabase/client";
 
 const navLinks = ["About", "Income", "Ranks", "Rewards", "Join"];
 
 export default function NavBar() {
+  const supabase = createClient();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [sessionUser, setSessionUser] = useState<any>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    // Check initial session
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setSessionUser(user);
+    });
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSessionUser(session?.user ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setDropdownOpen(false);
+    setIsOpen(false);
+    router.push('/signin');
+  };
 
   // Staggered variants for mobile links
   const menuVariants: any = {
@@ -65,18 +94,72 @@ export default function NavBar() {
         <div className="flex items-center gap-4">
           {/* Auth Buttons (Desktop Only) */}
           <div className="hidden md:flex items-center gap-4">
-            <Link
-              href="/signin"
-              className="px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-[#D4AF37] border border-[#D4AF37]/30 hover:border-[#D4AF37] hover:bg-[#D4AF37]/[0.06] transition-all duration-300 rounded-full"
-            >
-              Login
-            </Link>
-            <Link
-              href="/signup"
-              className="px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] bg-gradient-to-r from-[#D4AF37] to-[#C7913C] text-[#050505] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 rounded-full font-black"
-            >
-              Register
-            </Link>
+            {sessionUser ? (
+              <div className="relative">
+                <button 
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#C7913C] text-[#050505] font-black text-sm uppercase shadow-[0_0_15px_rgba(212,175,55,0.2)] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 z-50 relative border border-[#D4AF37]/50"
+                >
+                  {sessionUser.email ? sessionUser.email[0].toUpperCase() : 'U'}
+                </button>
+
+                {dropdownOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
+                    <div className="absolute right-0 mt-3 w-64 rounded-2xl bg-[#090909]/95 border border-[#D4AF37]/25 shadow-[0_10px_35px_rgba(0,0,0,0.9)] z-50 overflow-hidden backdrop-blur-2xl">
+                      <div className="px-4 py-3 bg-[#0d0d0d] border-b border-[#D4AF37]/10">
+                        <p className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">Signed in as</p>
+                        <p className="text-xs text-[#D4AF37] font-semibold truncate mt-0.5">{sessionUser.email}</p>
+                      </div>
+                      <div className="py-1">
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center px-4 py-2.5 text-xs text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent transition-all duration-200"
+                        >
+                          👤 Player Dashboard
+                        </Link>
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center px-4 py-2.5 text-xs text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent transition-all duration-200"
+                        >
+                          💸 Deposit Money
+                        </Link>
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center px-4 py-2.5 text-xs text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent transition-all duration-200"
+                        >
+                          📥 Withdraw Funds
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center px-4 py-2.5 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all duration-200 text-left border-t border-[#D4AF37]/10"
+                        >
+                          🚪 Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/signin"
+                  className="px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-[#D4AF37] border border-[#D4AF37]/30 hover:border-[#D4AF37] hover:bg-[#D4AF37]/[0.06] transition-all duration-300 rounded-full"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] bg-gradient-to-r from-[#D4AF37] to-[#C7913C] text-[#050505] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 rounded-full font-black"
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Hamburger Mobile Toggle (Mobile Only) */}
@@ -129,20 +212,44 @@ export default function NavBar() {
             </ul>
 
             <motion.div variants={linkVariants} className="flex flex-col gap-4">
-              <Link
-                onClick={() => setIsOpen(false)}
-                href="/signin"
-                className="w-full py-4 text-center text-sm font-bold uppercase tracking-[0.2em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full bg-[#D4AF37]/[0.02]"
-              >
-                Login
-              </Link>
-              <Link
-                onClick={() => setIsOpen(false)}
-                href="/signup"
-                className="w-full py-4 text-center text-sm font-bold uppercase tracking-[0.2em] bg-gradient-to-r from-[#D4AF37] via-[#F5C542] to-[#C7913C] text-[#050505] rounded-full font-black shadow-[0_0_20px_rgba(212,175,55,0.2)]"
-              >
-                Register
-              </Link>
+              {sessionUser ? (
+                <div className="flex flex-col gap-3 border-t border-[#D4AF37]/10 pt-6">
+                  <div className="px-4 py-2.5 bg-[#0d0d0d] border border-[#D4AF37]/15 rounded-xl text-center mb-1">
+                    <p className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">Signed in as</p>
+                    <p className="text-xs text-[#D4AF37] font-semibold truncate mt-0.5">{sessionUser.email}</p>
+                  </div>
+                  <Link
+                    onClick={() => setIsOpen(false)}
+                    href="/dashboard"
+                    className="w-full py-3.5 text-center text-xs font-bold uppercase tracking-[0.2em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full bg-[#D4AF37]/[0.02]"
+                  >
+                    👤 Player Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full py-3.5 text-center text-xs font-bold uppercase tracking-[0.2em] text-red-400 border border-red-500/20 bg-red-500/5 rounded-full"
+                  >
+                    🚪 Sign Out
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <Link
+                    onClick={() => setIsOpen(false)}
+                    href="/signin"
+                    className="w-full py-4 text-center text-sm font-bold uppercase tracking-[0.2em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full bg-[#D4AF37]/[0.02]"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    onClick={() => setIsOpen(false)}
+                    href="/signup"
+                    className="w-full py-4 text-center text-sm font-bold uppercase tracking-[0.2em] bg-gradient-to-r from-[#D4AF37] via-[#F5C542] to-[#C7913C] text-[#050505] rounded-full font-black shadow-[0_0_20px_rgba(212,175,55,0.2)]"
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
             </motion.div>
           </motion.div>
         )}
