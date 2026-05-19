@@ -43,75 +43,131 @@ export default function Dashboard() {
   const [copied, setCopied] = useState(false);
   const [directSum, setDirectSum] = useState(0);
   const [levelSum, setLevelSum] = useState(0);
+  const [debugInfo, setDebugInfo] = useState<{
+    authUserId?: string;
+    authUserEmail?: string;
+    profileStatus?: string;
+    walletStatus?: string;
+    referralsStatus?: string;
+    transactionsStatus?: string;
+    urlOrigin?: string;
+    errorMsg?: string;
+  }>({});
 
   useEffect(() => {
     const fetchDashboardData = async () => {
+      const logs: typeof debugInfo = {
+        urlOrigin: typeof window !== 'undefined' ? window.location.origin : 'undefined',
+      };
       try {
         // 1. Get logged-in user session
         const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
         if (authError || !authUser) {
+          logs.errorMsg = `Auth error: ${authError?.message || 'No active session'}`;
+          setDebugInfo(logs);
           router.push('/signin');
           return;
         }
 
+        logs.authUserId = authUser.id;
+        logs.authUserEmail = authUser.email;
+
         // 2. Fetch public user profile
-        const { data: profile, error: profileError } = await supabase
-          .from('users')
-          .select('id, full_name, email, referral_code, role')
-          .eq('id', authUser.id)
-          .single();
+        try {
+          const { data: profile, error: profileError } = await supabase
+            .from('users')
+            .select('id, full_name, email, referral_code, role')
+            .eq('id', authUser.id)
+            .single();
 
-        if (profileError) throw profileError;
-        setUser(profile);
-
-        // 3. Fetch user wallet balances
-        const { data: walletData, error: walletError } = await supabase
-          .from('wallets')
-          .select('main_balance, deposit_balance, income_balance, withdrawal_balance')
-          .eq('user_id', authUser.id)
-          .single();
-
-        if (walletError) throw walletError;
-        setWallet(walletData);
-
-        // 4. Fetch referrals count
-        const { count: referralsCount, error: refError } = await supabase
-          .from('referrals')
-          .select('id', { count: 'exact', head: true })
-          .eq('sponsor_id', authUser.id);
-
-        // 5. Fetch recent transactions
-        const { data: txData, error: txError } = await supabase
-          .from('transactions')
-          .select('id, amount, type, description, created_at')
-          .eq('user_id', authUser.id)
-          .order('created_at', { ascending: false })
-          .limit(10);
-
-        if (!txError && txData) {
-          setTransactions(txData);
-          
-          // Calculate direct & level commission sums from transactions
-          const direct = txData
-            .filter(t => t.type === 'commission_direct')
-            .reduce((acc, curr) => acc + Number(curr.amount), 0);
-          
-          const lvl = txData
-            .filter(t => t.type === 'commission_level')
-            .reduce((acc, curr) => acc + Number(curr.amount), 0);
-
-          setDirectSum(direct);
-          setLevelSum(lvl);
+          if (profileError) {
+            logs.profileStatus = `Error: ${profileError.message} (Code: ${profileError.code})`;
+          } else if (!profile) {
+            logs.profileStatus = 'Error: Profile is null/empty';
+          } else {
+            setUser(profile);
+            logs.profileStatus = `Success (Ref code: ${profile.referral_code})`;
+          }
+        } catch (e: any) {
+          logs.profileStatus = `Exception: ${e.message || e}`;
         }
 
-        setStats({
-          referralsCount: referralsCount || 0,
-          teamCount: (referralsCount || 0) * 3, // Multi-tier mock for downline tracking
-        });
+        // 3. Fetch user wallet balances
+        try {
+          const { data: walletData, error: walletError } = await supabase
+            .from('wallets')
+            .select('main_balance, deposit_balance, income_balance, withdrawal_balance')
+            .eq('user_id', authUser.id)
+            .single();
 
-      } catch (error) {
+          if (walletError) {
+            logs.walletStatus = `Error: ${walletError.message} (Code: ${walletError.code})`;
+          } else if (!walletData) {
+            logs.walletStatus = 'Error: Wallet row is null/empty';
+          } else {
+            setWallet(walletData);
+            logs.walletStatus = 'Success';
+          }
+        } catch (e: any) {
+          logs.walletStatus = `Exception: ${e.message || e}`;
+        }
+
+        // 4. Fetch referrals count
+        try {
+          const { count: referralsCount, error: refError } = await supabase
+            .from('referrals')
+            .select('id', { count: 'exact', head: true })
+            .eq('sponsor_id', authUser.id);
+
+          if (refError) {
+            logs.referralsStatus = `Error: ${refError.message} (Code: ${refError.code})`;
+          } else {
+            setStats({
+              referralsCount: referralsCount || 0,
+              teamCount: (referralsCount || 0) * 3,
+            });
+            logs.referralsStatus = `Success (Count: ${referralsCount || 0})`;
+          }
+        } catch (e: any) {
+          logs.referralsStatus = `Exception: ${e.message || e}`;
+        }
+
+        // 5. Fetch recent transactions
+        try {
+          const { data: txData, error: txError } = await supabase
+            .from('transactions')
+            .select('id, amount, type, description, created_at')
+            .eq('user_id', authUser.id)
+            .order('created_at', { ascending: false })
+            .limit(10);
+
+          if (txError) {
+            logs.transactionsStatus = `Error: ${txError.message} (Code: ${txError.code})`;
+          } else {
+            if (txData) {
+              setTransactions(txData);
+              const direct = txData
+                .filter(t => t.type === 'commission_direct')
+                .reduce((acc, curr) => acc + Number(curr.amount), 0);
+              
+              const lvl = txData
+                .filter(t => t.type === 'commission_level')
+                .reduce((acc, curr) => acc + Number(curr.amount), 0);
+
+              setDirectSum(direct);
+              setLevelSum(lvl);
+            }
+            logs.transactionsStatus = 'Success';
+          }
+        } catch (e: any) {
+          logs.transactionsStatus = `Exception: ${e.message || e}`;
+        }
+
+      } catch (error: any) {
         console.error('Error fetching dashboard data:', error);
+        logs.errorMsg = `Global catch: ${error.message || error}`;
       } finally {
+        setDebugInfo(logs);
         setLoading(false);
       }
     };
@@ -480,6 +536,29 @@ export default function Dashboard() {
                 ))}
               </div>
             )}
+          </Card>
+        </section>
+
+        {/* 7. DIAGNOSTIC PANEL FOR TROUBLESHOOTING */}
+        <section className={styles.singleGrid} style={{ marginTop: '2rem' }}>
+          <Card className={styles.panelCard} style={{ border: '1px solid rgba(212, 175, 55, 0.3)' }}>
+            <h4 className={styles.panelTitle} style={{ color: '#D4AF37' }}>🛠️ Platform Connection Diagnostic</h4>
+            <div style={{ fontSize: '0.8rem', fontFamily: 'monospace', lineHeight: '1.6', color: '#ccc', marginTop: '1rem' }}>
+              <p><strong>URL Origin:</strong> {debugInfo.urlOrigin}</p>
+              <p><strong>Auth ID:</strong> {debugInfo.authUserId || 'Not authenticated'}</p>
+              <p><strong>Auth Email:</strong> {debugInfo.authUserEmail || 'N/A'}</p>
+              <hr style={{ borderColor: '#222', margin: '0.5rem 0' }} />
+              <p><strong>Profile Table Query:</strong> <span style={{ color: debugInfo.profileStatus?.includes('Error') || debugInfo.profileStatus?.includes('Exception') ? '#e74c3c' : '#2ecc71' }}>{debugInfo.profileStatus}</span></p>
+              <p><strong>Wallet Table Query:</strong> <span style={{ color: debugInfo.walletStatus?.includes('Error') || debugInfo.walletStatus?.includes('Exception') ? '#e74c3c' : '#2ecc71' }}>{debugInfo.walletStatus}</span></p>
+              <p><strong>Referrals Table Query:</strong> <span style={{ color: debugInfo.referralsStatus?.includes('Error') || debugInfo.referralsStatus?.includes('Exception') ? '#e74c3c' : '#2ecc71' }}>{debugInfo.referralsStatus}</span></p>
+              <p><strong>Transactions Table Query:</strong> <span style={{ color: debugInfo.transactionsStatus?.includes('Error') || debugInfo.transactionsStatus?.includes('Exception') ? '#e74c3c' : '#2ecc71' }}>{debugInfo.transactionsStatus}</span></p>
+              {debugInfo.errorMsg && (
+                <>
+                  <hr style={{ borderColor: '#222', margin: '0.5rem 0' }} />
+                  <p style={{ color: '#e74c3c' }}><strong>Global Error:</strong> {debugInfo.errorMsg}</p>
+                </>
+              )}
+            </div>
           </Card>
         </section>
       </main>
