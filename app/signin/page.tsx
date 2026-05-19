@@ -43,7 +43,7 @@ export default function SignIn() {
   };
 
   // Stagger animation container
-  const containerVariants = {
+  const containerVariants: any = {
     hidden: { opacity: 0, y: 40 },
     visible: { 
       opacity: 1, 
@@ -57,7 +57,7 @@ export default function SignIn() {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: any = {
     hidden: { opacity: 0, y: 20 },
     visible: { 
       opacity: 1, 
