@@ -10,7 +10,7 @@ export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
 
   // Staggered variants for mobile links
-  const menuVariants = {
+  const menuVariants: any = {
     closed: { 
       opacity: 0,
       y: "-100%",
@@ -23,7 +23,7 @@ export default function NavBar() {
     }
   };
 
-  const linkVariants = {
+  const linkVariants: any = {
     closed: { opacity: 0, y: -15, transition: { duration: 0.3 } },
     open: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 12 } }
   };
