@@ -2,11 +2,13 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '../../lib/supabase/client';
-import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
+import FloatingBackground from '../../components/FloatingBackground';
 import styles from './signup.module.css';
+import Link from 'next/link';
 
 export default function SignUp() {
   const supabase = createClient();
@@ -58,94 +60,174 @@ export default function SignUp() {
     }
   };
 
+  // Stagger animation container
+  const containerVariants = {
+    hidden: { opacity: 0, y: 40 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        duration: 0.8, 
+        ease: [0.16, 1, 0.3, 1],
+        staggerChildren: 0.06,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] } 
+    }
+  };
+
   return (
     <div className={styles.container}>
-      <Card className={styles.card}>
-        <div className={styles.badgeWrapper}>
-          <span className={styles.badge}>Professional Pack — $3</span>
+      {/* High-end luxury floating gold icons */}
+      <FloatingBackground />
+
+      {/* Decorative ambient gold radial light blobs */}
+      <div className={styles.glowBlob1} />
+      <div className={styles.glowBlob2} />
+
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className={styles.cardWrapper}
+      >
+        <div className={styles.card}>
+          {/* Top Brand Pill Indicator with Active Pack Status */}
+          <motion.div variants={itemVariants} className={styles.badgeWrapper}>
+            <span className={styles.badge}>Professional Pack — $3</span>
+          </motion.div>
+          
+          <motion.div variants={itemVariants} className={styles.header}>
+            <h1 className={styles.title}>Create Account</h1>
+            <p className={styles.subtitle}>Start building your global passive income stream today</p>
+          </motion.div>
+
+          <AnimatePresence mode="wait">
+            {success ? (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.4 }}
+                className={styles.successMessage}
+              >
+                <div className={styles.successIcon}>🎉</div>
+                <h3>Registration Successful!</h3>
+                <p>Welcome aboard! redirecting you to sign in to activate your package...</p>
+              </motion.div>
+            ) : (
+              <form onSubmit={handleRegister} className={styles.form}>
+                <motion.div variants={itemVariants}>
+                  <Input
+                    label="Full Name"
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                  />
+                </motion.div>
+                
+                <motion.div variants={itemVariants}>
+                  <Input
+                    label="Email Address"
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                  <Input
+                    label="Phone Number"
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    required
+                  />
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                  <Input
+                    label="Password"
+                    type="password"
+                    placeholder="Create a highly secure password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                  <Input
+                    label="Sponsor Code (Optional)"
+                    type="text"
+                    placeholder="Enter sponsor referral code"
+                    value={sponsorCode}
+                    onChange={(e) => setSponsorCode(e.target.value)}
+                  />
+                </motion.div>
+
+                <motion.div variants={itemVariants} className={styles.checkboxWrapper}>
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    checked={agreeTerms}
+                    onChange={(e) => setAgreeTerms(e.target.checked)}
+                    className={styles.checkbox}
+                  />
+                  <label htmlFor="terms" className={styles.checkboxLabel}>
+                    I accept the <a href="#" className={styles.termsLink}>terms and conditions</a>
+                  </label>
+                </motion.div>
+
+                <AnimatePresence>
+                  {error && (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                      className={styles.error}
+                    >
+                      ⚠️ {error}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <motion.div variants={itemVariants} className="mt-4 flex flex-col gap-3">
+                  <Button type="submit" loading={loading} className={styles.submitBtn}>
+                    Join Now • Just $3
+                  </Button>
+                  
+                  <Button 
+                    type="button" 
+                    variant="secondary" 
+                    className={styles.backBtn} 
+                    onClick={() => router.push('/')}
+                  >
+                    Back to Homepage
+                  </Button>
+                </motion.div>
+              </form>
+            )}
+          </AnimatePresence>
+
+          <motion.div variants={itemVariants} className={styles.footer}>
+            Already have an account? <Link href="/signin" className={styles.link}>Sign In</Link>
+          </motion.div>
         </div>
-        
-        <div className={styles.header}>
-          <h1 className={styles.title}>Create Member Account</h1>
-          <p className={styles.subtitle}>Start building your passive income today</p>
-        </div>
-
-        {success ? (
-          <div className={styles.successMessage}>
-            <h3>Registration Successful!</h3>
-            <p>Please check your email for the verification link. Redirecting you to login...</p>
-          </div>
-        ) : (
-          <form onSubmit={handleRegister} className={styles.form}>
-            <Input
-              label="Full Name"
-              type="text"
-              placeholder="Enter your full name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
-            />
-            
-            <Input
-              label="Email Address"
-              type="email"
-              placeholder="Enter your email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-
-            <Input
-              label="Phone Number"
-              type="tel"
-              placeholder="Enter your phone number"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              required
-            />
-
-            <Input
-              label="Password"
-              type="password"
-              placeholder="Create a secure password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-
-            <Input
-              label="Sponsor Code (Optional)"
-              type="text"
-              placeholder="Enter sponsor referral code"
-              value={sponsorCode}
-              onChange={(e) => setSponsorCode(e.target.value)}
-            />
-
-            <div className={styles.checkboxWrapper}>
-              <input
-                type="checkbox"
-                id="terms"
-                checked={agreeTerms}
-                onChange={(e) => setAgreeTerms(e.target.checked)}
-                className={styles.checkbox}
-              />
-              <label htmlFor="terms" className={styles.checkboxLabel}>
-                I accept the <a href="#" className={styles.termsLink}>terms and conditions</a>
-              </label>
-            </div>
-
-            {error && <div className={styles.error}>{error}</div>}
-
-            <Button type="submit" loading={loading} className={styles.submitBtn}>
-              Join Now • Just $3
-            </Button>
-          </form>
-        )}
-
-        <div className={styles.footer}>
-          Already have an account? <a href="/signin" className={styles.link}>Sign In</a>
-        </div>
-      </Card>
+      </motion.div>
     </div>
   );
 }
