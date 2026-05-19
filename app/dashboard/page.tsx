@@ -117,16 +117,23 @@ export default function Dashboard() {
           const { count: referralsCount, error: refError } = await supabase
             .from('referrals')
             .select('id', { count: 'exact', head: true })
+            .eq('sponsor_id', authUser.id)
+            .eq('level', 1);
+
+          const { count: teamCount, error: teamError } = await supabase
+            .from('referrals')
+            .select('id', { count: 'exact', head: true })
             .eq('sponsor_id', authUser.id);
 
-          if (refError) {
-            logs.referralsStatus = `Error: ${refError.message} (Code: ${refError.code})`;
+          if (refError || teamError) {
+            const errMsg = (refError?.message || '') + (teamError?.message || '');
+            logs.referralsStatus = `Error: ${errMsg}`;
           } else {
             setStats({
               referralsCount: referralsCount || 0,
-              teamCount: (referralsCount || 0) * 3,
+              teamCount: teamCount || 0,
             });
-            logs.referralsStatus = `Success (Count: ${referralsCount || 0})`;
+            logs.referralsStatus = `Success (Direct: ${referralsCount || 0}, Team: ${teamCount || 0})`;
           }
         } catch (e: any) {
           logs.referralsStatus = `Exception: ${e.message || e}`;
