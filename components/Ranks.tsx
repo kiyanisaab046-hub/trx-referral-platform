@@ -20,7 +20,7 @@ export default function Ranks() {
     <section className="relative py-32 bg-gradient-to-b from-[#050505] via-[#080604] to-[#050505] overflow-hidden" id="ranks">
       <div className="absolute top-[-150px] right-[-100px] w-[500px] h-[500px] bg-[#D4AF37]/[0.03] rounded-full blur-[160px] pointer-events-none" />
       <div className="container mx-auto px-6 relative z-10">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9 }} className="text-center mb-20">
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "150px 0px" }} transition={{ duration: 0.6 }} className="text-center mb-20">
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#D4AF37]/60" />
             <span className="text-[11px] font-bold uppercase tracking-[0.35em] text-[#D4AF37] bg-[#D4AF37]/[0.06] px-5 py-1.5 rounded-full border border-[#D4AF37]/20">Rank System</span>
@@ -46,7 +46,7 @@ export default function Ranks() {
               </thead>
               <tbody>
                 {ranks.map((rank, i) => (
-                  <motion.tr key={rank.id} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.5 }} className="group border-b border-[#D4AF37]/[0.06] hover:bg-[#D4AF37]/[0.04] transition-all duration-300 cursor-default">
+                  <motion.tr key={rank.id} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "150px 0px" }} transition={{ delay: i * 0.03, duration: 0.3 }} className="group border-b border-[#D4AF37]/[0.06] hover:bg-[#D4AF37]/[0.04] transition-all duration-300 cursor-default">
                     <td className="p-5"><span className="font-mono text-sm text-[#8a7a5a] group-hover:text-[#c9b896] transition-colors duration-300">{rank.id}</span></td>
                     <td className="p-5"><span className="font-display font-black text-[#c9b896] group-hover:text-[#F5C542] uppercase tracking-wider text-sm transition-colors duration-300">{rank.name}</span></td>
                     <td className="p-5"><span className="font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#F5C542] text-lg tracking-tight">{rank.price}</span></td>

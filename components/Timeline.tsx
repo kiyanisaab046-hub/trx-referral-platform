@@ -24,8 +24,8 @@ export default function Timeline() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9 }}
+          viewport={{ once: true, margin: "150px 0px" }}
+          transition={{ duration: 0.6 }}
           className="text-center mb-24"
         >
           <div className="flex items-center justify-center gap-3 mb-6">
@@ -50,8 +50,8 @@ export default function Timeline() {
           <motion.div 
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            viewport={{ once: true, margin: "150px 0px" }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="mx-auto mt-6 h-[2px] w-24 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent origin-center"
           />
         </motion.div>
@@ -65,10 +65,10 @@ export default function Timeline() {
             {milestones.map((m, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{ duration: 0.8, delay: i * 0.1, type: "spring", stiffness: 70 }}
+                viewport={{ once: true, margin: "150px 0px" }}
+                transition={{ duration: 0.5, delay: i * 0.05, type: "spring", stiffness: 120, damping: 15 }}
                 className={`flex flex-col md:flex-row items-center gap-8 ${i % 2 !== 0 ? "md:flex-row-reverse" : ""}`}
               >
                 {/* Content block */}

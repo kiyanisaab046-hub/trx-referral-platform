@@ -20,8 +20,8 @@ const containerVariants = {
 } as const;
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 40, scale: 0.95 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, type: "spring", stiffness: 90 } },
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, type: "spring", stiffness: 150, damping: 18 } },
 } as const;
 
 export default function Features() {
@@ -40,8 +40,8 @@ export default function Features() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9 }}
+          viewport={{ once: true, margin: "150px 0px" }}
+          transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
           <div className="flex items-center justify-center gap-3 mb-6">
@@ -76,7 +76,7 @@ export default function Features() {
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, amount: 0.1 }}
+          viewport={{ once: true, margin: "150px 0px" }}
         >
           {features.map((f, i) => (
             <motion.div

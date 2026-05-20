@@ -34,8 +34,8 @@ export default function About() {
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ duration: 1, ease: "easeOut" }}
+            viewport={{ once: true, margin: "150px 0px" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             className="lg:w-1/2"
           >
             {/* Premium Section Label */}
@@ -66,8 +66,8 @@ export default function About() {
                   key={index}
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: card.delay, duration: 0.6, type: "spring", stiffness: 80 }}
+                  viewport={{ once: true, margin: "150px 0px" }}
+                  transition={{ delay: card.delay * 0.5, duration: 0.4, ease: "easeOut" }}
                   whileHover={{ scale: 1.02, y: -4 }}
                   whileTap={{ scale: 0.98 }}
                   className="group relative p-[1px] rounded-2xl overflow-hidden"
@@ -90,10 +90,10 @@ export default function About() {
 
           {/* Right — 3D Glass Orb Visual */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
+            viewport={{ once: true, margin: "150px 0px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             className="lg:w-1/2 relative h-[500px] flex items-center justify-center group"
           >
             {/* Core glowing sphere */}

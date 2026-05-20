@@ -27,8 +27,8 @@ export default function EarningPotential() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9 }}
+          viewport={{ once: true, margin: "150px 0px" }}
+          transition={{ duration: 0.6 }}
           className="mb-20"
         >
           <div className="flex items-center justify-center gap-3 mb-6">
@@ -67,10 +67,10 @@ export default function EarningPotential() {
           {incomes.map((inc, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15, duration: 0.7, type: "spring", stiffness: 80 }}
+              viewport={{ once: true, margin: "150px 0px" }}
+              transition={{ delay: i * 0.08, duration: 0.4, type: "spring", stiffness: 150, damping: 18 }}
               whileHover={{ y: -10, scale: 1.03 }}
               className="group flex-1 relative rounded-2xl overflow-hidden cursor-default"
             >
@@ -110,8 +110,8 @@ export default function EarningPotential() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4, duration: 0.7 }}
+          viewport={{ once: true, margin: "150px 0px" }}
+          transition={{ delay: 0.2, duration: 0.5 }}
           className="max-w-xl mx-auto"
         >
           <div className="flex items-center justify-center gap-3 flex-wrap px-6 py-4 rounded-2xl bg-[#0c0a08]/60 border border-[#D4AF37]/10">

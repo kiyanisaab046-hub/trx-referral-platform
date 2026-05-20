@@ -25,8 +25,8 @@ export default function Mission() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9 }}
+          viewport={{ once: true, margin: "150px 0px" }}
+          transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
           <div className="flex items-center justify-center gap-3 mb-6">
@@ -48,8 +48,8 @@ export default function Mission() {
           <motion.div 
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            viewport={{ once: true, margin: "150px 0px" }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="mx-auto mt-6 h-[2px] w-24 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent origin-center"
           />
         </motion.div>
@@ -58,10 +58,10 @@ export default function Mission() {
           
           {/* Left - Rotating Premium Glass Orb Visual */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
+            viewport={{ once: true, margin: "150px 0px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
             className="w-64 h-64 relative flex items-center justify-center flex-shrink-0"
           >
             {/* Glowing core sphere */}
@@ -85,8 +85,8 @@ export default function Mission() {
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.9, delay: 0.1 }}
+            viewport={{ once: true, margin: "150px 0px" }}
+            transition={{ duration: 0.6, delay: 0.05 }}
             className="flex-1"
           >
             <p className="text-xl text-[#8a7a5a] group-hover:text-[#c9b896] leading-relaxed mb-10 font-light max-w-2xl">

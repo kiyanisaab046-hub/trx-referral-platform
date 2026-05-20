@@ -12,7 +12,7 @@ export default function LevelIncomeTable() {
     <section className="relative py-32 bg-gradient-to-b from-[#050505] via-[#080604] to-[#050505] overflow-hidden" id="level-income-table">
       <div className="absolute bottom-[-150px] left-[-100px] w-[500px] h-[500px] bg-[#C7913C]/[0.04] rounded-full blur-[160px] pointer-events-none" />
       <div className="container mx-auto px-6 relative z-10">
-        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9 }} className="text-center mb-20">
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "150px 0px" }} transition={{ duration: 0.6 }} className="text-center mb-20">
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#D4AF37]/60" />
             <span className="text-[11px] font-bold uppercase tracking-[0.35em] text-[#D4AF37] bg-[#D4AF37]/[0.06] px-5 py-1.5 rounded-full border border-[#D4AF37]/20">Level System</span>
@@ -40,7 +40,7 @@ export default function LevelIncomeTable() {
                 {levels.map(({ lvl, pct }, i) => {
                   const tier = lvl === 1 ? "★★★" : lvl <= 5 ? "★★" : lvl <= 10 ? "★" : "·";
                   return (
-                    <motion.tr key={lvl} initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.04 }} className="group border-b border-[#D4AF37]/[0.06] hover:bg-[#D4AF37]/[0.04] transition-all duration-300 cursor-default">
+                    <motion.tr key={lvl} initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "150px 0px" }} transition={{ delay: i * 0.02, duration: 0.25 }} className="group border-b border-[#D4AF37]/[0.06] hover:bg-[#D4AF37]/[0.04] transition-all duration-300 cursor-default">
                       <td className="p-5">
                         <div className="flex items-center gap-3">
                           <span className="font-mono text-sm text-[#8a7a5a]/60 w-6">{lvl.toString().padStart(2, "0")}</span>

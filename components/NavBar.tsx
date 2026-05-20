@@ -38,23 +38,21 @@ export default function NavBar() {
     router.push('/signin');
   };
 
-  // Staggered variants for mobile links
+  // Staggered variants for mobile links (optimized to avoid full-screen translates with backdrop-blur)
   const menuVariants: any = {
     closed: { 
       opacity: 0,
-      y: "-100%",
-      transition: { duration: 0.4, ease: [0.3, 0, 0.2, 1], staggerChildren: 0.05, staggerDirection: -1 }
+      transition: { duration: 0.2, ease: "easeInOut" }
     },
     open: { 
       opacity: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: [0.3, 0, 0.2, 1], staggerChildren: 0.07, delayChildren: 0.1 }
+      transition: { duration: 0.25, ease: "easeInOut", staggerChildren: 0.04, delayChildren: 0.05 }
     }
   };
 
   const linkVariants: any = {
-    closed: { opacity: 0, y: -15, transition: { duration: 0.3 } },
-    open: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100, damping: 12 } }
+    closed: { opacity: 0, y: -8, transition: { duration: 0.15 } },
+    open: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 150, damping: 15 } }
   };
 
   return (
@@ -170,14 +168,17 @@ export default function NavBar() {
           >
             <motion.span
               animate={isOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
+              transition={{ duration: 0.2 }}
               className="w-5 h-[2px] bg-[#D4AF37] rounded-full origin-center"
             />
             <motion.span
               animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
+              transition={{ duration: 0.15 }}
               className="w-5 h-[2px] bg-[#D4AF37] rounded-full"
             />
             <motion.span
               animate={isOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
+              transition={{ duration: 0.2 }}
               className="w-5 h-[2px] bg-[#D4AF37] rounded-full origin-center"
             />
           </button>
@@ -192,7 +193,7 @@ export default function NavBar() {
             animate="open"
             exit="closed"
             variants={menuVariants}
-            className="fixed inset-x-0 top-0 h-screen bg-[#050505]/95 backdrop-blur-2xl border-b border-[#D4AF37]/10 z-40 flex flex-col justify-center px-10 md:hidden"
+            className="fixed inset-0 h-screen bg-[#050505]/95 backdrop-blur-md border-b border-[#D4AF37]/10 z-40 flex flex-col justify-center px-10 md:hidden"
           >
             {/* Background luxury glow in overlay */}
             <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-64 h-64 bg-[#D4AF37]/5 rounded-full blur-[100px] pointer-events-none" />

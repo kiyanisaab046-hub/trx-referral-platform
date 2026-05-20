@@ -22,8 +22,8 @@ export default function Vision() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9 }}
+          viewport={{ once: true, margin: "150px 0px" }}
+          transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
           <div className="flex items-center justify-center gap-3 mb-6">
@@ -45,8 +45,8 @@ export default function Vision() {
           <motion.div 
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            viewport={{ once: true, margin: "150px 0px" }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="mx-auto mt-6 h-[2px] w-24 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent origin-center"
           />
         </motion.div>
@@ -57,8 +57,8 @@ export default function Vision() {
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            viewport={{ once: true, margin: "150px 0px" }}
+            transition={{ duration: 0.6 }}
           >
             <h3 className="text-2xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#C7913C] mb-6 uppercase tracking-wide">
               Financial Empowerment
@@ -92,8 +92,8 @@ export default function Vision() {
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.9, delay: 0.1 }}
+            viewport={{ once: true, margin: "150px 0px" }}
+            transition={{ duration: 0.6, delay: 0.05 }}
             whileHover={{ scale: 1.02 }}
             className="relative h-72 rounded-2xl overflow-hidden border border-[#D4AF37]/[0.08] bg-[#0c0a08]/60 backdrop-blur-md flex flex-col items-center justify-center p-8 group transition-all duration-500 shadow-2xl cursor-default"
           >

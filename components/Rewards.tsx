@@ -30,8 +30,8 @@ const containerVariants = {
 } as const;
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 40, scale: 0.95 },
-  show:   { opacity: 1, y: 0,  scale: 1, transition: { duration: 0.6, type: "spring", stiffness: 90 } },
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  show:   { opacity: 1, y: 0,  scale: 1, transition: { duration: 0.4, type: "spring", stiffness: 150, damping: 18 } },
 } as const;
 
 export default function Rewards() {
@@ -50,8 +50,8 @@ export default function Rewards() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9 }}
+          viewport={{ once: true, margin: "150px 0px" }}
+          transition={{ duration: 0.6 }}
           className="text-center mb-20"
         >
           <div className="flex items-center justify-center gap-3 mb-6">
@@ -82,8 +82,8 @@ export default function Rewards() {
           <motion.div 
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            viewport={{ once: true, margin: "150px 0px" }}
+            transition={{ duration: 0.5, delay: 0.1 }}
             className="mx-auto mt-6 h-[2px] w-24 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent origin-center"
           />
         </motion.div>
@@ -94,7 +94,7 @@ export default function Rewards() {
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true, amount: 0.1 }}
+          viewport={{ once: true, margin: "150px 0px" }}
         >
           {rewardsData.map((r, i) => (
             <motion.div
