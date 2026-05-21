@@ -167,17 +167,17 @@ export default function NavBar() {
             <motion.span
               animate={isOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
               transition={{ duration: 0.2 }}
-              w-5 h-[2px] bg-primary rounded-full origin-center
+              className="w-5 h-[2px] bg-primary rounded-full origin-center"
             />
             <motion.span
               animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
               transition={{ duration: 0.15 }}
-              w-5 h-[2px] bg-primary rounded-full
+              className="w-5 h-[2px] bg-primary rounded-full"
             />
             <motion.span
               animate={isOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
               transition={{ duration: 0.2 }}
-              w-5 h-[2px] bg-primary rounded-full origin-center
+              className="w-5 h-[2px] bg-primary rounded-full origin-center"
             />
           </button>
         </div>
