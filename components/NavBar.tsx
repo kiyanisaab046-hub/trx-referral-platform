@@ -150,7 +150,7 @@ export default function NavBar() {
                 </Link>
                 <Link
                   href="/signup"
-                  px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] bg-gradient-to-r from-primary to-secondary text-[#050505] hover:shadow-[0_0_20px_rgba(var(--color-primary),0.4)] transition-all duration-300 rounded-full font-black
+                  className="px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] bg-gradient-to-r from-primary to-secondary text-[#050505] hover:shadow-[0_0_20px_rgba(var(--color-primary),0.4)] transition-all duration-300 rounded-full font-black"
                 >
                   Register
                 </Link>
