@@ -7,10 +7,10 @@
   --color-rich-charcoal:#111111;
   --color-card-bg:      rgba(255,255,255,0.06);
 
-  --color-gold:         #D4AF37;
-  --color-gold-glow:    #FFB400;
-  --color-gold-light:   #F5C542;
-  --color-bronze:       #C7913C;
+  --color-primary: #FF9A86; /* salmon */
+  --color-secondary: #FFB399; /* light orange */
+  --color-accent: #FFF0BD; /* pale yellow */
+  --color-highlight: #FFB49A; /* deeper orange */
 
   --color-dark-fg:      #E5E5E5;
   --color-soft-gray:    #BFBFBF;

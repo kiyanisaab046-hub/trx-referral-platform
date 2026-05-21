@@ -209,7 +209,7 @@
 .statusIndicator {
   color: #2ecc71;
   font-size: 0.75rem;
-  animation: pulse 2s infinite;
+  -webkit-animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
