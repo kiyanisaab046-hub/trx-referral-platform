@@ -23,9 +23,9 @@ export default function About() {
       className="relative py-32 overflow-hidden bg-gradient-to-b from-[#050505] via-[#0A0514] to-[#050505]" 
       id="about"
     >
-      {/* Deep Amethyst and Gold Ambient Glows */}
+      {/* Deep Amethyst and Pastel Ambient Glows */}
       <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-purple-900/10 rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-[#D4AF37]/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="flex flex-col lg:flex-row gap-20 items-center">
@@ -40,15 +40,15 @@ export default function About() {
           >
             {/* Premium Section Label */}
             <div className="flex items-center gap-3 mb-6">
-              <div className="h-[1px] w-8 bg-gradient-to-r from-[#D4AF37] to-transparent" />
-              <span className="text-xs font-bold uppercase tracking-[0.4em] text-[#D4AF37] bg-white/5 px-3 py-1 rounded-full border border-[#D4AF37]/20 backdrop-blur-sm">
+              <div className="h-[1px] w-8 bg-gradient-to-r from-primary to-transparent" />
+              <span className="text-xs font-bold uppercase tracking-[0.4em] text-primary bg-white/5 px-3 py-1 rounded-full border border-primary/20 backdrop-blur-sm">
                 About Us
               </span>
             </div>
 
             <h2 className="text-4xl md:text-6xl font-display font-black uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-400 mb-6 leading-[1.1]">
               Redefining <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5C542] to-[#C7913C] drop-shadow-lg">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-highlight drop-shadow-lg">
                 Your Income
               </span>
             </h2>
@@ -73,10 +73,10 @@ export default function About() {
                   className="group relative p-[1px] rounded-2xl overflow-hidden"
                 >
                   {/* Animated Border Gradient on Hover */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-transparent group-hover:via-[#D4AF37] -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/50 to-transparent group-hover:via-primary -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
                   
-                  <div className="relative flex items-center gap-4 p-5 h-full rounded-2xl bg-white/[0.02] backdrop-blur-xl border border-white/10 group-hover:bg-white/[0.05] group-hover:border-[#D4AF37]/40 transition-all duration-300 shadow-2xl">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-white/5 to-white/10 border border-white/10 group-hover:bg-[#D4AF37]/20 group-hover:border-[#D4AF37] group-hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-all duration-300">
+                  <div className="relative flex items-center gap-4 p-5 h-full rounded-2xl bg-white/[0.02] backdrop-blur-xl border border-white/10 group-hover:bg-white/[0.05] group-hover:border-primary/40 transition-all duration-300 shadow-2xl">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-white/5 to-white/10 border border-white/10 group-hover:bg-primary/20 group-hover:border-primary group-hover:shadow-[0_0_15px_rgba(255,154,134,0.4)] transition-all duration-300">
                       <card.icon className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" />
                     </div>
                     <h3 className="font-display font-bold text-gray-200 group-hover:text-white transition-colors text-sm uppercase tracking-wider">
@@ -100,7 +100,7 @@ export default function About() {
             <motion.div 
               animate={{ y: [-15, 15, -15] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="relative w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-tr from-[#D4AF37] via-[#C7913C] to-purple-600/40 shadow-[0_0_100px_rgba(212,175,55,0.3)] flex items-center justify-center"
+              className="relative w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-tr from-primary via-highlight to-purple-600/40 shadow-[0_0_100px_rgba(255,154,134,0.3)] flex items-center justify-center"
             >
               <div className="absolute inset-0 bg-black/20 rounded-full mix-blend-overlay" />
               
@@ -108,14 +108,14 @@ export default function About() {
               <motion.div 
                 animate={{ rotate: 360 }}
                 transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[130%] h-[130%] rounded-full border-[1px] border-white/10 border-t-[#D4AF37]/80 border-r-[#D4AF37]/30" 
+                className="absolute w-[130%] h-[130%] rounded-full border-[1px] border-white/10 border-t-primary/80 border-r-primary/30" 
               />
               
               {/* Orbiting Ring 2 */}
               <motion.div 
                 animate={{ rotate: -360 }}
                 transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[160%] h-[160%] rounded-full border-[1px] border-white/5 border-b-purple-400/50 border-l-[#D4AF37]/40" 
+                className="absolute w-[160%] h-[160%] rounded-full border-[1px] border-white/5 border-b-purple-400/50 border-l-primary/40" 
               />
 
               {/* Floating Glass Plate in the center */}
@@ -129,7 +129,7 @@ export default function About() {
                   UIP
                 </span>
                 <div className="relative mt-3 px-3 py-1 rounded-full bg-black/40 border border-white/10">
-                  <span className="text-[#D4AF37] text-[10px] tracking-[0.2em] uppercase font-bold">
+                  <span className="text-primary text-[10px] tracking-[0.2em] uppercase font-bold">
                     Since 2024
                   </span>
                 </div>

@@ -542,8 +542,8 @@ export default function Dashboard() {
 
         {/* 7. DIAGNOSTIC PANEL FOR TROUBLESHOOTING */}
         <section className={styles.singleGrid} style={{ marginTop: '2rem' }}>
-          <Card className={styles.panelCard} style={{ border: '1px solid rgba(212, 175, 55, 0.3)' }}>
-            <h4 className={styles.panelTitle} style={{ color: '#D4AF37' }}>🛠️ Platform Connection Diagnostic</h4>
+          <Card className={styles.panelCard} style={{ border: '1px solid var(--color-primary)' }}>
+            <h4 className={styles.panelTitle} style={{ color: 'var(--color-primary)' }}>🛠️ Platform Connection Diagnostic</h4>
             <div style={{ fontSize: '0.8rem', fontFamily: 'monospace', lineHeight: '1.6', color: '#ccc', marginTop: '1rem' }}>
               <p><strong>URL Origin:</strong> {debugInfo.urlOrigin}</p>
               <p><strong>Auth ID:</strong> {debugInfo.authUserId || 'Not authenticated'}</p>

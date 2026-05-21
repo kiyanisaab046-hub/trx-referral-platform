@@ -22,7 +22,7 @@
   align-items: center;
   padding: 1rem 2rem;
   background-color: #0a0a0a;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+  border-bottom: 1px solid rgba(255, 154, 134, 0.15);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
 }
 
@@ -39,14 +39,14 @@
 }
 
 .logoBadge {
-  background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary), var(--color-highlight), var(--color-accent));
   color: #000;
   font-size: 0.85rem;
   font-weight: 900;
   padding: 0.35rem 0.85rem;
   border-radius: 50px;
   letter-spacing: 0.05em;
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+  box-shadow: 0 0 15px rgba(255, 154, 134, 0.2);
 }
 
 .logoTitles {
@@ -83,8 +83,8 @@
 
 .homeBtn {
   background: transparent;
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  color: #D4AF37;
+  border: 1px solid rgba(255, 154, 134, 0.4);
+  color: var(--color-primary);
   padding: 0.5rem 1.25rem;
   border-radius: 50px;
   font-size: 0.85rem;
@@ -94,15 +94,15 @@
 }
 
 .homeBtn:hover {
-  background-color: #D4AF37;
+  background-color: var(--color-primary);
   color: #000;
-  border-color: #D4AF37;
+  border-color: var(--color-primary);
 }
 
 .adminPortalBtn {
-  background-color: rgba(212, 175, 55, 0.1);
-  border: 1px solid #D4AF37;
-  color: #D4AF37;
+  background-color: rgba(255, 154, 134, 0.1);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
   padding: 0.5rem 1.25rem;
   border-radius: 50px;
   font-size: 0.85rem;
@@ -112,7 +112,7 @@
 }
 
 .adminPortalBtn:hover {
-  background-color: #D4AF37;
+  background-color: var(--color-primary);
   color: #000;
 }
 
@@ -225,9 +225,9 @@
 }
 
 .statusBadge {
-  background: rgba(212, 175, 55, 0.08);
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  color: #D4AF37;
+  background: rgba(255, 154, 134, 0.08);
+  border: 1px solid rgba(255, 154, 134, 0.2);
+  color: var(--color-primary);
   font-size: 0.75rem;
   font-weight: 700;
   padding: 0.25rem 0.65rem;
@@ -250,7 +250,7 @@
 }
 
 .metricCard:hover {
-  border-color: rgba(212, 175, 55, 0.3);
+  border-color: rgba(255, 154, 134, 0.3);
   transform: translateY(-2px);
 }
 
@@ -310,11 +310,11 @@
 .panelTitle {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #D4AF37;
+  color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin: 0 0 1.5rem 0;
-  border-left: 3px solid #D4AF37;
+  border-left: 3px solid var(--color-primary);
   padding-left: 0.75rem;
 }
 
@@ -349,7 +349,7 @@
 
 .barFill {
   height: 100%;
-  background: linear-gradient(90deg, #b38728, #fcf6ba, #bf953f);
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary), var(--color-highlight));
   border-radius: 10px;
   transition: width 0.6s ease;
 }
@@ -384,15 +384,15 @@
 
 .stepActive {
   opacity: 1;
-  border-color: rgba(212, 175, 55, 0.3);
-  background: rgba(212, 175, 55, 0.02);
+  border-color: rgba(255, 154, 134, 0.3);
+  background: rgba(255, 154, 134, 0.02);
 }
 
 .stepCurrent {
   opacity: 1;
-  border-color: #D4AF37;
-  background: rgba(212, 175, 55, 0.08);
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+  border-color: var(--color-primary);
+  background: rgba(255, 154, 134, 0.08);
+  box-shadow: 0 0 15px rgba(255, 154, 134, 0.15);
 }
 
 .stepCircle {
@@ -410,7 +410,7 @@
 }
 
 .stepActive .stepCircle {
-  background: #D4AF37;
+  background: var(--color-primary);
   color: #000;
 }
 
@@ -434,7 +434,7 @@
 .progressPercentRow {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #D4AF37;
+  color: var(--color-primary);
 }
 
 /* BINARY TREE SPILL */
@@ -469,8 +469,8 @@
 }
 
 .nodeRoot {
-  border-color: #D4AF37;
-  background: rgba(212, 175, 55, 0.05);
+  border-color: var(--color-primary);
+  background: rgba(255, 154, 134, 0.05);
 }
 
 .nodeIcon {
@@ -543,8 +543,8 @@
 }
 
 .nodeLeftLeg .legBadge {
-  border-color: rgba(212, 175, 55, 0.3);
-  color: #D4AF37;
+  border-color: rgba(255, 154, 134, 0.3);
+  color: var(--color-primary);
 }
 
 .legTitle {
@@ -592,10 +592,10 @@
 .mainBalanceDisplay {
   font-size: 2.5rem;
   font-weight: 900;
-  color: #D4AF37;
+  color: var(--color-primary);
   margin: 0;
   letter-spacing: -0.03em;
-  text-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
+  text-shadow: 0 0 20px rgba(255, 154, 134, 0.25);
 }
 
 .balanceStatusLabel {
@@ -647,7 +647,7 @@
 }
 
 .referralCopyBtn {
-  background: #D4AF37;
+  background: var(--color-primary);
   color: #000;
   border: none;
   border-radius: 6px;
@@ -700,15 +700,15 @@
 
 .activityIcon {
   font-size: 1.25rem;
-  color: #D4AF37;
-  background: rgba(212, 175, 55, 0.05);
+  color: var(--color-primary);
+  background: rgba(255, 154, 134, 0.05);
   width: 36px;
   height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(255, 154, 134, 0.15);
 }
 
 .activityDetails {

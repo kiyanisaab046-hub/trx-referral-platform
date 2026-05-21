@@ -58,7 +58,7 @@ export default function NavBar() {
   return (
     <>
       <motion.nav
-        className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 bg-[#050505]/80 backdrop-blur-xl border-b border-[#D4AF37]/10"
+        className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 bg-[#050505]/80 backdrop-blur-xl border-b border-primary/10"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -66,7 +66,7 @@ export default function NavBar() {
         {/* Left — Brand */}
         <Link href="/" className="flex items-center gap-3 flex-shrink-0 group">
           <img src="file:///C:/Users/03165/.gemini/antigravity/brain/907c9ea0-2299-45b8-965f-2d10af8a6c66/uploaded_media_1779358212422.png" alt="Logo" className="h-8 w-auto" />
-          <span className="font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 group-hover:from-[#D4AF37] group-hover:to-[#F5C542] text-sm uppercase tracking-[0.25em] hidden sm:block transition-all duration-300">
+          <span className="font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 group-hover:from-primary group-hover:to-secondary text-sm uppercase tracking-[0.25em] hidden sm:block transition-all duration-300">
             Unique Income Plan
           </span>
         </Link>
@@ -77,10 +77,10 @@ export default function NavBar() {
             <li key={txt}>
               <Link
                 href={`#${txt.toLowerCase()}`}
-                className="text-xs font-bold uppercase tracking-[0.2em] text-[#8a7a5a] hover:text-[#F5C542] transition-colors duration-300 relative group"
+                className="text-xs font-bold uppercase tracking-[0.2em] text-soft-gray hover:text-secondary transition-colors duration-300 relative group"
               >
                 {txt}
-                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#D4AF37] transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-primary transition-all duration-300 group-hover:w-full" />
               </Link>
             </li>
           ))}
@@ -94,7 +94,7 @@ export default function NavBar() {
               <div className="relative">
                 <button 
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#C7913C] text-[#050505] font-black text-sm uppercase shadow-[0_0_15px_rgba(212,175,55,0.2)] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 z-50 relative border border-[#D4AF37]/50"
+                  className="flex items-center justify-center w-9 h-9 rounded-full bg-gradient-to-r from-primary to-highlight text-[#050505] font-black text-sm uppercase shadow-[0_0_15px_rgba(255,154,134,0.2)] hover:shadow-[0_0_20px_rgba(255,154,134,0.4)] transition-all duration-300 z-50 relative border border-primary/50"
                 >
                   {sessionUser.email ? sessionUser.email[0].toUpperCase() : 'U'}
                 </button>
@@ -102,36 +102,36 @@ export default function NavBar() {
                 {dropdownOpen && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
-                    <div className="absolute right-0 mt-3 w-64 rounded-2xl bg-[#090909]/95 border border-[#D4AF37]/25 shadow-[0_10px_35px_rgba(0,0,0,0.9)] z-50 overflow-hidden backdrop-blur-2xl">
-                      <div className="px-4 py-3 bg-[#0d0d0d] border-b border-[#D4AF37]/10">
+                    <div className="absolute right-0 mt-3 w-64 rounded-2xl bg-[#090909]/95 border border-primary/25 shadow-[0_10px_35px_rgba(0,0,0,0.9)] z-50 overflow-hidden backdrop-blur-2xl">
+                      <div className="px-4 py-3 bg-[#0d0d0d] border-b border-primary/10">
                         <p className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">Signed in as</p>
-                        <p className="text-xs text-[#D4AF37] font-semibold truncate mt-0.5">{sessionUser.email}</p>
+                        <p className="text-xs text-primary font-semibold truncate mt-0.5">{sessionUser.email}</p>
                       </div>
                       <div className="py-1">
                         <Link
                           href="/dashboard"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center px-4 py-2.5 text-xs text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent transition-all duration-200"
+                          className="flex items-center px-4 py-2.5 text-xs text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-all duration-200"
                         >
                           👤 Player Dashboard
                         </Link>
                         <Link
                           href="/dashboard"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center px-4 py-2.5 text-xs text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent transition-all duration-200"
+                          className="flex items-center px-4 py-2.5 text-xs text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-all duration-200"
                         >
                           💸 Deposit Money
                         </Link>
                         <Link
                           href="/dashboard"
                           onClick={() => setDropdownOpen(false)}
-                          className="flex items-center px-4 py-2.5 text-xs text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent transition-all duration-200"
+                          className="flex items-center px-4 py-2.5 text-xs text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-all duration-200"
                         >
                           📥 Withdraw Funds
                         </Link>
                         <button
                           onClick={handleLogout}
-                          className="w-full flex items-center px-4 py-2.5 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all duration-200 text-left border-t border-[#D4AF37]/10"
+                          className="w-full flex items-center px-4 py-2.5 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/5 transition-all duration-200 text-left border-t border-primary/10"
                         >
                           🚪 Sign Out
                         </button>
@@ -202,7 +202,7 @@ export default function NavBar() {
                   <Link
                     onClick={() => setIsOpen(false)}
                     href={`#${txt.toLowerCase()}`}
-                    className="text-2xl font-display font-black uppercase tracking-[0.25em] text-[#8a7a5a] hover:text-[#F5C542] transition-colors duration-300"
+                    className="text-2xl font-display font-black uppercase tracking-[0.25em] text-soft-gray hover:text-secondary transition-colors duration-300"
                   >
                     {txt}
                   </Link>
@@ -212,15 +212,15 @@ export default function NavBar() {
 
             <motion.div variants={linkVariants} className="flex flex-col gap-4">
               {sessionUser ? (
-                <div className="flex flex-col gap-3 border-t border-[#D4AF37]/10 pt-6">
-                  <div className="px-4 py-2.5 bg-[#0d0d0d] border border-[#D4AF37]/15 rounded-xl text-center mb-1">
+                <div className="flex flex-col gap-3 border-t border-primary/10 pt-6">
+                  <div className="px-4 py-2.5 bg-[#0d0d0d] border border-primary/15 rounded-xl text-center mb-1">
                     <p className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">Signed in as</p>
-                    <p className="text-xs text-[#D4AF37] font-semibold truncate mt-0.5">{sessionUser.email}</p>
+                    <p className="text-xs text-primary font-semibold truncate mt-0.5">{sessionUser.email}</p>
                   </div>
                   <Link
                     onClick={() => setIsOpen(false)}
                     href="/dashboard"
-                    className="w-full py-3.5 text-center text-xs font-bold uppercase tracking-[0.2em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full bg-[#D4AF37]/[0.02]"
+                    className="w-full py-3.5 text-center text-xs font-bold uppercase tracking-[0.2em] text-primary border border-primary/30 rounded-full bg-primary/[0.02]"
                   >
                     👤 Player Dashboard
                   </Link>
@@ -236,14 +236,14 @@ export default function NavBar() {
                   <Link
                     onClick={() => setIsOpen(false)}
                     href="/signin"
-                    className="w-full py-4 text-center text-sm font-bold uppercase tracking-[0.2em] text-[#D4AF37] border border-[#D4AF37]/30 rounded-full bg-[#D4AF37]/[0.02]"
+                    className="w-full py-4 text-center text-sm font-bold uppercase tracking-[0.2em] text-primary border border-primary/30 rounded-full bg-primary/[0.02]"
                   >
                     Login
                   </Link>
                   <Link
                     onClick={() => setIsOpen(false)}
                     href="/signup"
-                    className="w-full py-4 text-center text-sm font-bold uppercase tracking-[0.2em] bg-gradient-to-r from-[#D4AF37] via-[#F5C542] to-[#C7913C] text-[#050505] rounded-full font-black shadow-[0_0_20px_rgba(212,175,55,0.2)]"
+                    className="w-full py-4 text-center text-sm font-bold uppercase tracking-[0.2em] bg-gradient-to-r from-primary via-secondary to-highlight text-[#050505] rounded-full font-black shadow-[0_0_20px_rgba(255,154,134,0.2)]"
                   >
                     Register
                   </Link>

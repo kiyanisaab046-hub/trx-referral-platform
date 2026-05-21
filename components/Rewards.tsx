@@ -37,12 +37,12 @@ const cardVariants = {
 export default function Rewards() {
   return (
     <section 
-      className="relative py-32 bg-gradient-to-b from-[#050505] via-[#080604] to-[#050505] overflow-hidden" 
+      className="relative py-32 bg-gradient-to-b from-[#050505] via-[#05050c] to-[#050505] overflow-hidden" 
       id="rewards"
     >
       {/* Dynamic Background Glows */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#D4AF37]/[0.03] blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-[#C7913C]/[0.03] blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/[0.03] blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/[0.03] blur-[120px] rounded-full pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
         
@@ -55,27 +55,27 @@ export default function Rewards() {
           className="text-center mb-20"
         >
           <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#D4AF37]/60" />
-            <span className="text-[11px] font-bold uppercase tracking-[0.35em] text-[#D4AF37] bg-[#D4AF37]/[0.06] px-5 py-1.5 rounded-full border border-[#D4AF37]/20">
+            <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-primary/60" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.35em] text-primary bg-primary/[0.06] px-5 py-1.5 rounded-full border border-primary/20">
               Professional Rewards
             </span>
-            <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[#D4AF37]/60" />
+            <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-primary/60" />
           </div>
 
           <h2 className="text-4xl md:text-6xl font-display font-black uppercase tracking-tight leading-[1.1]">
-            <span className="text-transparent bg-clip-text bg-gradient-to-b from-[#e8e0cc] to-[#8a7a5a]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-soft-gray">
               Elite{" "}
             </span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5C542] to-[#C7913C]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-highlight">
               Milestones
             </span>
           </h2>
 
-          <div className="flex items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-widest text-[#8a7a5a] mt-6">
+          <div className="flex items-center justify-center gap-4 text-[10px] font-bold uppercase tracking-widest text-soft-gray mt-6">
             <span>Dream Big</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]/40" />
+            <span className="w-1.5 h-1.5 rounded-full bg-primary/40" />
             <span>Work Smart</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]/40" />
+            <span className="w-1.5 h-1.5 rounded-full bg-primary/40" />
             <span>Achieve Success</span>
           </div>
 
@@ -84,7 +84,7 @@ export default function Rewards() {
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true, margin: "150px 0px" }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="mx-auto mt-6 h-[2px] w-24 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent origin-center"
+            className="mx-auto mt-6 h-[2px] w-24 bg-gradient-to-r from-transparent via-primary to-transparent origin-center"
           />
         </motion.div>
 
@@ -105,12 +105,12 @@ export default function Rewards() {
               className="group relative rounded-2xl overflow-hidden cursor-default"
             >
               {/* Card border glow on hover */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#D4AF37]/0 to-[#D4AF37]/0 group-hover:from-[#D4AF37]/15 group-hover:to-[#C7913C]/10 transition-all duration-500 pointer-events-none" />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/0 to-primary/0 group-hover:from-primary/15 group-hover:to-secondary/10 transition-all duration-500 pointer-events-none" />
 
-              <div className="relative p-7 h-full rounded-2xl bg-[#0c0a08]/80 border border-[#D4AF37]/[0.08] group-hover:border-[#D4AF37]/40 backdrop-blur-sm transition-all duration-500 flex flex-col justify-between">
+              <div className="relative p-7 h-full rounded-2xl bg-[#0c0a10]/80 border border-primary/[0.08] group-hover:border-primary/40 backdrop-blur-sm transition-all duration-500 flex flex-col justify-between">
                 
                 {/* Large watermark number */}
-                <div className="absolute -top-4 -right-4 text-7xl font-display font-black text-[#D4AF37]/[0.03] select-none transition-colors group-hover:text-[#D4AF37]/[0.08]">
+                <div className="absolute -top-4 -right-4 text-7xl font-display font-black text-primary/[0.03] select-none transition-colors group-hover:text-primary/[0.08]">
                   {r.id}
                 </div>
 
@@ -118,55 +118,55 @@ export default function Rewards() {
                   <div className="flex items-center justify-between mb-6">
                     {/* Icon container */}
                     <div className="relative">
-                      <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-[#D4AF37]/[0.08] to-[#C7913C]/[0.04] border border-[#D4AF37]/15 group-hover:border-[#D4AF37]/60 group-hover:shadow-[0_0_20px_rgba(212,175,55,0.15)] transition-all duration-500">
-                        <r.icon className="w-6 h-6 text-[#D4AF37]/70 group-hover:text-[#F5C542] transition-colors duration-300" />
+                      <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/[0.08] to-highlight/[0.04] border border-primary/15 group-hover:border-primary/60 group-hover:shadow-[0_0_20px_rgba(255,154,134,0.15)] transition-all duration-500">
+                        <r.icon className="w-6 h-6 text-primary/70 group-hover:text-secondary transition-colors duration-300" />
                       </div>
-                      <div className="absolute inset-0 -z-10 rounded-2xl bg-[#D4AF37]/0 group-hover:bg-[#D4AF37]/10 blur-xl transition-all duration-500" />
+                      <div className="absolute inset-0 -z-10 rounded-2xl bg-primary/0 group-hover:bg-primary/10 blur-xl transition-all duration-500" />
                     </div>
 
                     <div className="text-right">
-                      <div className="text-[9px] font-bold text-[#D4AF37]/60 uppercase tracking-widest">{r.rank}</div>
-                      <div className="text-lg font-display font-black text-[#c9b896] group-hover:text-white uppercase tracking-tight transition-colors">{r.name}</div>
+                      <div className="text-[9px] font-bold text-primary/60 uppercase tracking-widest">{r.rank}</div>
+                      <div className="text-lg font-display font-black text-accent group-hover:text-white uppercase tracking-tight transition-colors">{r.name}</div>
                     </div>
                   </div>
 
                   {/* Visual Image Banner */}
-                  <div className="relative h-36 w-full rounded-xl overflow-hidden mb-6 border border-[#D4AF37]/10 group-hover:border-[#D4AF37]/30 transition-all duration-500 bg-[#070503]">
+                  <div className="relative h-36 w-full rounded-xl overflow-hidden mb-6 border border-primary/10 group-hover:border-primary/30 transition-all duration-500 bg-[#050508]">
                     <img 
                       src={r.image} 
                       alt={r.prize}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out opacity-80 group-hover:opacity-100"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0c0a08]/90 via-[#0c0a08]/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0c0a10]/90 via-[#0c0a10]/20 to-transparent" />
                   </div>
 
                   {/* Conditions table list */}
                   <div className="space-y-3 mb-8">
-                    <div className="flex justify-between items-center border-b border-[#D4AF37]/[0.05] pb-2">
-                      <span className="text-[10px] uppercase tracking-widest text-[#8a7a5a] font-bold">Self ID</span>
-                      <span className="text-xs font-bold text-[#c9b896] group-hover:text-[#F5C542] transition-colors">{r.selfId}</span>
+                    <div className="flex justify-between items-center border-b border-primary/[0.05] pb-2">
+                      <span className="text-[10px] uppercase tracking-widest text-soft-gray font-bold">Self ID</span>
+                      <span className="text-xs font-bold text-accent group-hover:text-secondary transition-colors">{r.selfId}</span>
                     </div>
-                    <div className="flex justify-between items-center border-b border-[#D4AF37]/[0.05] pb-2">
-                      <span className="text-[10px] uppercase tracking-widest text-[#8a7a5a] font-bold">Min Direct</span>
-                      <span className="text-xs font-bold text-[#c9b896] group-hover:text-[#F5C542] transition-colors">{r.direct}</span>
+                    <div className="flex justify-between items-center border-b border-primary/[0.05] pb-2">
+                      <span className="text-[10px] uppercase tracking-widest text-soft-gray font-bold">Min Direct</span>
+                      <span className="text-xs font-bold text-accent group-hover:text-secondary transition-colors">{r.direct}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-[10px] uppercase tracking-widest text-[#8a7a5a] font-bold">Team Biz</span>
-                      <span className="text-xs font-bold text-[#c9b896] group-hover:text-[#F5C542] transition-colors">{r.biz}</span>
+                      <span className="text-[10px] uppercase tracking-widest text-soft-gray font-bold">Team Biz</span>
+                      <span className="text-xs font-bold text-accent group-hover:text-secondary transition-colors">{r.biz}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Prize */}
-                <div className="mt-4 pt-4 border-t border-[#D4AF37]/[0.05]">
-                  <div className="text-[9px] font-bold text-[#D4AF37]/50 uppercase tracking-[0.25em] mb-1">Exclusive Prize</div>
-                  <div className="text-base font-display font-black text-[#c9b896] group-hover:text-[#F5C542] leading-tight uppercase transition-colors">
+                <div className="mt-4 pt-4 border-t border-primary/[0.05]">
+                  <div className="text-[9px] font-bold text-primary/50 uppercase tracking-[0.25em] mb-1">Exclusive Prize</div>
+                  <div className="text-base font-display font-black text-accent group-hover:text-secondary leading-tight uppercase transition-colors">
                     {r.prize}
                   </div>
                 </div>
 
                 {/* Bottom line sweep */}
-                <div className="absolute bottom-0 left-0 h-[1px] w-0 group-hover:w-full bg-gradient-to-r from-[#D4AF37] via-[#F5C542] to-transparent transition-all duration-700 ease-out" />
+                <div className="absolute bottom-0 left-0 h-[1px] w-0 group-hover:w-full bg-gradient-to-r from-primary via-secondary to-transparent transition-all duration-700 ease-out" />
               </div>
             </motion.div>
           ))}

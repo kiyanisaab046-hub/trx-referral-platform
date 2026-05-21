@@ -9,14 +9,14 @@
   overflow: hidden;
 }
 
-/* Luxury Warm Gold Background Blobs */
+/* Luxury Warm Pastel Background Blobs */
 .glowBlob1 {
   position: absolute;
   top: 10%;
   left: 15%;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.04) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 154, 134, 0.04) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
   filter: blur(80px);
@@ -29,7 +29,7 @@
   right: 15%;
   width: 450px;
   height: 450px;
-  background: radial-gradient(circle, rgba(199, 145, 60, 0.04) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 215, 166, 0.04) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
   filter: blur(90px);
@@ -49,20 +49,20 @@
   background: rgba(10, 10, 10, 0.75);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(255, 154, 134, 0.15);
   border-radius: 1.5rem;
   padding: 3.5rem 2.5rem;
   box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9),
-              0 0 50px rgba(212, 175, 55, 0.05);
+              0 0 50px rgba(255, 154, 134, 0.05);
   position: relative;
   overflow: hidden;
   transition: border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 .card:hover {
-  border-color: rgba(212, 175, 55, 0.3);
+  border-color: rgba(255, 154, 134, 0.3);
   box-shadow: 0 30px 75px rgba(0, 0, 0, 0.95),
-              0 0 60px rgba(212, 175, 55, 0.08);
+              0 0 60px rgba(255, 154, 134, 0.08);
 }
 
 .card::before {
@@ -72,7 +72,7 @@
   left: 0;
   width: 100%;
   height: 3px;
-  background: linear-gradient(90deg, transparent, #D4AF37, #C7913C, transparent);
+  background: linear-gradient(90deg, transparent, var(--color-primary), var(--color-highlight), transparent);
 }
 
 .brandBadge {
@@ -82,16 +82,16 @@
 }
 
 .badgeText {
-  background: rgba(212, 175, 55, 0.06);
-  border: 1px solid rgba(212, 175, 55, 0.2);
-  color: #D4AF37;
+  background: rgba(255, 154, 134, 0.06);
+  border: 1px solid rgba(255, 154, 134, 0.2);
+  color: var(--color-primary);
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.2em;
   padding: 0.45rem 1.2rem;
   border-radius: 9999px;
   text-transform: uppercase;
-  box-shadow: 0 0 15px rgba(212, 175, 55, 0.05);
+  box-shadow: 0 0 15px rgba(255, 154, 134, 0.05);
 }
 
 .header {
@@ -134,7 +134,7 @@
   bottom: 0.82rem;
   background: none;
   border: none;
-  color: #D4AF37;
+  color: var(--color-primary);
   font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
@@ -166,26 +166,26 @@
 }
 
 .checkbox {
-  accent-color: #D4AF37;
+  accent-color: var(--color-primary);
   cursor: pointer;
 }
 
 .forgotPassword {
-  color: #D4AF37;
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s ease;
 }
 
 .forgotPassword:hover {
-  color: #F5C542;
+  color: var(--color-secondary);
   text-decoration: underline;
 }
 
 .submitBtn {
   margin-top: 1rem;
   width: 100%;
-  background: linear-gradient(90deg, #D4AF37, #C7913C) !important;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-highlight)) !important;
   border: none !important;
   color: #050505 !important;
   font-weight: 900 !important;
@@ -194,14 +194,14 @@
   letter-spacing: 0.08em;
   border-radius: 9999px !important;
   padding: 0.95rem !important;
-  box-shadow: 0 4px 25px rgba(212, 175, 55, 0.25) !important;
+  box-shadow: 0 4px 25px rgba(255, 154, 134, 0.25) !important;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
   cursor: pointer;
 }
 
 .submitBtn:hover {
-  background: linear-gradient(90deg, #F5C542, #D4AF37) !important;
-  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.5) !important;
+  background: linear-gradient(90deg, var(--color-secondary), var(--color-primary)) !important;
+  box-shadow: 0 8px 30px rgba(255, 154, 134, 0.5) !important;
   transform: translateY(-3px) !important;
 }
 
@@ -246,7 +246,7 @@
 }
 
 .link {
-  color: #D4AF37;
+  color: var(--color-primary);
   text-decoration: none;
   font-weight: 700;
   margin-left: 0.35rem;
@@ -254,6 +254,6 @@
 }
 
 .link:hover {
-  color: #F5C542;
+  color: var(--color-secondary);
   text-decoration: underline;
 }

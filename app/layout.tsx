@@ -21,7 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased selection:bg-[#D4AF37] selection:text-black">
+      <body className="antialiased selection:bg-primary selection:text-black">
         <FloatingBackground />
         <SmoothScroll>
           <main className="flex-1">{children}</main>

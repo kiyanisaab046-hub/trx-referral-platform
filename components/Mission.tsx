@@ -12,12 +12,12 @@ const highlights = [
 export default function Mission() {
   return (
     <section 
-      className="relative py-32 bg-gradient-to-b from-[#050505] via-[#080604] to-[#050505] overflow-hidden" 
+      className="relative py-32 bg-gradient-to-b from-[#050505] via-[#05050c] to-[#050505] overflow-hidden" 
       id="mission"
     >
       {/* Dynamic Background Glows */}
-      <div className="absolute top-1/2 right-[-100px] w-[500px] h-[500px] bg-[#D4AF37]/[0.03] rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute bottom-0 left-[-100px] w-[400px] h-[400px] bg-[#C7913C]/[0.03] rounded-full blur-[130px] pointer-events-none" />
+      <div className="absolute top-1/2 right-[-100px] w-[500px] h-[500px] bg-primary/[0.03] rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-0 left-[-100px] w-[400px] h-[400px] bg-secondary/[0.03] rounded-full blur-[130px] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
         
@@ -30,18 +30,18 @@ export default function Mission() {
           className="text-center mb-20"
         >
           <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-[#D4AF37]/60" />
-            <span className="text-[11px] font-bold uppercase tracking-[0.35em] text-[#D4AF37] bg-[#D4AF37]/[0.06] px-5 py-1.5 rounded-full border border-[#D4AF37]/20">
+            <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-primary/60" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.35em] text-primary bg-primary/[0.06] px-5 py-1.5 rounded-full border border-primary/20">
               Our Purpose
             </span>
-            <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-[#D4AF37]/60" />
+            <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-primary/60" />
           </div>
 
           <h2 className="text-4xl md:text-6xl font-display font-black uppercase tracking-tight leading-[1.1]">
-            <span className="text-transparent bg-clip-text bg-gradient-to-b from-[#e8e0cc] to-[#8a7a5a]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-soft-gray">
               Our{" "}
             </span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5C542] to-[#C7913C]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-highlight">
               Mission
             </span>
           </h2>
@@ -50,7 +50,7 @@ export default function Mission() {
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true, margin: "150px 0px" }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="mx-auto mt-6 h-[2px] w-24 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent origin-center"
+            className="mx-auto mt-6 h-[2px] w-24 bg-gradient-to-r from-transparent via-primary to-transparent origin-center"
           />
         </motion.div>
 
@@ -68,7 +68,7 @@ export default function Mission() {
             <motion.div 
               animate={{ y: [-10, 10, -10], rotate: [0, 5, -5, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="relative w-44 h-44 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#C7913C] shadow-[0_0_60px_rgba(212,175,55,0.3)] flex items-center justify-center"
+              className="relative w-44 h-44 rounded-full bg-gradient-to-tr from-primary to-highlight shadow-[0_0_60px_rgba(255,154,134,0.3)] flex items-center justify-center"
             >
               <div className="absolute inset-0 bg-black/10 rounded-full mix-blend-overlay" />
               
@@ -76,7 +76,7 @@ export default function Mission() {
               <motion.div 
                 animate={{ rotate: 360 }}
                 transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[140%] h-[140%] rounded-full border border-white/5 border-t-[#D4AF37]/50" 
+                className="absolute w-[140%] h-[140%] rounded-full border border-white/5 border-t-primary/50" 
               />
             </motion.div>
           </motion.div>
@@ -89,7 +89,7 @@ export default function Mission() {
             transition={{ duration: 0.6, delay: 0.05 }}
             className="flex-1"
           >
-            <p className="text-xl text-[#8a7a5a] group-hover:text-[#c9b896] leading-relaxed mb-10 font-light max-w-2xl">
+            <p className="text-xl text-soft-gray group-hover:text-white leading-relaxed mb-10 font-light max-w-2xl">
               Empower the next generation of creators and investors with a transparent, 
               community-driven income ecosystem that blends innovation, collective power, 
               and financial freedom.
@@ -102,10 +102,10 @@ export default function Mission() {
                   whileHover={{ x: 4 }}
                   className="flex items-start gap-4 text-white group cursor-default"
                 >
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#D4AF37]/[0.08] border border-[#D4AF37]/15 group-hover:border-[#D4AF37]/60 group-hover:bg-[#D4AF37]/10 transition-all duration-300 mt-0.5">
-                    <ShieldCheckIcon className="w-4 h-4 text-[#D4AF37]" />
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/[0.08] border border-primary/15 group-hover:border-primary/60 group-hover:bg-primary/10 transition-all duration-300 mt-0.5">
+                    <ShieldCheckIcon className="w-4 h-4 text-primary" />
                   </div>
-                  <span className="text-[#8a7a5a] group-hover:text-[#c9b896] leading-relaxed transition-colors duration-300 max-w-xl font-medium">
+                  <span className="text-soft-gray group-hover:text-white leading-relaxed transition-colors duration-300 max-w-xl font-medium">
                     {h}
                   </span>
                 </motion.li>

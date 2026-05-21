@@ -47,8 +47,8 @@ export default function CustomCursor() {
       height: 32,
       width: 32,
       backgroundColor: "transparent",
-      border: "2px solid var(--color-electric-blue)",
-      boxShadow: "var(--shadow-neon)",
+      border: "2px solid var(--color-primary)",
+      boxShadow: "0 0 10px rgba(255, 154, 134, 0.2)",
       transition: { type: "tween" as const, ease: "backOut" as const, duration: 0.1 }
     },
     hover: {
@@ -56,9 +56,9 @@ export default function CustomCursor() {
       y: mousePosition.y - 24,
       height: 48,
       width: 48,
-      backgroundColor: "rgba(0, 194, 255, 0.1)",
-      border: "2px solid var(--color-emerald-glow)",
-      boxShadow: "0 0 15px var(--color-emerald-glow)",
+      backgroundColor: "rgba(255, 154, 134, 0.1)",
+      border: "2px solid var(--color-secondary)",
+      boxShadow: "0 0 15px rgba(255, 179, 153, 0.5)",
       transition: { type: "spring" as const, stiffness: 300, damping: 20 }
     }
   };
@@ -71,7 +71,7 @@ export default function CustomCursor() {
         animate={isHovering ? "hover" : "default"}
       />
       <motion.div
-        className="fixed top-0 left-0 w-2 h-2 bg-[#D4AF37]/30 rounded-full pointer-events-none z-[10000]"
+        className="fixed top-0 left-0 w-2 h-2 bg-primary/30 rounded-full pointer-events-none z-[10000]"
         animate={{
           x: mousePosition.x - 4,
           y: mousePosition.y - 4,

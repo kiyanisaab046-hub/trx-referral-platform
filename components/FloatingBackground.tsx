@@ -57,17 +57,17 @@ export default function FloatingBackground() {
         .luxury-center-glow {
           position: absolute;
           inset: 0;
-          background: radial-gradient(circle at center, rgba(212, 175, 55, 0.02) 0%, transparent 70%);
+          background: radial-gradient(circle at center, rgba(255, 154, 134, 0.03) 0%, transparent 70%);
         }
 
         .floating-particle {
           position: absolute;
           bottom: -50px;
-          color: #D4AF37;
+          color: var(--color-primary);
           opacity: 0;
           will-change: transform, opacity;
           animation: floatUp linear infinite;
-          filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.1));
+          filter: drop-shadow(0 0 2px rgba(255, 154, 134, 0.2));
         }
 
         @media (prefers-reduced-motion: reduce) {
