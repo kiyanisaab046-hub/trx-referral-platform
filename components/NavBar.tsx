@@ -65,9 +65,7 @@ export default function NavBar() {
       >
         {/* Left — Brand */}
         <Link href="/" className="flex items-center gap-3 flex-shrink-0 group">
-          <span className="px-3 py-1 bg-gradient-to-r from-[#D4AF37] to-[#C7913C] text-[#050505] text-xs font-black uppercase tracking-[0.15em] rounded-full shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-            UIP
-          </span>
+          <img src="file:///C:/Users/03165/.gemini/antigravity/brain/907c9ea0-2299-45b8-965f-2d10af8a6c66/uploaded_media_1779358212422.png" alt="Logo" className="h-8 w-auto" />
           <span className="font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 group-hover:from-[#D4AF37] group-hover:to-[#F5C542] text-sm uppercase tracking-[0.25em] hidden sm:block transition-all duration-300">
             Unique Income Plan
           </span>
@@ -146,13 +144,13 @@ export default function NavBar() {
               <>
                 <Link
                   href="/signin"
-                  className="px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-[#D4AF37] border border-[#D4AF37]/30 hover:border-[#D4AF37] hover:bg-[#D4AF37]/[0.06] transition-all duration-300 rounded-full"
+                  px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-primary border border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-300 rounded-full
                 >
                   Login
                 </Link>
                 <Link
                   href="/signup"
-                  className="px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] bg-gradient-to-r from-[#D4AF37] to-[#C7913C] text-[#050505] hover:shadow-[0_0_20px_rgba(212,175,55,0.4)] transition-all duration-300 rounded-full font-black"
+                  px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] bg-gradient-to-r from-primary to-secondary text-[#050505] hover:shadow-[0_0_20px_rgba(var(--color-primary),0.4)] transition-all duration-300 rounded-full font-black
                 >
                   Register
                 </Link>
@@ -163,23 +161,23 @@ export default function NavBar() {
           {/* Hamburger Mobile Toggle (Mobile Only) */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden flex flex-col justify-center items-center gap-[6px] w-10 h-10 rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/[0.03] text-[#D4AF37] hover:border-[#D4AF37]/50 transition-all duration-300 focus:outline-none z-50 relative"
+            md:hidden flex flex-col justify-center items-center gap-[6px] w-10 h-10 rounded-full border border-primary/20 bg-primary/5 text-primary hover:border-primary/50 transition-all duration-300 focus:outline-none z-50 relative
             aria-label="Toggle Menu"
           >
             <motion.span
               animate={isOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
               transition={{ duration: 0.2 }}
-              className="w-5 h-[2px] bg-[#D4AF37] rounded-full origin-center"
+              w-5 h-[2px] bg-primary rounded-full origin-center
             />
             <motion.span
               animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
               transition={{ duration: 0.15 }}
-              className="w-5 h-[2px] bg-[#D4AF37] rounded-full"
+              w-5 h-[2px] bg-primary rounded-full
             />
             <motion.span
               animate={isOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
               transition={{ duration: 0.2 }}
-              className="w-5 h-[2px] bg-[#D4AF37] rounded-full origin-center"
+              w-5 h-[2px] bg-primary rounded-full origin-center
             />
           </button>
         </div>
@@ -193,10 +191,10 @@ export default function NavBar() {
             animate="open"
             exit="closed"
             variants={menuVariants}
-            className="fixed inset-0 h-screen bg-[#050505]/95 backdrop-blur-md border-b border-[#D4AF37]/10 z-40 flex flex-col justify-center px-10 md:hidden"
+            fixed inset-0 h-screen bg-[#050505]/95 backdrop-blur-md border-b border-primary/10 z-40 flex flex-col justify-center px-10 md:hidden
           >
             {/* Background luxury glow in overlay */}
-            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-64 h-64 bg-[#D4AF37]/5 rounded-full blur-[100px] pointer-events-none" />
+            <div absolute top-1/4 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none />
 
             <ul className="flex flex-col gap-6 mb-12">
               {navLinks.map((txt) => (

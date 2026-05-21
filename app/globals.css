@@ -65,18 +65,19 @@ body {
 ============================== */
 
 /* Text */
-.text-gold       { color: var(--color-gold); }
-.text-gold-light { color: var(--color-gold-light); }
+.text-primary       { color: var(--color-primary); }
+.text-primary-light { color: var(--color-secondary); }
 .text-soft-gray  { color: var(--color-soft-gray); }
 
 /* Backgrounds */
-.bg-gold         { background-color: var(--color-gold); }
+.bg-primary         { background-color: var(--color-primary); }
+.bg-secondary       { background-color: var(--color-secondary); }
 .bg-deep-black   { background-color: var(--color-deep-black); }
 .bg-dark-black   { background-color: var(--color-dark-black); }
 .bg-rich-charcoal{ background-color: var(--color-rich-charcoal); }
 
 /* Borders */
-.border-gold     { border-color: var(--color-gold); }
+.border-primary     { border-color: var(--color-primary); }
 
 /* Glass card */
 .glass-card {
