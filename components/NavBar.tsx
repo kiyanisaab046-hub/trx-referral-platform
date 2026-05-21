@@ -65,7 +65,7 @@ export default function NavBar() {
       >
         {/* Left — Brand */}
         <Link href="/" className="flex items-center gap-3 flex-shrink-0 group">
-          <img src="file:///C:/Users/03165/.gemini/antigravity/brain/907c9ea0-2299-45b8-965f-2d10af8a6c66/uploaded_media_1779358212422.png" alt="Logo" className="h-8 w-auto" />
+          <img src="https://anyimage.io/storage/uploads/357abaf76df985e6480832402d9dafbc" alt="Logo" className="h-8 w-auto" style={{ filter: "brightness(0.8)" }} />
           <span className="font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 group-hover:from-primary group-hover:to-secondary text-sm uppercase tracking-[0.25em] hidden sm:block transition-all duration-300">
             Unique Income Plan
           </span>
