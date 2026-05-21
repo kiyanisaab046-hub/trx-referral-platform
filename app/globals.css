@@ -10,7 +10,12 @@
   --color-primary: #FF9A86; /* salmon */
   --color-secondary: #FFB399; /* light orange */
   --color-accent: #FFF0BD; /* pale yellow */
-  --color-highlight: #FFB49A; /* deeper orange */
+  --color-highlight: #FFD7A6; /* peach/champagne */
+
+  --color-gold: #FF9A86;
+  --color-gold-light: #FFB399;
+  --color-bronze: #FFD7A6;
+  --color-yellow: #FFF0BD;
 
   --color-dark-fg:      #E5E5E5;
   --color-soft-gray:    #BFBFBF;
@@ -22,7 +27,7 @@
   --font-heading: "Satoshi", sans-serif;
 
   /* === SHADOWS === */
-  --shadow-gold: 0 10px 30px rgba(212, 175, 55, 0.18);
+  --shadow-gold: 0 10px 30px rgba(255, 154, 134, 0.15);
   --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 

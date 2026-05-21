@@ -8,6 +8,7 @@ const IncomeTypes = dynamic(() => import("../components/IncomeTypes"));
 const EarningPotential = dynamic(() => import("../components/EarningPotential"));
 const Features = dynamic(() => import("../components/Features"));
 const Ranks = dynamic(() => import("../components/Ranks"));
+const LevelIncomeSection = dynamic(() => import("../components/LevelIncomeSection"));
 const Vision = dynamic(() => import("../components/Vision"));
 const Mission = dynamic(() => import("../components/Mission"));
 const Rewards = dynamic(() => import("../components/Rewards"));
@@ -25,6 +26,7 @@ export default function Home() {
       <EarningPotential />
       <Features />
       <Ranks />
+      <LevelIncomeSection />
       <Vision />
       <Mission />
       <Rewards />
