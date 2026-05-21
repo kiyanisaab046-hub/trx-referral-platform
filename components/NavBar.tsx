@@ -144,7 +144,7 @@ export default function NavBar() {
               <>
                 <Link
                   href="/signin"
-                  px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-primary border border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-300 rounded-full
+                  className="px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] text-primary border border-primary/30 hover:border-primary hover:bg-primary/5 transition-all duration-300 rounded-full"
                 >
                   Login
                 </Link>
@@ -161,7 +161,7 @@ export default function NavBar() {
           {/* Hamburger Mobile Toggle (Mobile Only) */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            md:hidden flex flex-col justify-center items-center gap-[6px] w-10 h-10 rounded-full border border-primary/20 bg-primary/5 text-primary hover:border-primary/50 transition-all duration-300 focus:outline-none z-50 relative
+            className="md:hidden flex flex-col justify-center items-center gap-[6px] w-10 h-10 rounded-full border border-primary/20 bg-primary/5 text-primary hover:border-primary/50 transition-all duration-300 focus:outline-none z-50 relative"
             aria-label="Toggle Menu"
           >
             <motion.span
@@ -191,10 +191,10 @@ export default function NavBar() {
             animate="open"
             exit="closed"
             variants={menuVariants}
-            fixed inset-0 h-screen bg-[#050505]/95 backdrop-blur-md border-b border-primary/10 z-40 flex flex-col justify-center px-10 md:hidden
+            className="fixed inset-0 h-screen bg-[#050505]/95 backdrop-blur-md border-b border-primary/10 z-40 flex flex-col justify-center px-10 md:hidden"
           >
             {/* Background luxury glow in overlay */}
-            <div absolute top-1/4 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none />
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
 
             <ul className="flex flex-col gap-6 mb-12">
               {navLinks.map((txt) => (
