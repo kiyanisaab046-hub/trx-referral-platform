@@ -23,13 +23,16 @@ export default function FloatingBackground() {
 
   useEffect(() => {
     setMounted(true);
-    // Generate a fixed set of 12 particles (fewer nodes, faster rendering)
-    const generated = Array.from({ length: 12 }).map((_, i) => {
+    // Determine if viewport width is sufficient for particles (disable on mobile <768px)
+    const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768;
+    if (!isDesktop) return;
+    // Generate a reduced set of 6 particles for better performance
+    const generated = Array.from({ length: 6 }).map((_, i) => {
       const Icon = icons[Math.floor(Math.random() * icons.length)];
       const size = Math.random() * 20 + 15; // 15px to 35px
       const left = Math.random() * 100; // 0% to 100%
-      const duration = Math.random() * 15 + 15; // 15s to 30s
-      const delay = Math.random() * -30; // negative delay to start immediately at random points
+      const duration = Math.random() * 12 + 12; // 12s to 24s (shorter)
+      const delay = Math.random() * -24; // negative delay to start immediately at random points
       return { id: i, Icon, size, left, duration, delay };
     });
     setParticles(generated);
@@ -65,6 +68,12 @@ export default function FloatingBackground() {
           will-change: transform, opacity;
           animation: floatUp linear infinite;
           filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.1));
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .floating-particle {
+            animation-duration: 5s !important;
+          }
         }
 
         @keyframes floatUp {
