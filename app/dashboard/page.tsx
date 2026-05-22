@@ -249,7 +249,7 @@ export default function Dashboard() {
             <span className={styles.logoBadge}>UIP</span>
           </div>
           <div className={styles.logoTitles}>
-            <h2 className={styles.logoText}>Unique Income Plan</h2>
+            <h2 className={styles.logoText}>Unique Income Plane</h2>
             <span className={styles.logoSlogan}>Build • Earn • Grow</span>
           </div>
         </div>

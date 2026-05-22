@@ -8,8 +8,13 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Unique Income Plan | Better Life",
+  title: "Unique Income Plane | Better Life",
   description: "A premium financial empowerment ecosystem — 5 income types, 10 ranks, starting at just $3.",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
