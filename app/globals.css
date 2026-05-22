@@ -35,9 +35,20 @@
    BASE
 ============================== */
 :root {
-  --background: var(--color-deep-black);
-  --foreground: var(--color-dark-fg);
+  --color-primary: #ff9a86;
+  --color-secondary: #ffb27e;
+  --color-highlight: #ffd580;
+  --color-deep-black: #0a0a0a;
+  --color-background-dark: #0f0f0f;
+  --color-background-gradient: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+  --animation-pulse: pulse 8s ease-in-out infinite;
 }
+
+@keyframes pulse {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -48,14 +59,18 @@ html {
 }
 
 body {
-  background-color: var(--background);
+  background-image: url('/background.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  animation: none !important;
   color: var(--foreground);
   font-family: var(--font-sans);
   overflow-x: hidden;
   color-scheme: dark;
-  /* Restore default cursor */
   cursor: auto;
 }
+
 
 /* ==============================
    SCROLLBAR
@@ -85,6 +100,20 @@ body {
 .border-primary     { border-color: var(--color-primary); }
 
 /* Glass card */
+.metricCard {
+  padding: 1.5rem;
+  background: var(--color-deep-black);
+  border: 1px solid #1a1a1a;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 8px rgba(255, 154, 134, 0.1);
+}
+
+.metricCard:hover {
+  border-color: rgba(255, 154, 134, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgba(255, 154, 134, 0.3);
+}
 .glass-card {
   backdrop-filter: blur(14px);
   background: var(--color-card-bg);
