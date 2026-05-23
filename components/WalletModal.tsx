@@ -3,7 +3,13 @@
 import React, { useState } from "react";
 import CryptoPayButton from "./CryptoPayButton";
 
-export default function WalletModal({ type, open, onClose }) {
+interface WalletModalProps {
+  type: 'deposit' | 'withdraw';
+  open: boolean;
+  onClose: () => void;
+}
+
+export default function WalletModal({ type, open, onClose }: WalletModalProps) {
   const [amount, setAmount] = useState(10);
   const [address, setAddress] = useState("");
   const [crypto, setCrypto] = useState("btc");
