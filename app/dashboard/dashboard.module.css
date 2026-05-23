@@ -3,12 +3,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #050505;
+  background: transparent;
 }
 
 .dashboardContainer {
   min-height: 100vh;
-  background-color: #050505;
+  background: transparent;
   color: #ffffff;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   display: flex;
@@ -21,7 +21,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #0a0a0a;
+  background: transparent;
   border-bottom: 1px solid rgba(0, 210, 255, 0.15);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
 }
@@ -181,7 +181,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.25rem 1.5rem;
-  background: #0f0f0f;
+  background: transparent;
   border: 1px solid #1a1a1a;
   border-radius: 12px;
 }
@@ -342,7 +342,7 @@
 
 .barTrack {
   height: 6px;
-  background-color: #1a1a1a;
+  background: transparent;
   border-radius: 10px;
   overflow: hidden;
 }
@@ -425,7 +425,7 @@
   align-items: center;
   text-align: center;
   padding: 0.75rem 0.5rem;
-  background: #141414;
+  background: transparent;
   border: 1px solid #222;
   border-radius: 8px;
   opacity: 0.5;
@@ -449,7 +449,7 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: #222;
+  background: transparent;
   color: #888;
   display: flex;
   align-items: center;
@@ -512,7 +512,7 @@
   flex-direction: column;
   align-items: center;
   padding: 0.65rem 1rem;
-  background: #141414;
+  background: transparent;
   border: 1px solid #222;
   border-radius: 8px;
   width: 100px;
@@ -582,7 +582,7 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #222;
+  background: transparent;
   color: #888;
   font-size: 0.65rem;
   font-weight: 900;
@@ -613,7 +613,7 @@
 .autoSpillSettings {
   display: flex;
   gap: 2rem;
-  background: #0a0a0a;
+  background: transparent;
   border: 1px solid #1c1c1c;
   padding: 0.6rem 1.25rem;
   border-radius: 30px;
@@ -629,7 +629,7 @@
 .walletBox {
   text-align: center;
   padding: 1.5rem;
-  background: #0a0a0a;
+  background: transparent;
   border: 1px solid #1a1a1a;
   border-radius: 10px;
   margin-bottom: 1.5rem;
@@ -668,7 +668,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  background: #0a0a0a;
+  background: transparent;
   border: 1px solid #1a1a1a;
   padding: 1rem;
   border-radius: 10px;
@@ -687,7 +687,7 @@
 
 .referralInput {
   flex: 1;
-  background: #111;
+  background: transparent;
   border: 1px solid #222;
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
