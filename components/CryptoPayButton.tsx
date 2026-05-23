@@ -1,4 +1,4 @@
-// components/CryptoPayButton.tsx
+"use client";
 import { useState } from 'react';
 
 interface Props {

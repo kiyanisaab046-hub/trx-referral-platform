@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from 'react';
 import CryptoPayButton from '../../../components/CryptoPayButton';
 
