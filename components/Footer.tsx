@@ -87,7 +87,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-primary/10 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-xs text-soft-gray font-light">
-            © 2024 Unique Income Plan. All rights reserved.
+            © 2024 Unique Income Plane. All rights reserved.
           </p>
           <div className="flex gap-3">
             {["T", "F", "I"].map((s) => (

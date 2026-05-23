@@ -7,6 +7,7 @@ import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import styles from './dashboard.module.css';
+import CryptoPayButton from '../../components/CryptoPayButton';
 
 interface UserProfile {
   id: string;
@@ -43,6 +44,13 @@ export default function Dashboard() {
   const [copied, setCopied] = useState(false);
   const [directSum, setDirectSum] = useState(0);
   const [levelSum, setLevelSum] = useState(0);
+  const [teamSum, setTeamSum] = useState(0);
+  const [salarySum, setSalarySum] = useState(0);
+  const [rewardSum, setRewardSum] = useState(0);
+  const [weeklySalarySum, setWeeklySalarySum] = useState(0);
+  const [dailyIncome, setDailyIncome] = useState(0);
+  const [communityTree, setCommunityTree] = useState<Array<{id:string; name:string; level:number}>>([]);
+  const [mobileSliderIndex, setMobileSliderIndex] = useState(-1);
   const [debugInfo, setDebugInfo] = useState<{
     authUserId?: string;
     authUserEmail?: string;
@@ -151,19 +159,74 @@ export default function Dashboard() {
           } else {
             if (txData) {
               setTransactions(txData);
-              const direct = txData
-                .filter(t => t.type === 'commission_direct')
-                .reduce((acc, curr) => acc + Number(curr.amount), 0);
-              
-              const lvl = txData
-                .filter(t => t.type === 'commission_level')
-                .reduce((acc, curr) => acc + Number(curr.amount), 0);
+                const today = new Date().toISOString().split('T')[0];
+                const directToday = txData
+                  .filter(t => t.type === 'commission_direct' && t.created_at.startsWith(today))
+                  .reduce((acc, curr) => acc + Number(curr.amount), 0);
+                const lvlToday = txData
+                  .filter(t => t.type === 'commission_level' && t.created_at.startsWith(today))
+                  .reduce((acc, curr) => acc + Number(curr.amount), 0);
+                setDirectSum(directToday);
+                setLevelSum(lvlToday);
+                // Compute daily income (sum of direct and level commissions for today)
+                setDailyIncome(directToday + lvlToday);
 
-              setDirectSum(direct);
-              setLevelSum(lvl);
+                // 7. Fetch community tree referrals (all levels)
+                const { data: allRefs } = await supabase
+                  .from('referrals')
+                  .select('sponsor_id, referred_id, level')
+                  .order('level', { ascending: true });
+                if (allRefs) {
+                  // Gather all referred IDs to fetch user names
+                  const referredIds = allRefs.map(r => r.referred_id);
+                  const { data: usersData } = await supabase
+                    .from('users')
+                    .select('id, full_name')
+                    .in('id', referredIds);
+                  const userMap: Record<string, string> = {};
+                  usersData?.forEach(u => { userMap[u.id] = u.full_name; });
+                  const tree = allRefs.map(r => ({
+                    id: r.referred_id,
+                    name: userMap[r.referred_id] || 'User',
+                    level: r.level
+                  }));
+                  setCommunityTree(tree);
+                }
             }
             logs.transactionsStatus = 'Success';
           }
+                // 6. Fetch total team, salary, reward and weekly salary income
+                const { data: aggregateTxData } = await supabase
+                  .from('transactions')
+                  .select('amount, type, created_at')
+                  .eq('user_id', authUser.id)
+                  .in('type', ['commission_team', 'commission_salary', 'commission_reward']);
+                
+                if (aggregateTxData) {
+                  const tSum = aggregateTxData
+                    .filter(t => t.type === 'commission_team')
+                    .reduce((acc, curr) => acc + Number(curr.amount), 0);
+                  const sSum = aggregateTxData
+                    .filter(t => t.type === 'commission_salary')
+                    .reduce((acc, curr) => acc + Number(curr.amount), 0);
+                  const rSum = aggregateTxData
+                    .filter(t => t.type === 'commission_reward')
+                    .reduce((acc, curr) => acc + Number(curr.amount), 0);
+                  
+                  setTeamSum(tSum);
+                  setSalarySum(sSum);
+                  setRewardSum(rSum);
+                  
+                  // Weekly salary (last 7 days)
+                  const now = new Date();
+                  const weekAgo = new Date();
+                  weekAgo.setDate(now.getDate() - 6);
+                  const weekStart = weekAgo.toISOString().split('T')[0];
+                  const weekSalary = aggregateTxData
+                    .filter(t => t.type === 'commission_salary' && t.created_at >= weekStart)
+                    .reduce((acc, cur) => acc + Number(cur.amount), 0);
+                  setWeeklySalarySum(weekSalary);
+                }
         } catch (e: any) {
           logs.transactionsStatus = `Exception: ${e.message || e}`;
         }
@@ -209,15 +272,9 @@ export default function Dashboard() {
 
   const rankInfo = getRankInfo(stats.referralsCount);
   const totalEarnings = (wallet?.income_balance || 0) + (wallet?.withdrawal_balance || 0);
+  const currentSliderIndex = mobileSliderIndex === -1 ? Math.max(0, rankInfo.rank - 1) : mobileSliderIndex;
 
-  // Dynamic percentages for breakdown card
-  const directPercent = totalEarnings > 0 ? Math.round((directSum / totalEarnings) * 100) : 0;
-  const levelPercent = totalEarnings > 0 ? Math.round((levelSum / totalEarnings) * 100) : 0;
-  const otherPercent = totalEarnings > 0 ? Math.max(0, 100 - directPercent - levelPercent) : 0;
 
-  // Binary legs calculation
-  const leftLegCount = Math.ceil(stats.teamCount / 2);
-  const rightLegCount = Math.floor(stats.teamCount / 2);
 
   if (loading) {
     return (
@@ -291,6 +348,12 @@ export default function Dashboard() {
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>Current Rank</span>
               <span className={styles.statusTextVal}>Rank {rankInfo.rank}: {rankInfo.name}</span>
+              {/* Crypto upgrade button */}
+              <CryptoPayButton
+                amount={10}
+                description={`Upgrade to Rank ${rankInfo.rank + 1}`}
+                onSuccess={() => { /* optional refresh */ }}
+              />
             </div>
             <span className={styles.statusBadge}>$3 Investment</span>
           </Card>
@@ -303,13 +366,20 @@ export default function Dashboard() {
           </Card>
         </section>
 
-        {/* 3. FOUR METRICS CARDS GRID */}
+        {/* 3. METRICS CARDS GRID */}
         <section className={styles.metricsGrid}>
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
               <span className={styles.metricTitle}>Total Earnings</span>
             </div>
             <h3 className={styles.metricValue}>${totalEarnings.toFixed(2)}</h3>
+          </Card>
+
+          <Card className={styles.metricCard}>
+            <div className={styles.metricHeader}>
+              <span className={styles.metricTitle}>Today's Income</span>
+            </div>
+            <h3 className={styles.metricValue}>${dailyIncome.toFixed(2)}</h3>
           </Card>
 
           <Card className={styles.metricCard}>
@@ -328,91 +398,75 @@ export default function Dashboard() {
 
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
-              <span className={styles.metricTitle}>Team Members</span>
+              <span className={styles.metricTitle}>Team Income</span>
             </div>
-            <h3 className={styles.metricValue}>{stats.teamCount}</h3>
+            <h3 className={styles.metricValue}>${teamSum.toFixed(2)}</h3>
+          </Card>
+
+          <Card className={styles.metricCard}>
+            <div className={styles.metricHeader}>
+              <span className={styles.metricTitle}>Weekly Salary</span>
+            </div>
+            <h3 className={styles.metricValue}>${weeklySalarySum.toFixed(2)}</h3>
+          </Card>
+
+          <Card className={styles.metricCard}>
+            <div className={styles.metricHeader}>
+              <span className={styles.metricTitle}>Reward Income</span>
+            </div>
+            <h3 className={styles.metricValue}>${rewardSum.toFixed(2)}</h3>
           </Card>
         </section>
 
-        {/* 4. DOUBLE GRID: INCOME BREAKDOWN & RANK PROGRESS */}
-        <section className={styles.doubleGrid}>
-          {/* Left: Income Breakdown progress bars */}
+        {/* 4. Community Tree Section */}
+        <section className={styles.communityTreeSection}>
           <Card className={styles.panelCard}>
-            <h4 className={styles.panelTitle}>Income Breakdown</h4>
-            <div className={styles.breakdownList}>
-              <div className={styles.breakdownItem}>
-                <div className={styles.breakdownLabelRow}>
-                  <span>Direct</span>
-                  <span>{directPercent}%</span>
-                </div>
-                <div className={styles.barTrack}>
-                  <div className={styles.barFill} style={{ width: `${directPercent}%` }} />
-                </div>
-              </div>
+            <h4 className={styles.panelTitle}>Community Tree</h4>
+            {communityTree.length === 0 ? (
+              <p className={styles.emptyState}>No referrals yet.</p>
+            ) : (
+              <ul className={styles.treeList}>
+                {communityTree.map(member => (
+                  <li key={member.id} style={{ marginLeft: `${member.level * 1.5}rem` }}>
+                    {member.name} (Level {member.level})
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+        </section>
 
-              <div className={styles.breakdownItem}>
-                <div className={styles.breakdownLabelRow}>
-                  <span>Level</span>
-                  <span>{levelPercent}%</span>
-                </div>
-                <div className={styles.barTrack}>
-                  <div className={styles.barFill} style={{ width: `${levelPercent}%` }} />
-                </div>
-              </div>
-
-              <div className={styles.breakdownItem}>
-                <div className={styles.breakdownLabelRow}>
-                  <span>Team</span>
-                  <span>0%</span>
-                </div>
-                <div className={styles.barTrack}>
-                  <div className={styles.barFill} style={{ width: '0%' }} />
-                </div>
-              </div>
-
-              <div className={styles.breakdownItem}>
-                <div className={styles.breakdownLabelRow}>
-                  <span>Salary</span>
-                  <span>0%</span>
-                </div>
-                <div className={styles.barTrack}>
-                  <div className={styles.barFill} style={{ width: '0%' }} />
-                </div>
-              </div>
-
-              <div className={styles.breakdownItem}>
-                <div className={styles.breakdownLabelRow}>
-                  <span>Reward</span>
-                  <span>{otherPercent}%</span>
-                </div>
-                <div className={styles.barTrack}>
-                  <div className={styles.barFill} style={{ width: `${otherPercent}%` }} />
-                </div>
-              </div>
-
-              <div className={styles.breakdownItem}>
-                <div className={styles.breakdownLabelRow}>
-                  <span>Maintenance</span>
-                  <span>0%</span>
-                </div>
-                <div className={styles.barTrack}>
-                  <div className={styles.barFill} style={{ width: '0%' }} />
-                </div>
+        <section className={styles.doubleGrid}>
+          {/* Left: Rank Progress step list */}
+          <Card className={styles.panelCard}>
+            <div className={styles.rankProgressHeaderRow}>
+              <h4 className={styles.panelTitle}>Rank Progress</h4>
+              <div className={styles.mobileSliderControls}>
+                <button 
+                  className={styles.mobileSliderBtn} 
+                  disabled={currentSliderIndex === 0}
+                  onClick={() => setMobileSliderIndex(Math.max(0, currentSliderIndex - 1))}
+                >
+                  &lt;
+                </button>
+                <button 
+                  className={styles.mobileSliderBtn} 
+                  disabled={currentSliderIndex === rankList.length - 1}
+                  onClick={() => setMobileSliderIndex(Math.min(rankList.length - 1, currentSliderIndex + 1))}
+                >
+                  &gt;
+                </button>
               </div>
             </div>
-          </Card>
-
-          {/* Right: Rank Progress step list */}
-          <Card className={styles.panelCard}>
-            <h4 className={styles.panelTitle}>Rank Progress</h4>
             <div className={styles.rankStepper}>
-              {rankList.map((r) => {
+              {rankList.map((r, i) => {
                 const isActive = rankInfo.rank >= r.num;
                 const isCurrent = rankInfo.rank === r.num;
+                const isMobileVisible = currentSliderIndex === i;
                 return (
                   <div 
                     key={r.num} 
-                    className={`${styles.rankStep} ${isActive ? styles.stepActive : ''} ${isCurrent ? styles.stepCurrent : ''}`}
+                    className={`${styles.rankStep} ${isActive ? styles.stepActive : ''} ${isCurrent ? styles.stepCurrent : ''} ${isMobileVisible ? styles.mobileVisible : styles.mobileHidden}`}
                   >
                     <div className={styles.stepCircle}>{r.num}</div>
                     <span className={styles.stepLabel}>{r.label}</span>
@@ -426,45 +480,6 @@ export default function Dashboard() {
               </div>
               <div className={styles.barTrack}>
                 <div className={styles.barFill} style={{ width: `${rankInfo.progress}%` }} />
-              </div>
-            </div>
-          </Card>
-        </section>
-
-        {/* 5. AUTO-SPILL & WALLET ACTIONS */}
-        <section className={styles.doubleGrid}>
-          {/* Left: Binary Auto-Spill visualization */}
-          <Card className={styles.panelCard}>
-            <h4 className={styles.panelTitle}>Binary Auto-Spill</h4>
-            <div className={styles.binaryTreeBox}>
-              <div className={styles.binaryTree}>
-                <div className={`${styles.treeNode} ${styles.nodeRoot}`}>
-                  <span className={styles.nodeIcon}>👤</span>
-                  <span className={styles.nodeTitle}>You</span>
-                </div>
-                
-                <div className={styles.treeBranches}>
-                  <div className={styles.branchLineLeft} />
-                  <div className={styles.branchLineRight} />
-                </div>
-
-                <div className={styles.nodeChildrenRow}>
-                  <div className={`${styles.treeNode} ${styles.nodeLeftLeg}`}>
-                    <span className={styles.legBadge}>L</span>
-                    <span className={styles.legTitle}>Left Leg</span>
-                    <span className={styles.legCount}>{leftLegCount} Members</span>
-                  </div>
-
-                  <div className={`${styles.treeNode} ${styles.nodeRightLeg}`}>
-                    <span className={styles.legBadge}>R</span>
-                    <span className={styles.legTitle}>Right Leg</span>
-                    <span className={styles.legCount}>{rightLegCount} Members</span>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.autoSpillSettings}>
-                <span className={styles.autoSpillStatus}>Auto-Spill: <strong className={styles.greenText}>Active</strong></span>
-                <span className={styles.autoSpillPlacement}>Placement: <strong>L → R</strong></span>
               </div>
             </div>
           </Card>
@@ -483,6 +498,11 @@ export default function Dashboard() {
                 <Button variant="secondary" className={styles.walletBtn} onClick={() => router.push('/dashboard/withdraw')}>
                   📥 Withdraw
                 </Button>
+                {/* Crypto purchase V button */}
+                <CryptoPayButton
+                  amount={5}
+                  description="Purchase V tokens"
+                />
               </div>
             </div>
 
@@ -540,28 +560,7 @@ export default function Dashboard() {
           </Card>
         </section>
 
-        {/* 7. DIAGNOSTIC PANEL FOR TROUBLESHOOTING */}
-        <section className={styles.singleGrid} style={{ marginTop: '2rem' }}>
-          <Card className={styles.panelCard} style={{ border: '1px solid var(--color-primary)' }}>
-            <h4 className={styles.panelTitle} style={{ color: 'var(--color-primary)' }}>🛠️ Platform Connection Diagnostic</h4>
-            <div style={{ fontSize: '0.8rem', fontFamily: 'monospace', lineHeight: '1.6', color: '#ccc', marginTop: '1rem' }}>
-              <p><strong>URL Origin:</strong> {debugInfo.urlOrigin}</p>
-              <p><strong>Auth ID:</strong> {debugInfo.authUserId || 'Not authenticated'}</p>
-              <p><strong>Auth Email:</strong> {debugInfo.authUserEmail || 'N/A'}</p>
-              <hr style={{ borderColor: '#222', margin: '0.5rem 0' }} />
-              <p><strong>Profile Table Query:</strong> <span style={{ color: debugInfo.profileStatus?.includes('Error') || debugInfo.profileStatus?.includes('Exception') ? '#e74c3c' : '#2ecc71' }}>{debugInfo.profileStatus}</span></p>
-              <p><strong>Wallet Table Query:</strong> <span style={{ color: debugInfo.walletStatus?.includes('Error') || debugInfo.walletStatus?.includes('Exception') ? '#e74c3c' : '#2ecc71' }}>{debugInfo.walletStatus}</span></p>
-              <p><strong>Referrals Table Query:</strong> <span style={{ color: debugInfo.referralsStatus?.includes('Error') || debugInfo.referralsStatus?.includes('Exception') ? '#e74c3c' : '#2ecc71' }}>{debugInfo.referralsStatus}</span></p>
-              <p><strong>Transactions Table Query:</strong> <span style={{ color: debugInfo.transactionsStatus?.includes('Error') || debugInfo.transactionsStatus?.includes('Exception') ? '#e74c3c' : '#2ecc71' }}>{debugInfo.transactionsStatus}</span></p>
-              {debugInfo.errorMsg && (
-                <>
-                  <hr style={{ borderColor: '#222', margin: '0.5rem 0' }} />
-                  <p style={{ color: '#e74c3c' }}><strong>Global Error:</strong> {debugInfo.errorMsg}</p>
-                </>
-              )}
-            </div>
-          </Card>
-        </section>
+
       </main>
     </div>
   );

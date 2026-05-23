@@ -169,3 +169,15 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(212,175,55,0.35);
 }
+.crypto-pay-btn {
+  background: linear-gradient(135deg, hsl(210,70%,55%), hsl(260,70%,55%));
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.crypto-pay-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.crypto-pay-btn:disabled { opacity: 0.6; cursor: not-allowed; }

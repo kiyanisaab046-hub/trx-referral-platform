@@ -67,7 +67,7 @@ export default function NavBar() {
         <Link href="/" className="flex items-center gap-3 flex-shrink-0 group">
           <img src="https://anyimage.io/storage/uploads/357abaf76df985e6480832402d9dafbc" alt="Logo" className="h-8 w-auto" style={{ filter: "brightness(0.8)" }} />
           <span className="font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 group-hover:from-primary group-hover:to-secondary text-sm uppercase tracking-[0.25em] hidden sm:block transition-all duration-300">
-            Unique Income Plan
+            Unique Income Plane
           </span>
         </Link>
 

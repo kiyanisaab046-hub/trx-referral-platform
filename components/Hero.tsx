@@ -79,7 +79,7 @@ export default function Hero() {
           </span>
           <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-highlight drop-shadow-[0_0_30px_rgba(255,154,134,0.2)]">
-            Income Plan
+            Income Plane
           </span>
         </motion.h1>
 

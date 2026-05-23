@@ -365,7 +365,57 @@
 
 @media (max-width: 600px) {
   .rankStepper {
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .mobileHidden {
+    display: none !important;
+  }
+  .mobileVisible {
+    display: flex !important;
+    width: 100%;
+    max-width: 250px;
+  }
+}
+
+.rankProgressHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.mobileSliderControls {
+  display: none;
+  gap: 10px;
+}
+
+.mobileSliderBtn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.mobileSliderBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mobileSliderBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .mobileSliderControls {
+    display: flex;
+  }
+  .panelTitle {
+    margin-bottom: 0;
   }
 }
 

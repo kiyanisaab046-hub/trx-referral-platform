@@ -73,7 +73,7 @@ export default function LevelIncomeSection() {
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-primary/60" />
             <span className="text-[11px] font-black uppercase tracking-[0.35em] text-primary bg-primary/10 px-5 py-1.5 rounded-full border border-primary/20">
-              Unique Income Plan
+              Unique Income Plane
             </span>
             <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-primary/60" />
           </div>
