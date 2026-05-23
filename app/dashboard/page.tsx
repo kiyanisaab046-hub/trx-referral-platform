@@ -499,10 +499,7 @@ export default function Dashboard() {
                   📥 Withdraw
                 </Button>
                 {/* Crypto purchase V button */}
-                <CryptoPayButton
-                  amount={5}
-                  description="Purchase V tokens"
-                />
+
               </div>
             </div>
 
