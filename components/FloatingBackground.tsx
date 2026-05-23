@@ -13,29 +13,23 @@ export default function FloatingBackground() {
   if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none z-[-1] bg-[#0b111e]">
-      {/* 
-        Grid / Mesh Pattern Overlay
-        Provides that subtle high-tech, financial grid look 
-      */}
+    <div className="fixed inset-0 overflow-hidden pointer-events-none z-[-1]"
+      style={{ background: 'linear-gradient(180deg, #e84393 0%, #f78fb3 30%, #f8a5c2 45%, #f5c6aa 60%, #ffeaa7 85%, #fdfd96 100%)' }}
+    >
+      {/* Subtle grid overlay */}
       <div 
-        className="absolute inset-0 opacity-[0.15]" 
+        className="absolute inset-0 opacity-[0.06]" 
         style={{
           backgroundImage: `
-            linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
+            linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px)
           `,
           backgroundSize: "30px 30px",
           backgroundPosition: "center center"
         }}
       />
 
-      {/* 
-        Morphing Motion Graphic Glows 
-        Using framer-motion for smooth, responsible animations
-      */}
-
-      {/* Main Cyan Glow (Top Left) */}
+      {/* Morphing Pink Glow (Top) */}
       <motion.div
         animate={{
           x: ["-5%", "5%", "-5%"],
@@ -47,13 +41,13 @@ export default function FloatingBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full opacity-30 mix-blend-screen blur-[120px] md:blur-[180px]"
+        className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full opacity-40 mix-blend-screen blur-[120px] md:blur-[180px]"
         style={{
-          background: "radial-gradient(circle, rgba(0, 210, 255, 0.8) 0%, rgba(0, 210, 255, 0) 70%)"
+          background: "radial-gradient(circle, rgba(232, 67, 147, 0.7) 0%, rgba(232, 67, 147, 0) 70%)"
         }}
       />
 
-      {/* Secondary Gold/Orange Glow (Bottom Right) */}
+      {/* Yellow/Gold Glow (Bottom) */}
       <motion.div
         animate={{
           x: ["5%", "-5%", "5%"],
@@ -65,13 +59,13 @@ export default function FloatingBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute -bottom-[20%] -right-[10%] w-[70%] h-[70%] rounded-full opacity-20 mix-blend-screen blur-[120px] md:blur-[180px]"
+        className="absolute -bottom-[20%] -right-[10%] w-[70%] h-[70%] rounded-full opacity-30 mix-blend-screen blur-[120px] md:blur-[180px]"
         style={{
-          background: "radial-gradient(circle, rgba(255, 170, 0, 0.6) 0%, rgba(255, 170, 0, 0) 70%)"
+          background: "radial-gradient(circle, rgba(255, 234, 167, 0.8) 0%, rgba(255, 234, 167, 0) 70%)"
         }}
       />
 
-      {/* Dynamic Deep Blue Center Morph */}
+      {/* Warm Peach Center Morph */}
       <motion.div
         animate={{
           x: ["0%", "10%", "-10%", "0%"],
@@ -82,14 +76,14 @@ export default function FloatingBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute top-[20%] left-[20%] w-[60%] h-[60%] rounded-full opacity-40 mix-blend-screen blur-[100px] md:blur-[150px]"
+        className="absolute top-[20%] left-[20%] w-[60%] h-[60%] rounded-full opacity-35 mix-blend-screen blur-[100px] md:blur-[150px]"
         style={{
-          background: "radial-gradient(circle, rgba(0, 80, 255, 0.4) 0%, rgba(0, 80, 255, 0) 70%)"
+          background: "radial-gradient(circle, rgba(247, 143, 179, 0.5) 0%, rgba(245, 198, 170, 0) 70%)"
         }}
       />
 
-      {/* Vignette Overlay for Depth */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#0b111e_100%)] opacity-80" />
+      {/* Soft vignette */}
+      <div className="absolute inset-0 opacity-30" style={{ background: 'radial-gradient(circle at center, transparent 0%, rgba(200, 100, 100, 0.15) 100%)' }} />
     </div>
   );
 }

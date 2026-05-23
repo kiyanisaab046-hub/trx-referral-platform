@@ -59,8 +59,8 @@ html {
 }
 
 body {
-  background-color: #0b111e;
-  /* Soft noise/mesh overlay can be added here if needed, but the animated bg will handle it */
+  background-color: #f78fb3;
+  /* Fallback - the animated FloatingBackground handles the full gradient */
   color: var(--foreground);
   font-family: var(--font-sans);
   overflow-x: hidden;
