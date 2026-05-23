@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 
 export async function POST(req: NextRequest) {
   const { amount, description, userId } = await req.json();
-  const apiKey = process.env.NEXT_PUBLIC_NOWPAYMENTS_PUBLIC_KEY; // The UUID API Key
+  const apiKey = process.env.NOWPAYMENTS_API_KEY || process.env.NEXT_PUBLIC_NOWPAYMENTS_PUBLIC_KEY;
   const payload = {
     price_amount: amount,
     price_currency: 'USD', // base currency
