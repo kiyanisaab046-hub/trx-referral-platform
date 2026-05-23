@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import crypto from 'crypto';
-import { createClient } from '../../../lib/supabase/server';
+import { createClient } from '../../../../lib/supabase/server';
 
 export async function POST(req: NextRequest) {
   const signature = req.headers.get('x-api-key') || '';
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     return new NextResponse('Missing userId', { status: 400 });
   }
 
-  const supabase = createClient();
+
 
   // Example: mark user as premium and add V balance (you can adjust logic)
   const updates: any = {};
