@@ -1,119 +1,95 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { 
-  SparklesIcon,
-  StarIcon,
-  CurrencyDollarIcon,
-  TrophyIcon,
-  BanknotesIcon,
-  WalletIcon,
-  GiftIcon,
-  CreditCardIcon
-} from "@heroicons/react/24/outline";
-
-const icons = [
-  SparklesIcon, StarIcon, CurrencyDollarIcon, TrophyIcon, 
-  BanknotesIcon, WalletIcon, GiftIcon, CreditCardIcon
-];
 
 export default function FloatingBackground() {
   const [mounted, setMounted] = useState(false);
-  const [particles, setParticles] = useState<any[]>([]);
 
   useEffect(() => {
     setMounted(true);
-    // Determine if viewport width is sufficient for particles (disable on mobile <768px)
-    const isDesktop = typeof window !== "undefined" && window.innerWidth >= 768;
-    if (!isDesktop) return;
-    // Generate a reduced set of 6 particles for better performance
-    const generated = Array.from({ length: 6 }).map((_, i) => {
-      const Icon = icons[Math.floor(Math.random() * icons.length)];
-      const size = Math.random() * 20 + 15; // 15px to 35px
-      const left = Math.random() * 100; // 0% to 100%
-      const duration = Math.random() * 12 + 12; // 12s to 24s (shorter)
-      const delay = Math.random() * -24; // negative delay to start immediately at random points
-      return { id: i, Icon, size, left, duration, delay };
-    });
-    setParticles(generated);
   }, []);
 
   if (!mounted) return null;
 
   return (
-    <div className="floating-bg-container">
-      <style>{`
-        .floating-bg-container {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100vw;
-          height: 100vh;
-          overflow: hidden;
-          pointer-events: none;
-          z-index: 1;
-        }
+    <div className="fixed inset-0 overflow-hidden pointer-events-none z-[-1] bg-[#0b111e]">
+      {/* 
+        Grid / Mesh Pattern Overlay
+        Provides that subtle high-tech, financial grid look 
+      */}
+      <div 
+        className="absolute inset-0 opacity-[0.15]" 
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: "30px 30px",
+          backgroundPosition: "center center"
+        }}
+      />
 
-        .luxury-center-glow {
-          position: absolute;
-          inset: 0;
-          background: radial-gradient(circle at center, rgba(255, 154, 134, 0.03) 0%, transparent 70%);
-        }
+      {/* 
+        Morphing Motion Graphic Glows 
+        Using framer-motion for smooth, responsible animations
+      */}
 
-        .floating-particle {
-          position: absolute;
-          bottom: -50px;
-          color: var(--color-primary);
-          opacity: 0;
-          will-change: transform, opacity;
-          animation: floatUp linear infinite;
-          filter: drop-shadow(0 0 2px rgba(255, 154, 134, 0.2));
-        }
+      {/* Main Cyan Glow (Top Left) */}
+      <motion.div
+        animate={{
+          x: ["-5%", "5%", "-5%"],
+          y: ["-5%", "5%", "-5%"],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 15,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full opacity-30 mix-blend-screen blur-[120px] md:blur-[180px]"
+        style={{
+          background: "radial-gradient(circle, rgba(0, 210, 255, 0.8) 0%, rgba(0, 210, 255, 0) 70%)"
+        }}
+      />
 
-        @media (prefers-reduced-motion: reduce) {
-          .floating-particle {
-            animation-duration: 5s !important;
-          }
-        }
+      {/* Secondary Gold/Orange Glow (Bottom Right) */}
+      <motion.div
+        animate={{
+          x: ["5%", "-5%", "5%"],
+          y: ["5%", "-5%", "5%"],
+          scale: [1, 1.2, 1],
+        }}
+        transition={{
+          duration: 18,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute -bottom-[20%] -right-[10%] w-[70%] h-[70%] rounded-full opacity-20 mix-blend-screen blur-[120px] md:blur-[180px]"
+        style={{
+          background: "radial-gradient(circle, rgba(255, 170, 0, 0.6) 0%, rgba(255, 170, 0, 0) 70%)"
+        }}
+      />
 
-        @keyframes floatUp {
-          0% {
-            transform: translateY(0) rotate(0deg);
-            opacity: 0;
-          }
-          10% {
-            opacity: 0.05;
-          }
-          90% {
-            opacity: 0.05;
-          }
-          100% {
-            transform: translateY(-110vh) rotate(360deg);
-            opacity: 0;
-          }
-        }
-      `}</style>
-      
-      <div className="luxury-center-glow" />
-      
-      {particles.map((p) => {
-        const IconComponent = p.Icon;
-        return (
-          <div
-            key={p.id}
-            className="floating-particle"
-            style={{
-              left: `${p.left}%`,
-              width: `${p.size}px`,
-              height: `${p.size}px`,
-              animationDuration: `${p.duration}s`,
-              animationDelay: `${p.delay}s`,
-            }}
-          >
-            <IconComponent className="w-full h-full" />
-          </div>
-        );
-      })}
+      {/* Dynamic Deep Blue Center Morph */}
+      <motion.div
+        animate={{
+          x: ["0%", "10%", "-10%", "0%"],
+          y: ["10%", "-10%", "10%", "10%"],
+        }}
+        transition={{
+          duration: 25,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="absolute top-[20%] left-[20%] w-[60%] h-[60%] rounded-full opacity-40 mix-blend-screen blur-[100px] md:blur-[150px]"
+        style={{
+          background: "radial-gradient(circle, rgba(0, 80, 255, 0.4) 0%, rgba(0, 80, 255, 0) 70%)"
+        }}
+      />
+
+      {/* Vignette Overlay for Depth */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#0b111e_100%)] opacity-80" />
     </div>
   );
 }
