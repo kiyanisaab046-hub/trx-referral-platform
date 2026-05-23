@@ -5,7 +5,7 @@ import CryptoPayButton from '../../../components/CryptoPayButton';
 export default function DepositPage() {
   const [amount, setAmount] = useState(10);
 
-  const handleAmountChange = (e) => {
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseFloat(e.target.value);
     setAmount(isNaN(val) ? 0 : val);
   };
