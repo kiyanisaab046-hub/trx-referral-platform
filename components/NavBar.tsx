@@ -58,7 +58,7 @@ export default function NavBar() {
   return (
     <>
       <motion.nav
-        className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 bg-[#030816]/70 backdrop-blur-xl border-b border-primary/10"
+        className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 bg-transparent backdrop-blur-xl border-b border-primary/10"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
