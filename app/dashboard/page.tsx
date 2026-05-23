@@ -8,6 +8,7 @@ import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import styles from './dashboard.module.css';
 import CryptoPayButton from '../../components/CryptoPayButton';
+import WalletModal from '../../components/WalletModal';
 
 interface UserProfile {
   id: string;
@@ -42,6 +43,8 @@ export default function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [stats, setStats] = useState({ referralsCount: 0, teamCount: 0 });
   const [copied, setCopied] = useState(false);
+  const [showDepositModal, setShowDepositModal] = useState(false);
+  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [directSum, setDirectSum] = useState(0);
   const [levelSum, setLevelSum] = useState(0);
   const [teamSum, setTeamSum] = useState(0);
@@ -490,8 +493,73 @@ export default function Dashboard() {
             <div className={styles.walletBox}>
               <h3 className={styles.mainBalanceDisplay}>${wallet?.main_balance.toFixed(2) || '0.00'}</h3>
               <p className={styles.balanceStatusLabel}>Available for withdrawal</p>
-              
+
+              {/* Premium Deposit & Withdraw Buttons */}
+              <div style={{
+                display: 'flex',
+                gap: '0.75rem',
+                marginTop: '1.25rem',
+                width: '100%',
+              }}>
+                <button
+                  onClick={() => setShowDepositModal(true)}
+                  style={{
+                    flex: 1,
+                    padding: '0.75rem 0',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, #00d2ff, #0080ff)',
+                    color: '#fff',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontWeight: 700,
+                    fontSize: '0.9rem',
+                    letterSpacing: '0.03em',
+                    boxShadow: '0 4px 18px rgba(0, 210, 255, 0.3)',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.4rem',
+                  }}
+                  onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 24px rgba(0,210,255,0.45)'; }}
+                  onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 18px rgba(0, 210, 255, 0.3)'; }}
+                >
+                  💸 Deposit
+                </button>
+                <button
+                  onClick={() => setShowWithdrawModal(true)}
+                  style={{
+                    flex: 1,
+                    padding: '0.75rem 0',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, #ffaa00, #ff6600)',
+                    color: '#fff',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontWeight: 700,
+                    fontSize: '0.9rem',
+                    letterSpacing: '0.03em',
+                    boxShadow: '0 4px 18px rgba(255, 170, 0, 0.3)',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.4rem',
+                  }}
+                  onMouseOver={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 24px rgba(255,170,0,0.45)'; }}
+                  onMouseOut={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 18px rgba(255, 170, 0, 0.3)'; }}
+                >
+                  📥 Withdraw
+                </button>
+              </div>
             </div>
+            {/* Wallet Modals */}
+            {showDepositModal && (
+              <WalletModal type="deposit" open={showDepositModal} onClose={() => setShowDepositModal(false)} />
+            )}
+            {showWithdrawModal && (
+              <WalletModal type="withdraw" open={showWithdrawModal} onClose={() => setShowWithdrawModal(false)} />
+            )}
 
             {/* Referral Sponsor Link */}
             <div className={styles.referralLinkContainer}>
