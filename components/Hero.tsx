@@ -29,7 +29,7 @@ const itemVariants = {
 export default function Hero() {
   return (
     <section
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-[#050505] pt-32 pb-24"
+      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent pt-32 pb-24"
       id="home"
     >
       {/* Premium Pastel Core Ambient Glow */}
@@ -123,7 +123,7 @@ export default function Hero() {
             <motion.div
               key={idx}
               whileHover={{ y: -6, borderColor: "rgba(255,154,134,0.4)" }}
-              className="group relative flex flex-col items-center justify-center py-8 px-6 rounded-2xl border border-primary/[0.08] bg-[#0c0a08]/80 backdrop-blur-sm transition-all duration-300"
+              className="group relative flex flex-col items-center justify-center py-8 px-6 rounded-2xl border border-primary/[0.08] bg-[#030816]/80 backdrop-blur-sm transition-all duration-300"
             >
               {/* Stat glow effect on hover */}
               <div className="absolute inset-0 rounded-2xl bg-primary/0 group-hover:bg-primary/[0.02] blur-xl transition-all duration-300 pointer-events-none" />

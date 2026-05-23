@@ -2,7 +2,7 @@
 
 @theme {
   /* === COLOR PALETTE === */
-  --color-deep-black:   #050505;
+  --color-deep-black: rgba(5, 10, 20, 0.4);
   --color-dark-black:   #0A0A0A;
   --color-rich-charcoal:#111111;
   --color-card-bg:      rgba(255,255,255,0.06);
@@ -38,8 +38,8 @@
   --color-primary: #00d2ff;
   --color-secondary: #ffaa00;
   --color-highlight: #00e5ff;
-  --color-deep-black: #0a0a0a;
-  --color-background-dark: #0f0f0f;
+  --color-deep-black: rgba(5, 10, 20, 0.4);
+  --color-background-dark: transparent;
   --color-background-gradient: linear-gradient(135deg, #0f0f0f, #1a1a1a);
   --animation-pulse: pulse 8s ease-in-out infinite;
 }
@@ -89,7 +89,7 @@ body {
 /* Backgrounds */
 .bg-primary         { background-color: var(--color-primary); }
 .bg-secondary       { background-color: var(--color-secondary); }
-.bg-deep-black   { background-color: var(--color-deep-black); }
+.bg-transparent   { background-color: var(--color-deep-black); }
 .bg-dark-black   { background-color: var(--color-dark-black); }
 .bg-rich-charcoal{ background-color: var(--color-rich-charcoal); }
 

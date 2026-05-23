@@ -58,7 +58,7 @@ export default function NavBar() {
   return (
     <>
       <motion.nav
-        className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 bg-[#050505]/80 backdrop-blur-xl border-b border-primary/10"
+        className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 bg-[#030816]/70 backdrop-blur-xl border-b border-primary/10"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -191,7 +191,7 @@ export default function NavBar() {
             animate="open"
             exit="closed"
             variants={menuVariants}
-            className="fixed inset-0 h-screen bg-[#050505]/95 backdrop-blur-md border-b border-primary/10 z-40 flex flex-col justify-center px-10 md:hidden"
+            className="fixed inset-0 h-screen bg-[#030816]/85 backdrop-blur-md border-b border-primary/10 z-40 flex flex-col justify-center px-10 md:hidden"
           >
             {/* Background luxury glow in overlay */}
             <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />

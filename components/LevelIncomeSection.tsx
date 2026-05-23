@@ -138,7 +138,7 @@ export default function LevelIncomeSection() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
-              className="max-w-4xl mx-auto rounded-3xl overflow-hidden border border-primary/10 bg-[#0C0A08]/90 backdrop-blur-md shadow-2xl relative"
+              className="max-w-4xl mx-auto rounded-3xl overflow-hidden border border-primary/10 bg-[#030816]/90 backdrop-blur-md shadow-2xl relative"
             >
               {/* Table Header Glow decoration */}
               <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
@@ -202,7 +202,7 @@ export default function LevelIncomeSection() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
-              className="max-w-xl mx-auto rounded-3xl p-8 border border-secondary/15 bg-[#0C0A08]/95 backdrop-blur-md shadow-2xl relative overflow-hidden"
+              className="max-w-xl mx-auto rounded-3xl p-8 border border-secondary/15 bg-[#030816]/95 backdrop-blur-md shadow-2xl relative overflow-hidden"
             >
               {/* Interactive background glow */}
               <div className="absolute top-[-50px] right-[-50px] w-48 h-48 bg-primary/10 rounded-full blur-[60px]" />
@@ -278,7 +278,7 @@ export default function LevelIncomeSection() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               whileHover={{ y: -8, borderColor: "rgba(255, 154, 134, 0.4)", boxShadow: "0 12px 30px rgba(255, 154, 134, 0.08)" }}
-              className="p-6 rounded-2xl border border-white/[0.05] bg-[#0C0A08]/80 backdrop-blur-md hover:bg-white/[0.01] transition-all duration-300 flex flex-col items-center text-center group cursor-default"
+              className="p-6 rounded-2xl border border-white/[0.05] bg-[#030816]/80 backdrop-blur-md hover:bg-white/[0.01] transition-all duration-300 flex flex-col items-center text-center group cursor-default"
             >
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/5 border border-primary/20 group-hover:border-primary/50 group-hover:scale-110 flex items-center justify-center mb-4 transition-all duration-300">
                 <card.icon className="w-6 h-6 text-primary" />

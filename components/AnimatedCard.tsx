@@ -18,7 +18,7 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
       <motion.div
         whileHover={{ y: -8, scale: 1.04, rotate: 3 }}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
-        className={`group relative p-8 bg-[#050505] border border-primary/20 hover:border-primary/60 hover:bg-primary/10 transition-all duration-300 ${className || ""}`}
+        className={`group relative p-8 bg-transparent border border-primary/20 hover:border-primary/60 hover:bg-primary/10 transition-all duration-300 ${className || ""}`}
         style={style}
       >
         <div className="absolute top-3 right-4 text-primary/20 group-hover:text-primary/50 transition-colors text-lg select-none">♛</div>

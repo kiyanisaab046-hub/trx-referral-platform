@@ -20,7 +20,7 @@ const supportLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[#050505] border-t border-primary/15 pt-24 pb-12">
+    <footer className="bg-transparent border-t border-primary/15 pt-24 pb-12">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
 

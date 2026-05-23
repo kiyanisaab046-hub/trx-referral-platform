@@ -18,7 +18,7 @@ const Footer = dynamic(() => import("../components/Footer"));
 
 export default function Home() {
   return (
-    <main className="flex flex-col gap-24 bg-deep-black text-white font-satoshi">
+    <main className="flex flex-col gap-24 bg-transparent text-white font-satoshi">
       <NavBar />
       <Hero />
       <About />

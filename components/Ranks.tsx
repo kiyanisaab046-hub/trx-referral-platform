@@ -33,7 +33,7 @@ export default function Ranks() {
           <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.3 }} className="mx-auto mt-6 h-[2px] w-24 bg-gradient-to-r from-transparent via-primary to-transparent origin-center" />
         </motion.div>
 
-        <div className="max-w-3xl mx-auto rounded-2xl overflow-hidden border border-primary/[0.08] bg-[#0c0a08]/80 backdrop-blur-sm">
+        <div className="max-w-3xl mx-auto rounded-2xl overflow-hidden border border-primary/[0.08] bg-[#030816]/80 backdrop-blur-sm">
           <div className="overflow-x-auto w-full">
             <table className="w-full text-left min-w-[500px]">
               <thead>
