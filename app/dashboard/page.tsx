@@ -491,16 +491,6 @@ export default function Dashboard() {
               <h3 className={styles.mainBalanceDisplay}>${wallet?.main_balance.toFixed(2) || '0.00'}</h3>
               <p className={styles.balanceStatusLabel}>Available for withdrawal</p>
               
-              <div className={styles.walletButtonsRow}>
-                <Button className={styles.walletBtn} onClick={() => router.push('/dashboard/deposit')}>
-                  💸 Deposit
-                </Button>
-                <Button variant="secondary" className={styles.walletBtn} onClick={() => router.push('/dashboard/withdraw')}>
-                  📥 Withdraw
-                </Button>
-                {/* Crypto purchase V button */}
-
-              </div>
             </div>
 
             {/* Referral Sponsor Link */}
