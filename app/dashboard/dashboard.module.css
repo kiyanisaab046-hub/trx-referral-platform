@@ -22,7 +22,7 @@
   align-items: center;
   padding: 1rem 2rem;
   background-color: #0a0a0a;
-  border-bottom: 1px solid rgba(255, 154, 134, 0.15);
+  border-bottom: 1px solid rgba(0, 210, 255, 0.15);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
 }
 
@@ -46,7 +46,7 @@
   padding: 0.35rem 0.85rem;
   border-radius: 50px;
   letter-spacing: 0.05em;
-  box-shadow: 0 0 15px rgba(255, 154, 134, 0.2);
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
 }
 
 .logoTitles {
@@ -83,7 +83,7 @@
 
 .homeBtn {
   background: transparent;
-  border: 1px solid rgba(255, 154, 134, 0.4);
+  border: 1px solid rgba(0, 210, 255, 0.4);
   color: var(--color-primary);
   padding: 0.5rem 1.25rem;
   border-radius: 50px;
@@ -100,7 +100,7 @@
 }
 
 .adminPortalBtn {
-  background-color: rgba(255, 154, 134, 0.1);
+  background-color: rgba(0, 210, 255, 0.1);
   border: 1px solid var(--color-primary);
   color: var(--color-primary);
   padding: 0.5rem 1.25rem;
@@ -225,8 +225,8 @@
 }
 
 .statusBadge {
-  background: rgba(255, 154, 134, 0.08);
-  border: 1px solid rgba(255, 154, 134, 0.2);
+  background: rgba(0, 210, 255, 0.08);
+  border: 1px solid rgba(0, 210, 255, 0.2);
   color: var(--color-primary);
   font-size: 0.75rem;
   font-weight: 700;
@@ -250,7 +250,7 @@
 }
 
 .metricCard:hover {
-  border-color: rgba(255, 154, 134, 0.3);
+  border-color: rgba(0, 210, 255, 0.3);
   transform: translateY(-2px);
 }
 
@@ -434,15 +434,15 @@
 
 .stepActive {
   opacity: 1;
-  border-color: rgba(255, 154, 134, 0.3);
-  background: rgba(255, 154, 134, 0.02);
+  border-color: rgba(0, 210, 255, 0.3);
+  background: rgba(0, 210, 255, 0.02);
 }
 
 .stepCurrent {
   opacity: 1;
   border-color: var(--color-primary);
-  background: rgba(255, 154, 134, 0.08);
-  box-shadow: 0 0 15px rgba(255, 154, 134, 0.15);
+  background: rgba(0, 210, 255, 0.08);
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
 }
 
 .stepCircle {
@@ -520,7 +520,7 @@
 
 .nodeRoot {
   border-color: var(--color-primary);
-  background: rgba(255, 154, 134, 0.05);
+  background: rgba(0, 210, 255, 0.05);
 }
 
 .nodeIcon {
@@ -593,7 +593,7 @@
 }
 
 .nodeLeftLeg .legBadge {
-  border-color: rgba(255, 154, 134, 0.3);
+  border-color: rgba(0, 210, 255, 0.3);
   color: var(--color-primary);
 }
 
@@ -645,7 +645,7 @@
   color: var(--color-primary);
   margin: 0;
   letter-spacing: -0.03em;
-  text-shadow: 0 0 20px rgba(255, 154, 134, 0.25);
+  text-shadow: 0 0 20px rgba(0, 210, 255, 0.25);
 }
 
 .balanceStatusLabel {
@@ -751,14 +751,14 @@
 .activityIcon {
   font-size: 1.25rem;
   color: var(--color-primary);
-  background: rgba(255, 154, 134, 0.05);
+  background: rgba(0, 210, 255, 0.05);
   width: 36px;
   height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(255, 154, 134, 0.15);
+  border: 1px solid rgba(0, 210, 255, 0.15);
 }
 
 .activityDetails {

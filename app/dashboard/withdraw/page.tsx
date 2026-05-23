@@ -48,41 +48,105 @@ export default function WithdrawPage() {
   };
 
   return (
-    <div style={{ padding: '2rem', textAlign: 'center' }}>
-      <h1>Withdraw via Crypto</h1>
-      <p>Select amount to withdraw from your balance.</p>
-      <input
-        type="number"
-        min="0"
-        value={amount}
-        onChange={handleAmountChange}
-        placeholder="Amount (USD)"
-        style={{ padding: '0.5rem', marginBottom: '0.5rem', width: '140px' }}
-      />
-      <br />
-      <input
-        type="text"
-        value={address}
-        onChange={handleAddressChange}
-        placeholder="Your BNB address"
-        style={{ padding: '0.5rem', marginBottom: '1rem', width: '260px' }}
-      />
-      <br />
-      <button
-        onClick={handleWithdraw}
-        disabled={loading}
-        style={{
-          padding: '0.6rem 1.2rem',
-          borderRadius: '8px',
-          background: loading ? '#888' : '#ff9a86',
-          color: '#000',
-          border: 'none',
-          cursor: loading ? 'default' : 'pointer',
-        }}
-      >
-        {loading ? 'Processing…' : 'Withdraw with Crypto'}
-      </button>
-      {msg && <p style={{ marginTop: '1rem' }}>{msg}</p>}
+    <div style={{
+      minHeight: '100vh',
+      background: '#050505',
+      color: '#fff',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+      padding: '2rem',
+    }}>
+      <div style={{
+        background: '#0f0f0f',
+        border: '1px solid #1a1a1a',
+        borderRadius: '16px',
+        padding: '2.5rem',
+        maxWidth: '460px',
+        width: '100%',
+        textAlign: 'center',
+      }}>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '0.5rem' }}>Withdraw via Crypto</h1>
+        <p style={{ color: '#8c8c8c', fontSize: '0.95rem', marginBottom: '1.5rem' }}>Select amount to withdraw from your balance.</p>
+
+        <input
+          type="number"
+          min="0"
+          value={amount}
+          onChange={handleAmountChange}
+          placeholder="Amount (USD)"
+          style={{
+            display: 'block',
+            width: '100%',
+            padding: '0.75rem 1rem',
+            marginBottom: '0.75rem',
+            background: '#111',
+            border: '1px solid #222',
+            borderRadius: '8px',
+            color: '#fff',
+            fontSize: '1rem',
+            outline: 'none',
+            boxSizing: 'border-box',
+          }}
+        />
+
+        <input
+          type="text"
+          value={address}
+          onChange={handleAddressChange}
+          placeholder="Your BNB wallet address"
+          style={{
+            display: 'block',
+            width: '100%',
+            padding: '0.75rem 1rem',
+            marginBottom: '1.25rem',
+            background: '#111',
+            border: '1px solid #222',
+            borderRadius: '8px',
+            color: '#fff',
+            fontSize: '1rem',
+            outline: 'none',
+            boxSizing: 'border-box',
+          }}
+        />
+
+        <button
+          onClick={handleWithdraw}
+          disabled={loading}
+          style={{
+            width: '100%',
+            padding: '0.85rem 1.5rem',
+            borderRadius: '10px',
+            background: loading ? '#555' : 'linear-gradient(135deg, #00d2ff, #ff6b6b)',
+            color: '#000',
+            border: 'none',
+            cursor: loading ? 'default' : 'pointer',
+            fontSize: '1rem',
+            fontWeight: 700,
+            transition: 'opacity 0.2s',
+          }}
+        >
+          {loading ? 'Processing…' : 'Withdraw with Crypto'}
+        </button>
+
+        {msg && (
+          <p style={{
+            marginTop: '1rem',
+            padding: '0.75rem',
+            background: msg.startsWith('✅') ? 'rgba(46,204,113,0.1)' : 'rgba(231,76,60,0.1)',
+            border: `1px solid ${msg.startsWith('✅') ? 'rgba(46,204,113,0.3)' : 'rgba(231,76,60,0.3)'}`,
+            borderRadius: '8px',
+            fontSize: '0.9rem',
+          }}>
+            {msg}
+          </p>
+        )}
+
+        <a href="/dashboard" style={{ display: 'inline-block', marginTop: '1.25rem', color: '#00d2ff', fontSize: '0.85rem', textDecoration: 'none' }}>
+          ← Back to Dashboard
+        </a>
+      </div>
     </div>
   );
 }

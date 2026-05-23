@@ -60,9 +60,9 @@
 }
 
 .card:hover {
-  border-color: rgba(255, 154, 134, 0.3);
+  border-color: rgba(0, 210, 255, 0.3);
   box-shadow: 0 30px 75px rgba(0, 0, 0, 0.95),
-              0 0 60px rgba(255, 154, 134, 0.08);
+              0 0 60px rgba(0, 210, 255, 0.08);
 }
 
 .card::before {
@@ -89,7 +89,7 @@
   font-weight: 900;
   padding: 0.45rem 1.4rem;
   border-radius: 9999px;
-  box-shadow: 0 4px 20px rgba(255, 154, 134, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 210, 255, 0.35);
   text-transform: uppercase;
   letter-spacing: 0.1em;
   display: inline-block;
@@ -99,11 +99,11 @@
 @keyframes badgePulse {
   0% {
     transform: scale(1);
-    box-shadow: 0 4px 15px rgba(255, 154, 134, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
   }
   100% {
     transform: scale(1.05);
-    box-shadow: 0 6px 25px rgba(255, 154, 134, 0.5);
+    box-shadow: 0 6px 25px rgba(0, 210, 255, 0.5);
   }
 }
 
@@ -182,14 +182,14 @@
   letter-spacing: 0.08em;
   border-radius: 9999px !important;
   padding: 0.95rem !important;
-  box-shadow: 0 4px 25px rgba(255, 154, 134, 0.25) !important;
+  box-shadow: 0 4px 25px rgba(0, 210, 255, 0.25) !important;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
   cursor: pointer;
 }
 
 .submitBtn:hover {
   background: linear-gradient(90deg, var(--color-secondary), var(--color-primary)) !important;
-  box-shadow: 0 8px 30px rgba(255, 154, 134, 0.5) !important;
+  box-shadow: 0 8px 30px rgba(0, 210, 255, 0.5) !important;
   transform: translateY(-3px) !important;
 }
 
@@ -309,7 +309,7 @@
 
 .select:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(255, 154, 134, 0.2);
+  box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.2);
 }
 
 .phoneInputGroup {
@@ -323,7 +323,7 @@
 
 .phoneInputGroup:focus-within {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(255, 154, 134, 0.2);
+  box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.2);
 }
 
 .phonePrefix {

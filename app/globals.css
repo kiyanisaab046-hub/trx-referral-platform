@@ -7,15 +7,15 @@
   --color-rich-charcoal:#111111;
   --color-card-bg:      rgba(255,255,255,0.06);
 
-  --color-primary: #FF9A86; /* salmon */
-  --color-secondary: #FFB399; /* light orange */
-  --color-accent: #FFF0BD; /* pale yellow */
-  --color-highlight: #FFD7A6; /* peach/champagne */
+  --color-primary: #00d2ff; /* cyan */
+  --color-secondary: #ffaa00; /* orange/gold */
+  --color-accent: #ffcc00; /* lighter gold */
+  --color-highlight: #00e5ff; /* lighter cyan */
 
-  --color-gold: #FF9A86;
-  --color-gold-light: #FFB399;
-  --color-bronze: #FFD7A6;
-  --color-yellow: #FFF0BD;
+  --color-gold: #ffaa00;
+  --color-gold-light: #ffcc00;
+  --color-bronze: #ff8800;
+  --color-yellow: #ffdd00;
 
   --color-dark-fg:      #E5E5E5;
   --color-soft-gray:    #BFBFBF;
@@ -27,7 +27,7 @@
   --font-heading: "Satoshi", sans-serif;
 
   /* === SHADOWS === */
-  --shadow-gold: 0 10px 30px rgba(255, 154, 134, 0.15);
+  --shadow-gold: 0 10px 30px rgba(0, 210, 255, 0.15);
   --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
@@ -35,9 +35,9 @@
    BASE
 ============================== */
 :root {
-  --color-primary: #ff9a86;
-  --color-secondary: #ffb27e;
-  --color-highlight: #ffd580;
+  --color-primary: #00d2ff;
+  --color-secondary: #ffaa00;
+  --color-highlight: #00e5ff;
   --color-deep-black: #0a0a0a;
   --color-background-dark: #0f0f0f;
   --color-background-gradient: linear-gradient(135deg, #0f0f0f, #1a1a1a);
@@ -106,13 +106,13 @@ body {
   border: 1px solid #1a1a1a;
   border-radius: 12px;
   transition: all 0.3s ease;
-  box-shadow: 0 0 8px rgba(255, 154, 134, 0.1);
+  box-shadow: 0 0 8px rgba(0, 210, 255, 0.1);
 }
 
 .metricCard:hover {
-  border-color: rgba(255, 154, 134, 0.4);
+  border-color: rgba(0, 210, 255, 0.4);
   transform: translateY(-2px);
-  box-shadow: 0 0 12px rgba(255, 154, 134, 0.3);
+  box-shadow: 0 0 12px rgba(0, 210, 255, 0.3);
 }
 .glass-card {
   backdrop-filter: blur(14px);
