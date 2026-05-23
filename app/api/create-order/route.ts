@@ -4,19 +4,17 @@ import type { NextRequest } from 'next/server';
 
 export async function POST(req: NextRequest) {
   const { amount, description, userId } = await req.json();
-  const apiKey = process.env.NOWPAYMENTS_SECRET_KEY;
+  const apiKey = process.env.NEXT_PUBLIC_NOWPAYMENTS_PUBLIC_KEY; // The UUID API Key
   const payload = {
     price_amount: amount,
     price_currency: 'USD', // base currency
     pay_currency: process.env.NOWPAYMENTS_CURRENCY || 'BNB',
     ipn_callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/nowpayments/webhook`,
     order_id: `${userId}-${Date.now()}`,
-    order_description: description,
-    buyer_name: 'User',
-    sandbox: true // set false in production
+    order_description: description
   };
 
-  const response = await fetch('https://api.nowpayments.io/v2/payment', {
+  const response = await fetch('https://api.nowpayments.io/v1/invoice', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -26,5 +24,10 @@ export async function POST(req: NextRequest) {
   });
 
   const data = await response.json();
-  return NextResponse.json({ checkoutUrl: data.checkout_url });
+  
+  if (data.invoice_url) {
+    return NextResponse.json({ checkoutUrl: data.invoice_url });
+  } else {
+    return NextResponse.json({ error: data.message || 'Failed to create invoice', details: data }, { status: 400 });
+  }
 }

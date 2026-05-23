@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     return new NextResponse('Missing userId', { status: 400 });
   }
 
-
+  const supabase = await createClient();
 
   // Example: mark user as premium and add V balance (you can adjust logic)
   const updates: any = {};
