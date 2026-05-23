@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   const payload = {
     price_amount: amount,
     price_currency: 'USD', // base currency
-    pay_currency: process.env.NOWPAYMENTS_CURRENCY || 'BNB',
+    pay_currency: (process.env.NOWPAYMENTS_CURRENCY || 'bnbbsc').toLowerCase() === 'bnb' ? 'bnbbsc' : (process.env.NOWPAYMENTS_CURRENCY || 'bnbbsc').toLowerCase(),
     ipn_callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/nowpayments/webhook`,
     order_id: `${userId}-${Date.now()}`,
     order_description: description
