@@ -23,9 +23,9 @@ export default function About() {
       className="relative py-20 bg-transparent" 
       id="about"
     >
-      {/* Deep Amethyst and Pastel Ambient Glows */}
-      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-purple-900/10 rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+      {/* Ambient Glows */}
+      <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-accent/10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="flex flex-col lg:flex-row gap-20 items-center">
@@ -46,16 +46,16 @@ export default function About() {
               </span>
             </div>
 
-            <h2 className="text-4xl md:text-6xl font-display font-black uppercase tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-400 mb-6 leading-[1.1]">
+            <h2 className="text-4xl md:text-6xl font-display font-black uppercase tracking-tight text-white mb-6 leading-[1.1]">
               Redefining <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-highlight drop-shadow-lg">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-highlight drop-shadow-[0_0_10px_rgba(0,212,255,0.5)]">
                 Your Income
               </span>
             </h2>
 
-            <p className="text-lg md:text-xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-highlight leading-relaxed max-w-xl animate-pulse">
-              A highly intelligent, completely transparent plan designed to generate revenue through 
-              multiple dynamic sources. We empower visionary individuals to build an unbreakable 
+            <p className="text-lg md:text-xl font-display font-medium text-gray-300 leading-relaxed max-w-xl">
+              A smart, transparent, and powerful plan — an opportunity to earn income from 
+              multiple sources. We empower visionary individuals to build an unbreakable 
               financial foundation.
             </p>
 
@@ -73,13 +73,13 @@ export default function About() {
                   className="group relative p-[1px] rounded-2xl overflow-hidden"
                 >
                   {/* Animated Border Gradient on Hover */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/50 to-transparent group-hover:via-primary -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/30 to-transparent group-hover:via-primary/70 -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
                   
-                  <div className="relative flex items-center gap-4 p-5 h-full rounded-2xl bg-white/[0.02] backdrop-blur-xl border border-white/10 group-hover:bg-white/[0.05] group-hover:border-primary/40 transition-all duration-300 shadow-2xl">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-white/5 to-white/10 border border-white/10 group-hover:bg-primary/20 group-hover:border-primary group-hover:shadow-[0_0_15px_rgba(255,154,134,0.4)] transition-all duration-300">
-                      <card.icon className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" />
+                  <div className="relative flex items-center gap-4 p-5 h-full rounded-2xl bg-[rgba(0,20,50,0.65)] backdrop-blur-xl border border-primary/20 group-hover:bg-[rgba(0,30,60,0.8)] group-hover:border-primary/50 transition-all duration-300 shadow-lg">
+                    <div className="flex items-center justify-center min-w-12 h-12 rounded-xl bg-gradient-to-br from-[#00d4ff] to-[#f5c518] shadow-[0_0_15px_rgba(0,212,255,0.25)] group-hover:shadow-[0_0_20px_rgba(0,212,255,0.5)] transition-all duration-300">
+                      <card.icon className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
                     </div>
-                    <h3 className="font-display font-bold text-white group-hover:text-white transition-colors text-sm uppercase tracking-wider">
+                    <h3 className="font-display font-bold text-white group-hover:text-white transition-colors text-[15px] leading-snug tracking-wide">
                       {card.title}
                     </h3>
                   </div>
@@ -100,22 +100,22 @@ export default function About() {
             <motion.div 
               animate={{ y: [-15, 15, -15] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="relative w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-tr from-primary via-highlight to-purple-600/40 shadow-[0_0_100px_rgba(255,154,134,0.3)] flex items-center justify-center"
+              className="relative w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-tr from-primary via-secondary to-accent/40 shadow-[0_0_80px_rgba(0,212,255,0.25)] flex items-center justify-center"
             >
-              <div className="absolute inset-0 bg-black/20 rounded-full mix-blend-overlay" />
+              <div className="absolute inset-0 bg-black/30 rounded-full mix-blend-overlay" />
               
               {/* Orbiting Ring 1 */}
               <motion.div 
                 animate={{ rotate: 360 }}
                 transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[130%] h-[130%] rounded-full border-[1px] border-white/10 border-t-primary/80 border-r-primary/30" 
+                className="absolute w-[130%] h-[130%] rounded-full border-[1px] border-primary/10 border-t-primary/80 border-r-primary/30" 
               />
               
               {/* Orbiting Ring 2 */}
               <motion.div 
                 animate={{ rotate: -360 }}
                 transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[160%] h-[160%] rounded-full border-[1px] border-white/5 border-b-purple-400/50 border-l-primary/40" 
+                className="absolute w-[160%] h-[160%] rounded-full border-[1px] border-accent/10 border-b-accent/50 border-l-primary/40" 
               />
 
               {/* Floating Glass Plate in the center */}
