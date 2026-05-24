@@ -27,12 +27,32 @@ const cardVariants = {
 export default function Features() {
   return (
     <section
-      className="relative py-20 bg-transparent"
+      className="relative py-20 bg-transparent overflow-hidden"
       id="features"
     >
-      {/* Ambient glows */}
-      <div className="absolute top-[-100px] left-[-100px] w-[400px] h-[400px] bg-primary/[0.03] rounded-full blur-[150px] pointer-events-none" />
-      <div className="absolute bottom-[-100px] right-[-100px] w-[400px] h-[400px] bg-secondary/[0.04] rounded-full blur-[140px] pointer-events-none" />
+      {/* Morphing Ambient Glows */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <motion.div
+          animate={{
+            scale: [1, 1.25, 1],
+            opacity: [0.1, 0.15, 0.1],
+            x: [0, 60, 0],
+            y: [0, -40, 0]
+          }}
+          transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[150px]"
+        />
+        <motion.div
+          animate={{
+            scale: [1, 1.15, 1],
+            opacity: [0.08, 0.12, 0.08],
+            x: [0, -50, 0],
+            y: [0, 50, 0]
+          }}
+          transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-accent/20 rounded-full blur-[140px]"
+        />
+      </div>
 
       <div className="container mx-auto px-6 relative z-10">
 
@@ -53,10 +73,10 @@ export default function Features() {
           </div>
 
           <h2 className="text-4xl md:text-6xl font-display font-black uppercase tracking-tight leading-[1.1]">
-            <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-soft-gray">
+            <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-300">
               Key{" "}
             </span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-highlight">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent drop-shadow-[0_0_15px_rgba(0,212,255,0.4)]">
               Features
             </span>
           </h2>
@@ -66,7 +86,7 @@ export default function Features() {
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="mx-auto mt-6 h-[2px] w-24 bg-gradient-to-r from-transparent via-primary to-transparent origin-center"
+            className="mx-auto mt-6 h-[2px] w-24 bg-gradient-to-r from-transparent via-accent to-transparent origin-center"
           />
         </motion.div>
 
@@ -87,37 +107,39 @@ export default function Features() {
               className="group relative rounded-2xl overflow-hidden cursor-default"
             >
               {/* Hover border glow */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/0 to-primary/0 group-hover:from-primary/15 group-hover:to-secondary/10 transition-all duration-500 pointer-events-none" />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/0 to-accent/0 group-hover:from-primary/20 group-hover:to-accent/10 transition-all duration-500 pointer-events-none" />
 
-              <div className="relative p-8 h-full rounded-2xl bg-[#0c0a10]/80 border border-primary/[0.08] group-hover:border-primary/40 backdrop-blur-sm transition-all duration-500">
+              <div className="relative p-8 h-full rounded-2xl bg-[rgba(0,20,50,0.65)] border border-primary/20 group-hover:border-primary/50 group-hover:bg-[rgba(0,30,60,0.8)] backdrop-blur-md transition-all duration-500 overflow-hidden shadow-lg">
+
+                {/* Morphing gradient blob inside card */}
+                <div className="absolute -bottom-8 -right-8 w-28 h-28 bg-primary/20 rounded-full blur-[35px] group-hover:bg-accent/20 group-hover:scale-[1.7] transition-all duration-700 pointer-events-none" />
 
                 {/* Corner accent */}
-                <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-primary/[0.05] to-transparent rounded-bl-3xl pointer-events-none group-hover:from-primary/[0.12] transition-all duration-500" />
+                <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-primary/[0.1] to-transparent rounded-bl-3xl pointer-events-none group-hover:from-accent/[0.2] transition-all duration-500" />
 
                 {/* Bottom sweep */}
-                <div className="absolute bottom-0 left-0 h-[1px] w-0 group-hover:w-full bg-gradient-to-r from-primary via-secondary to-transparent transition-all duration-700 ease-out" />
+                <div className="absolute bottom-0 left-0 h-[2px] w-0 group-hover:w-full bg-gradient-to-r from-primary to-accent transition-all duration-700 ease-out" />
 
                 {/* Number watermark */}
-                <span className="absolute top-4 right-5 text-primary/[0.06] text-6xl font-display font-black pointer-events-none select-none group-hover:text-primary/[0.12] transition-all duration-500">
+                <span className="absolute top-4 right-5 text-primary/[0.1] text-6xl font-display font-black pointer-events-none select-none group-hover:text-primary/[0.2] transition-all duration-500 group-hover:-translate-y-2 group-hover:scale-110">
                   0{i + 1}
                 </span>
 
-                <div className="flex flex-col items-center space-y-5 relative z-10">
+                <div className="flex flex-col items-center space-y-5 relative z-10 mt-6">
                   {/* Icon */}
                   <div className="relative">
-                    <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/[0.08] to-highlight/[0.04] border border-primary/15 group-hover:border-primary/60 group-hover:shadow-[0_0_25px_rgba(255,154,134,0.15)] transition-all duration-500">
-                      <f.icon className="w-6 h-6 text-primary/70 group-hover:text-secondary transition-colors duration-300" />
+                    <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-[#00d4ff] to-[#f5c518] shadow-[0_0_15px_rgba(0,212,255,0.25)] group-hover:shadow-[0_0_25px_rgba(245,197,24,0.4)] transition-all duration-500 group-hover:-translate-y-1">
+                      <f.icon className="w-7 h-7 text-white group-hover:scale-110 transition-transform duration-300" />
                     </div>
-                    <div className="absolute inset-0 -z-10 rounded-2xl bg-primary/0 group-hover:bg-primary/10 blur-xl transition-all duration-500" />
                   </div>
 
                   {/* Title */}
-                  <h3 className="font-display font-black text-accent group-hover:text-secondary tracking-wider text-sm uppercase transition-colors duration-300 text-center">
+                  <h3 className="font-display font-bold text-white group-hover:text-primary tracking-wider text-[15px] uppercase transition-colors duration-300 text-center">
                     {f.title}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-sm text-soft-gray group-hover:text-white text-center leading-relaxed transition-colors duration-300">
+                  <p className="text-sm text-gray-300 group-hover:text-white text-center leading-relaxed transition-colors duration-300">
                     {f.description}
                   </p>
                 </div>
