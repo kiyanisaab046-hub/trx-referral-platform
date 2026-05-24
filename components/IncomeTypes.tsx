@@ -99,7 +99,7 @@ export default function IncomeTypes() {
               {/* Card border glow on hover */}
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/0 via-primary/0 to-primary/0 group-hover:from-primary/20 group-hover:via-secondary/10 group-hover:to-highlight/20 transition-all duration-500 pointer-events-none" />
 
-              <div className="relative p-8 h-full rounded-2xl bg-[#0c0a10]/80 border border-primary/[0.08] group-hover:border-primary/40 backdrop-blur-sm transition-all duration-500">
+              <div className="relative p-8 h-full rounded-2xl bg-gradient-to-br from-primary/20 via-secondary/10 to-highlight/5 border border-primary/[0.08] group-hover:border-primary/40 backdrop-blur-sm transition-all duration-500">
                 
                 {/* Top corner accent */}
                 <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-primary/[0.06] to-transparent rounded-bl-3xl pointer-events-none group-hover:from-primary/[0.12] transition-all duration-500" />
@@ -120,16 +120,16 @@ export default function IncomeTypes() {
 
                   {/* Title + Percent */}
                   <div className="text-center">
-                    <h3 className="font-display font-black text-accent group-hover:text-secondary tracking-wider text-sm uppercase transition-colors duration-300">
+                    <h3 className="font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-highlight tracking-wider text-sm uppercase transition-colors duration-300">
                       {item.title}
                     </h3>
-                    <span className="inline-block mt-2 text-[11px] font-bold uppercase tracking-[0.2em] text-primary/50 group-hover:text-primary bg-primary/[0.04] group-hover:bg-primary/[0.1] px-3 py-0.5 rounded-full border border-primary/10 group-hover:border-primary/30 transition-all duration-300">
+                    <span className="inline-block mt-2 text-[11px] font-bold uppercase tracking-[0.2em] text-white/80 group-hover:text-white bg-primary/[0.08] group-hover:bg-primary/[0.15] px-3 py-0.5 rounded-full border border-primary/10 group-hover:border-primary/30 transition-all duration-300">
                       {item.percent}
                     </span>
                   </div>
 
                   {/* Description */}
-                  <p className="text-sm text-soft-gray group-hover:text-white text-center leading-relaxed transition-colors duration-300">
+                  <p className="text-sm text-white/70 group-hover:text-white text-center leading-relaxed transition-colors duration-300">
                     {item.desc}
                   </p>
                 </div>

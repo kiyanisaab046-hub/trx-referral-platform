@@ -53,7 +53,7 @@ export default function About() {
               </span>
             </h2>
 
-            <p className="text-lg text-[#2c2c2c] mb-12 leading-relaxed font-light max-w-xl">
+            <p className="text-lg md:text-xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-highlight leading-relaxed max-w-xl animate-pulse">
               A highly intelligent, completely transparent plan designed to generate revenue through 
               multiple dynamic sources. We empower visionary individuals to build an unbreakable 
               financial foundation.
@@ -79,7 +79,7 @@ export default function About() {
                     <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-white/5 to-white/10 border border-white/10 group-hover:bg-primary/20 group-hover:border-primary group-hover:shadow-[0_0_15px_rgba(255,154,134,0.4)] transition-all duration-300">
                       <card.icon className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" />
                     </div>
-                    <h3 className="font-display font-bold text-[#2c2c2c] group-hover:text-white transition-colors text-sm uppercase tracking-wider">
+                    <h3 className="font-display font-bold text-white group-hover:text-white transition-colors text-sm uppercase tracking-wider">
                       {card.title}
                     </h3>
                   </div>
