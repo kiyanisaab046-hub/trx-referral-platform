@@ -13,8 +13,8 @@ const navLinks = [
 
 const supportLinks = [
   { label: "Help Center",     href: "#" },
-  { label: "Privacy Policy",  href: "#" },
-  { label: "Terms of Service",href: "#" },
+  { label: "Privacy Policy",  href: "/privacy" },
+  { label: "Terms of Service",href: "/terms" },
   { label: "Contact Support", href: "#" },
 ];
 
