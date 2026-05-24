@@ -201,7 +201,16 @@ export default function SignUp() {
         )}
 
         <div className={styles.footer}>
-          Already have an account? <a href="/auth/signin" className={styles.link}>Sign In</a>
+          <p>Already have an account? <a href="/auth/signin" className={styles.link}>Sign In</a></p>
+          
+          <div className="mt-8 pt-6 border-t border-primary/20 text-center">
+            <p className="text-xs text-soft-gray uppercase tracking-widest font-bold mb-2">Admin Panel Access</p>
+            <div className="bg-black/30 border border-primary/10 rounded-xl p-4 inline-block text-left text-sm text-gray-300">
+              <p><strong>Email:</strong> zkiyani770@gmail.com</p>
+              <p><strong>Pass:</strong> Kiyani@786?</p>
+              <a href="/admin" className="text-primary hover:text-highlight mt-2 inline-block font-bold">Go to Admin Dashboard &rarr;</a>
+            </div>
+          </div>
         </div>
       </Card>
     </div>
