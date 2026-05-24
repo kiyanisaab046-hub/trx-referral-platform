@@ -17,7 +17,7 @@ const ranks = [
 
 export default function Ranks() {
   return (
-    <section className="relative py-32 bg-gradient-to-b from-[#050505] via-[#0A0A0A] to-[#050505] overflow-hidden" id="ranks">
+    <section className="relative py-20 bg-transparent" id="ranks">
       <div className="absolute top-[-150px] right-[-100px] w-[500px] h-[500px] bg-primary/[0.03] rounded-full blur-[160px] pointer-events-none" />
       <div className="container mx-auto px-6 relative z-10">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "150px 0px" }} transition={{ duration: 0.6 }} className="text-center mb-20">

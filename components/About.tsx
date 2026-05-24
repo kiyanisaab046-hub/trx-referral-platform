@@ -20,7 +20,7 @@ const cards = [
 export default function About() {
   return (
     <section 
-      className="relative py-32 overflow-hidden bg-gradient-to-b from-[#050505] via-[#0A0514] to-[#050505]" 
+      className="relative py-20 bg-transparent" 
       id="about"
     >
       {/* Deep Amethyst and Pastel Ambient Glows */}
@@ -53,7 +53,7 @@ export default function About() {
               </span>
             </h2>
 
-            <p className="text-lg text-gray-400 mb-12 leading-relaxed font-light max-w-xl">
+            <p className="text-lg text-[#2c2c2c] mb-12 leading-relaxed font-light max-w-xl">
               A highly intelligent, completely transparent plan designed to generate revenue through 
               multiple dynamic sources. We empower visionary individuals to build an unbreakable 
               financial foundation.
@@ -79,7 +79,7 @@ export default function About() {
                     <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-br from-white/5 to-white/10 border border-white/10 group-hover:bg-primary/20 group-hover:border-primary group-hover:shadow-[0_0_15px_rgba(255,154,134,0.4)] transition-all duration-300">
                       <card.icon className="w-5 h-5 text-gray-300 group-hover:text-white transition-colors" />
                     </div>
-                    <h3 className="font-display font-bold text-gray-200 group-hover:text-white transition-colors text-sm uppercase tracking-wider">
+                    <h3 className="font-display font-bold text-[#2c2c2c] group-hover:text-white transition-colors text-sm uppercase tracking-wider">
                       {card.title}
                     </h3>
                   </div>

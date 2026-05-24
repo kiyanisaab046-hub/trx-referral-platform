@@ -66,7 +66,7 @@ export default function NavBar() {
         {/* Left — Brand */}
         <Link href="/" className="flex items-center gap-3 flex-shrink-0 group">
           <img src="https://anyimage.io/storage/uploads/357abaf76df985e6480832402d9dafbc" alt="Logo" className="h-8 w-auto" style={{ filter: "brightness(0.8)" }} />
-          <span className="font-display font-black text-sm uppercase tracking-[0.25em] hidden sm:block transition-all duration-300" style={{ color: '#1A0500' }}>
+          <span className="font-display font-black text-sm uppercase tracking-[0.25em] hidden sm:block transition-all duration-300" style={{ color: 'var(--color-primary)' }}>
             Unique Income Plane
           </span>
         </Link>
@@ -78,10 +78,10 @@ export default function NavBar() {
               <Link
                 href={`#${txt.toLowerCase()}`}
                 className="text-xs font-bold uppercase tracking-[0.2em] transition-colors duration-300 relative group"
-                style={{ color: '#1A0500' }}
+                style={{ color: 'var(--color-primary)' }}
               >
                 {txt}
-                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#3D0015] transition-all duration-300 group-hover:w-full" />
+                <span style={{ backgroundColor: 'var(--color-secondary)' }} className="absolute -bottom-1 left-0 w-0 h-[1px] transition-all duration-300 group-hover:w-full" />
               </Link>
             </li>
           ))}

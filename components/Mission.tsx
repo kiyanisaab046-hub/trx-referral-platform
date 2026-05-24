@@ -12,7 +12,7 @@ const highlights = [
 export default function Mission() {
   return (
     <section 
-      className="relative py-32 bg-gradient-to-b from-[#050505] via-[#05050c] to-[#050505] overflow-hidden" 
+      className="relative py-20 bg-transparent" 
       id="mission"
     >
       {/* Dynamic Background Glows */}

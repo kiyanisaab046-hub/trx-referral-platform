@@ -13,7 +13,7 @@ const stats = [
 const UNIQUE_LETTERS    = "UNIQUE".split("");
 const INCOME_LETTERS    = "INCOME PLANE".split("");
 
-const letterVariants = {
+const letterVariants: any = {
   hidden: { opacity: 0, y: 60, rotateX: -90 },
   visible: (i: number) => ({
     opacity: 1,
@@ -41,7 +41,7 @@ const itemVariants = {
 export default function Hero() {
   return (
     <section
-      className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-transparent pt-32 pb-24"
+      className="relative min-h-screen flex flex-col items-center justify-center bg-transparent pt-32 pb-12"
       id="home"
     >
       {/* ── CSS keyframes injected inline ── */}
@@ -67,15 +67,15 @@ export default function Hero() {
           50%       { opacity: 1;   transform: scaleX(1.0); box-shadow: 0 0 20px rgba(61,0,21,0.5); }
         }
         .hero-unique {
-          color: #1A0500;
-          animation: glow-pulse 3s ease-in-out infinite;
-          display: inline-block;
-        }
+           color: var(--color-primary);
+           animation: glow-pulse 3s ease-in-out infinite;
+           display: inline-block;
+         }
         .hero-income {
-          color: #3D0015;
-          animation: glow-pulse-2 2.5s ease-in-out infinite 0.5s;
-          display: inline-block;
-        }
+           color: var(--color-secondary);
+           animation: glow-pulse-2 2.5s ease-in-out infinite 0.5s;
+           display: inline-block;
+         }
         .shimmer-text {
           background: linear-gradient(
             90deg,
@@ -137,9 +137,9 @@ export default function Hero() {
           <span
             className="badge-animated inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.3em] backdrop-blur-sm"
             style={{
-              color: "#1A0500",
-              background: "rgba(26,5,0,0.08)",
-              border: "1.5px solid rgba(26,5,0,0.3)",
+              color: "var(--color-primary)",
+               background: "rgba(255,255,255,0.1)",
+               border: "1.5px solid rgba(0,0,0,0.2)",
             }}
           >
             ✦ Welcome To ✦
@@ -155,7 +155,7 @@ export default function Hero() {
               <motion.span
                 key={i}
                 custom={i}
-                variants={letterVariants}
+                variants={letterVariants as any}
                 initial="hidden"
                 animate="visible"
                 className="hero-unique"
@@ -190,19 +190,6 @@ export default function Hero() {
           "Ek Plan – Multiple Income – Life Change"
         </motion.p>
 
-        {/* ── Animated divider line ── */}
-        <motion.div
-          variants={itemVariants}
-          className="relative mx-auto mb-8 h-[2px] w-56 overflow-hidden rounded-full"
-          style={{ background: "rgba(26,5,0,0.15)" }}
-        >
-          <motion.div
-            animate={{ x: ["-100%", "100%"] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            className="absolute inset-y-0 w-1/2"
-            style={{ background: "linear-gradient(90deg, transparent, #3D0015, transparent)" }}
-          />
-        </motion.div>
 
         {/* ── BUILD SMART tagline with pulsing border ── */}
         <motion.p
@@ -250,19 +237,19 @@ export default function Hero() {
                 },
               }}
               className="flex flex-col items-center justify-center py-8 px-6 rounded-2xl backdrop-blur-sm transition-all duration-300 cursor-default"
-              style={{ background: "rgba(26,5,0,0.78)", border: "1.5px solid rgba(61,0,21,0.45)" }}
+              style={{ background: "rgba(255,255,255,0.12)", border: "1.5px solid rgba(255,154,134,0.25)" }}
             >
               <motion.span
                 animate={{ scale: [1, 1.06, 1] }}
                 transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut", delay: idx * 0.3 }}
                 className="text-3xl md:text-4xl font-display font-black mb-2"
-                style={{ color: "#FF9A86", textShadow: "0 0 20px rgba(255,154,134,0.6)" }}
+                style={{ color: "#2c2c2c", textShadow: "0 0 20px rgba(255,154,134,0.6)" }}
               >
                 {s.value}
               </motion.span>
               <span
                 className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-center"
-                style={{ color: "#f5c6aa" }}
+                style={{ color: "#2c2c2c" }}
               >
                 {s.label}
               </span>
@@ -295,9 +282,6 @@ export default function Hero() {
 
       {/* Decorative Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,154,134,0.015)_1.5px,transparent_1.5px),linear-gradient(90deg,rgba(255,154,134,0.015)_1.5px,transparent_1.5px)] bg-[size:40px_40px] pointer-events-none" />
-
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#050505] to-transparent pointer-events-none z-10" />
     </section>
   );
 }

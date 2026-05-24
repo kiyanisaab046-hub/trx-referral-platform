@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
 import { Card } from '../../../components/Card';
@@ -8,7 +8,7 @@ import { Input } from '../../../components/Input';
 import { Button } from '../../../components/Button';
 import styles from './signin.module.css';
 
-export default function SignIn() {
+function SignInContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -51,6 +51,7 @@ export default function SignIn() {
   };
 
   return (
+
     <div className={styles.container}>
       <Card className={styles.card}>
         <div className={styles.header}>
@@ -119,5 +120,13 @@ export default function SignIn() {
         </div>
       </Card>
     </div>
+
+  );
+}
+export default function SignIn() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignInContent />
+    </Suspense>
   );
 }

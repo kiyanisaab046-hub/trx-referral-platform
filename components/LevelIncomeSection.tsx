@@ -55,7 +55,7 @@ export default function LevelIncomeSection() {
   };
 
   return (
-    <section className="relative py-32 bg-gradient-to-b from-[#050505] via-[#0A0A0A] to-[#050505] overflow-hidden" id="level-income">
+    <section className="relative py-20 bg-transparent" id="level-income">
       {/* Decorative Blur Backgrounds */}
       <div className="absolute top-[20%] left-[-10%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[180px] pointer-events-none" />
       <div className="absolute bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-secondary/5 rounded-full blur-[180px] pointer-events-none" />

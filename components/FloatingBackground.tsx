@@ -13,8 +13,9 @@ export default function FloatingBackground() {
   if (!mounted) return null;
 
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none z-[-1]"
-      style={{ background: 'linear-gradient(180deg, #e84393 0%, #f78fb3 30%, #f8a5c2 45%, #f5c6aa 60%, #ffeaa7 85%, #fdfd96 100%)' }}
+    <div
+      className="fixed inset-0 overflow-hidden pointer-events-none z-[-1]"
+      style={{ background: 'linear-gradient(135deg, #ffe4f0 0%, #ffd6e8 20%, #ffecd2 50%, #fff5c2 75%, #fffbd6 100%)' }}
     >
       {/* Subtle grid overlay */}
       <div 
@@ -41,9 +42,9 @@ export default function FloatingBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full opacity-40 mix-blend-screen blur-[120px] md:blur-[180px]"
+        className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full opacity-60 blur-[100px] md:blur-[150px]"
         style={{
-          background: "radial-gradient(circle, rgba(232, 67, 147, 0.7) 0%, rgba(232, 67, 147, 0) 70%)"
+          background: "radial-gradient(circle, rgba(232, 67, 147, 0.55) 0%, rgba(232, 67, 147, 0) 70%)"
         }}
       />
 
@@ -59,9 +60,9 @@ export default function FloatingBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute -bottom-[20%] -right-[10%] w-[70%] h-[70%] rounded-full opacity-30 mix-blend-screen blur-[120px] md:blur-[180px]"
+        className="absolute -bottom-[20%] -right-[10%] w-[80%] h-[80%] rounded-full opacity-55 blur-[100px] md:blur-[150px]"
         style={{
-          background: "radial-gradient(circle, rgba(255, 234, 167, 0.8) 0%, rgba(255, 234, 167, 0) 70%)"
+          background: "radial-gradient(circle, rgba(255, 210, 100, 0.7) 0%, rgba(255, 234, 167, 0) 70%)"
         }}
       />
 
@@ -76,7 +77,7 @@ export default function FloatingBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute top-[20%] left-[20%] w-[60%] h-[60%] rounded-full opacity-35 mix-blend-screen blur-[100px] md:blur-[150px]"
+        className="absolute top-[20%] left-[20%] w-[65%] h-[65%] rounded-full opacity-45 blur-[80px] md:blur-[130px]"
         style={{
           background: "radial-gradient(circle, rgba(247, 143, 179, 0.5) 0%, rgba(245, 198, 170, 0) 70%)"
         }}

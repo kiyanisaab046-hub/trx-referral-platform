@@ -24,7 +24,7 @@ const cardVariants = {
 export default function HowToJoin() {
   return (
     <section 
-      className="relative py-32 bg-gradient-to-b from-[#050505] via-[#05050c] to-[#050505] overflow-hidden" 
+      className="relative py-20 bg-transparent" 
       id="join"
     >
       {/* Ambient Background Glows */}
