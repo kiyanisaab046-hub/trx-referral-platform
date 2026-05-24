@@ -116,10 +116,7 @@ export default function IncomeTypes() {
               whileTap={{ scale: 0.98 }}
               className="group relative rounded-2xl overflow-hidden cursor-default"
             >
-              {/* Card border glow on hover */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/0 to-accent/0 group-hover:from-primary/20 group-hover:to-accent/10 transition-all duration-500 pointer-events-none" />
-
-              <div className="relative p-8 h-full rounded-2xl bg-[rgba(0,20,50,0.65)] border border-primary/20 group-hover:border-primary/50 group-hover:bg-[rgba(0,30,60,0.8)] backdrop-blur-md transition-all duration-500 overflow-hidden shadow-lg">
+              <div className="relative p-8 h-full rounded-2xl bg-[rgba(0,20,50,0.65)] border border-primary/20 group-hover:border-[#00d4ff] group-hover:bg-[rgba(0,30,60,0.85)] backdrop-blur-md transition-all duration-500 overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.5)] group-hover:shadow-[0_0_40px_rgba(0,212,255,0.45)]">
                 
                 {/* Morphing gradient blob inside card */}
                 <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/20 rounded-full blur-[40px] group-hover:bg-accent/20 group-hover:scale-150 transition-all duration-700 pointer-events-none" />
