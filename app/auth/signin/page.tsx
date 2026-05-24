@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
 import { Card } from '../../../components/Card';
 import { Input } from '../../../components/Input';
@@ -15,12 +15,21 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
+    // Hardcoded admin shortcut for demo credentials
+    if (email === 'fazal@gmail.com' && password === '786786') {
+      // Skip Supabase and go straight to admin dashboard
+      sessionStorage.setItem('isAdmin', 'true');
+      router.push('/admin');
+      setLoading(false);
+      return;
+    }
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -31,9 +40,9 @@ export default function SignIn() {
         throw error;
       }
       
-      // In a real app we'd set an HTTP-only cookie via API here.
-      // For now, redirecting to dashboard.
-      router.push('/dashboard');
+      // Determine redirect target after successful login
+      const redirect = searchParams.get('redirect') || '/dashboard';
+      router.push(redirect);
     } catch (err: any) {
       setError(err.message || 'Failed to sign in');
     } finally {
@@ -102,9 +111,9 @@ export default function SignIn() {
           <div className="mt-8 pt-6 border-t border-primary/20 text-center">
             <p className="text-xs text-soft-gray uppercase tracking-wider font-bold mb-2">Admin Panel Access</p>
             <div className="bg-black/30 border border-primary/10 rounded-xl p-4 inline-block text-left text-sm text-gray-300">
-              <p><strong>Email:</strong> zkiyani770@gmail.com</p>
-              <p><strong>Pass:</strong> Kiyani@786?</p>
-              <a href="/admin" className="text-primary hover:text-highlight mt-2 inline-block font-bold">Go to Admin Dashboard &rarr;</a>
+              <p><strong>Email:</strong> fazal@gmail.com</p>
+              <p><strong>Pass:</strong> 786786</p>
+              <button onClick={() => router.push('/admin')} className={styles.link} style={{ background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit' }}>Go to Admin Dashboard →</button>
             </div>
           </div>
         </div>

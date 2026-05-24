@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { supabase } from '../../lib/supabase';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -11,48 +10,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAdmin = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        router.push('/auth/signin');
-        return;
-      }
-
-      // Fetch user profile to check role
-      const { data: profile } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', session.user.id)
-        .single();
-
-      // For demonstration, we'll allow access if the email matches the admin email
-      // EVEN if the role isn't 'admin' yet, since they just created it.
-      // In production, this should ONLY check profile?.role === 'admin'.
-      if (profile?.role === 'admin' || session.user.email === 'zkiyani770@gmail.com') {
-        setLoading(false);
-      } else {
-        router.push('/dashboard');
-      }
-    };
-
-    checkAdmin();
+    // Allow access only if admin bypass flag is set (set by /admin/login)
+    const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+    if (!isAdmin) {
+      router.push('/admin-login');
+    } else {
+      setLoading(false);
+    }
   }, [router]);
 
   const navItems = [
-    { name: 'Dashboard', path: '/admin', icon: '📊' },
-    { name: 'User Management', path: '/admin/users', icon: '👥' },
-    { name: 'Design Settings', path: '/admin/settings', icon: '🎨' },
-    { name: 'Notifications', path: '/admin/notifications', icon: '🔔' },
-    { name: 'Support System', path: '/admin/support', icon: '💬' },
-    { name: 'Maintenance', path: '/admin/maintenance', icon: '⚙️' },
-    { name: 'Extra Features', path: '/admin/extra', icon: '✨' },
+    { name: 'Dashboard',       path: '/admin',               icon: '📊' },
+    { name: 'User Management', path: '/admin/users',         icon: '👥' },
+    { name: 'Design Settings', path: '/admin/settings',      icon: '🎨' },
+    { name: 'Notifications',   path: '/admin/notifications', icon: '🔔' },
+    { name: 'Support System',  path: '/admin/support',       icon: '💬' },
+    { name: 'Maintenance',     path: '/admin/maintenance',   icon: '⚙️' },
+    { name: 'Extra Features',  path: '/admin/extra',         icon: '✨' },
   ];
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      <div style={{ minHeight: '100vh', background: '#050505', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: '48px', height: '48px', border: '4px solid #E84393', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
@@ -68,14 +49,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {navItems.map((item) => {
-            const isActive = pathname === item.path || pathname.startsWith(`${item.path}/`);
+            const isActive = pathname === item.path || (item.path !== '/admin' && pathname.startsWith(`${item.path}/`));
             return (
-              <Link 
-                key={item.path} 
+              <Link
+                key={item.path}
                 href={item.path}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${
-                  isActive 
-                    ? 'bg-primary/20 text-white border border-primary/30 shadow-[0_0_15px_rgba(232,67,147,0.2)]' 
+                  isActive
+                    ? 'bg-primary/20 text-white border border-primary/30 shadow-[0_0_15px_rgba(232,67,147,0.2)]'
                     : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10'
                 }`}
               >
@@ -86,10 +67,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        <div className="p-4 border-t border-primary/10">
+        <div className="p-4 border-t border-primary/10 space-y-2">
           <Link href="/dashboard" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-sm font-bold transition-all border border-white/10 text-gray-300 hover:text-white">
-            &larr; Exit to App
+            ← Exit to App
           </Link>
+          <button
+            onClick={() => { sessionStorage.removeItem('isAdmin'); router.push('/'); }}
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-red-900/20 hover:bg-red-900/40 text-sm font-bold transition-all border border-red-800/30 text-red-400 hover:text-red-300"
+          >
+            🔓 Logout
+          </button>
         </div>
       </aside>
 
@@ -107,7 +94,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="h-8 w-1 bg-gradient-to-b from-primary to-secondary rounded-full"></div>
             <h1 className="text-xl font-bold text-white capitalize">{pathname.split('/').pop() || 'Dashboard'}</h1>
           </div>
-          
+
           <div className="flex items-center gap-6">
             <button className="relative w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
               🔔
@@ -116,7 +103,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className="flex items-center gap-3 pl-6 border-l border-white/10">
               <div className="text-right hidden md:block">
                 <p className="text-sm font-bold text-white">Super Admin</p>
-                <p className="text-xs text-primary">zkiyani770@gmail.com</p>
+                <p className="text-xs text-primary">fazal@gmail.com</p>
               </div>
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-black font-black shadow-[0_0_15px_rgba(232,67,147,0.3)]">
                 ZK

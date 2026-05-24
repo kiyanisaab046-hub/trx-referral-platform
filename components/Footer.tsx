@@ -4,11 +4,12 @@ import React from "react";
 import Link from "next/link";
 
 const navLinks = [
-  { label: "About",   href: "#about" },
-  { label: "Income",  href: "#income" },
-  { label: "Ranks",   href: "#ranks" },
+  { label: "About", href: "#about" },
+  { label: "Income", href: "#income" },
+  { label: "Ranks", href: "#ranks" },
   { label: "Rewards", href: "#rewards" },
-  { label: "Join",    href: "#join" },
+  { label: "Join", href: "#join" },
+  { label: "Admin", href: "/admin-login" },
 ];
 
 const supportLinks = [

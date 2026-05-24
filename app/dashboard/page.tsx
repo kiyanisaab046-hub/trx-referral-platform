@@ -53,6 +53,7 @@ export default function Dashboard() {
   const [weeklySalarySum, setWeeklySalarySum] = useState(0);
   const [dailyIncome, setDailyIncome] = useState(0);
   const [communityTree, setCommunityTree] = useState<Array<{id:string; name:string; level:number}>>([]);
+const directMembers = communityTree.filter(member => member.level === 1);
   const [mobileSliderIndex, setMobileSliderIndex] = useState(-1);
   const [debugInfo, setDebugInfo] = useState<{
     authUserId?: string;
@@ -421,23 +422,7 @@ export default function Dashboard() {
           </Card>
         </section>
 
-        {/* 4. Community Tree Section */}
-        <section className={styles.communityTreeSection}>
-          <Card className={styles.panelCard}>
-            <h4 className={styles.panelTitle}>Community Tree</h4>
-            {communityTree.length === 0 ? (
-              <p className={styles.emptyState}>No referrals yet.</p>
-            ) : (
-              <ul className={styles.treeList}>
-                {communityTree.map(member => (
-                  <li key={member.id} style={{ marginLeft: `${member.level * 1.5}rem` }}>
-                    {member.name} (Level {member.level})
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Card>
-        </section>
+
 
         <section className={styles.doubleGrid}>
           {/* Left: Rank Progress step list */}
@@ -577,9 +562,43 @@ export default function Dashboard() {
               </div>
             </div>
           </Card>
+          </section>
+          
+
+          {/* 5. My Team Section */}
+          <section className={styles.communityTreeSection}>
+            <Card className={styles.panelCard}>
+              <h4 className={styles.panelTitle}>My Team</h4>
+              {directMembers.length === 0 ? (
+                <p className={styles.emptyState}>No direct referrals yet.</p>
+              ) : (
+                <ul className={styles.treeList}>
+                  {directMembers.map(member => (
+                    <li key={member.id}>{member.name}</li>
+                  ))}
+                </ul>
+              )}
+            </Card>
+          
         </section>
 
-        {/* 6. LEDGER / TRANSACTION HISTORY */}
+            {/* 6. Community Size Section */}
+            <section className={styles.communitySizeSection}>
+              <Card className={styles.panelCard}>
+                <h4 className={styles.panelTitle}>Community Size</h4>
+                {communityTree.length === 0 ? (
+                  <p className={styles.emptyState}>No referrals yet.</p>
+                ) : (
+                  <ul className={styles.treeList}>
+                    {communityTree.map(member => (
+                      <li key={member.id}>{member.name} (Level {member.level})</li>
+                    ))}
+                  </ul>
+                )}
+              </Card>
+            </section>
+
+            {/* 6. LEDGER / TRANSACTION HISTORY */}
         <section className={styles.singleGrid}>
           <Card className={styles.panelCard}>
             <h4 className={styles.panelTitle}>Recent Activity</h4>
