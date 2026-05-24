@@ -34,7 +34,7 @@ const cardVariants = {
 export default function IncomeTypes() {
   return (
     <section 
-      className="relative py-20 bg-transparent" 
+      className="relative py-20 bg-black" 
       id="income"
     >
       {/* Ambient Glows */}
