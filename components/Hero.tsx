@@ -41,49 +41,49 @@ const itemVariants = {
 export default function Hero() {
   return (
     <section
-      className="relative min-h-screen flex flex-col items-center justify-center bg-transparent pt-32 pb-12"
+      className="relative min-h-screen flex flex-col items-center justify-center bg-[#050d1a] pt-32 pb-12"
       id="home"
     >
       {/* ── CSS keyframes injected inline ── */}
       <style>{`
         @keyframes glow-pulse {
-          0%, 100% { text-shadow: 0 0 20px rgba(61,0,21,0.35), 0 2px 8px rgba(0,0,0,0.2); }
-          50%       { text-shadow: 0 0 45px rgba(61,0,21,0.65), 0 4px 16px rgba(0,0,0,0.3), 0 0 80px rgba(232,67,147,0.25); }
+          0%, 100% { text-shadow: 0 0 20px rgba(0,212,255,0.3), 0 2px 8px rgba(0,0,0,0.4); }
+          50%       { text-shadow: 0 0 50px rgba(0,212,255,0.7), 0 4px 16px rgba(0,0,0,0.5), 0 0 90px rgba(0,212,255,0.35); }
         }
         @keyframes glow-pulse-2 {
-          0%, 100% { text-shadow: 0 0 25px rgba(61,0,21,0.5), 0 2px 10px rgba(0,0,0,0.25); }
-          50%       { text-shadow: 0 0 60px rgba(61,0,21,0.9), 0 4px 20px rgba(0,0,0,0.35), 0 0 100px rgba(232,67,147,0.4); }
+          0%, 100% { text-shadow: 0 0 25px rgba(0,212,255,0.4), 0 2px 10px rgba(0,0,0,0.4); }
+          50%       { text-shadow: 0 0 65px rgba(0,212,255,0.85), 0 4px 20px rgba(0,0,0,0.5), 0 0 110px rgba(0,229,255,0.45); }
         }
         @keyframes shimmer-sweep {
           0%   { background-position: -200% center; }
           100% { background-position:  200% center; }
         }
         @keyframes badge-glow {
-          0%, 100% { box-shadow: 0 0 10px rgba(26,5,0,0.15), inset 0 0 8px rgba(26,5,0,0.05); }
-          50%       { box-shadow: 0 0 25px rgba(26,5,0,0.35), inset 0 0 16px rgba(26,5,0,0.12); }
+          0%, 100% { box-shadow: 0 0 10px rgba(0,212,255,0.15), inset 0 0 8px rgba(0,212,255,0.05); }
+          50%       { box-shadow: 0 0 28px rgba(0,212,255,0.4), inset 0 0 16px rgba(0,212,255,0.12); }
         }
         @keyframes line-glow {
           0%, 100% { opacity: 0.4; transform: scaleX(0.6); }
-          50%       { opacity: 1;   transform: scaleX(1.0); box-shadow: 0 0 20px rgba(61,0,21,0.5); }
+          50%       { opacity: 1;   transform: scaleX(1.0); box-shadow: 0 0 20px rgba(0,212,255,0.6); }
         }
         .hero-unique {
-           color: var(--color-primary);
+           color: #ffffff;
            animation: glow-pulse 3s ease-in-out infinite;
            display: inline-block;
          }
         .hero-income {
-           color: var(--color-secondary);
+           color: #ffffff;
            animation: glow-pulse-2 2.5s ease-in-out infinite 0.5s;
            display: inline-block;
          }
         .shimmer-text {
           background: linear-gradient(
             90deg,
-            #1A0500 0%,
-            #1A0500 35%,
-            rgba(232,67,147,0.8) 50%,
-            #1A0500 65%,
-            #1A0500 100%
+            #b0e8ff 0%,
+            #b0e8ff 35%,
+            rgba(0,212,255,0.95) 50%,
+            #b0e8ff 65%,
+            #b0e8ff 100%
           );
           background-size: 200% auto;
           -webkit-background-clip: text;
@@ -102,9 +102,10 @@ export default function Hero() {
       {/* ── Core ambient glow ── */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <motion.div
-          animate={{ scale: [1, 1.12, 1], opacity: [0.06, 0.12, 0.06] }}
+          animate={{ scale: [1, 1.12, 1], opacity: [0.04, 0.09, 0.04] }}
           transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-          className="w-[900px] h-[900px] rounded-full bg-primary blur-[180px]"
+          className="w-[900px] h-[900px] rounded-full blur-[180px]"
+          style={{ background: "rgba(0,180,220,0.25)" }}
         />
       </div>
 
@@ -113,13 +114,13 @@ export default function Hero() {
         animate={{ x: [-20, 20, -20], y: [-10, 10, -10] }}
         transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
         className="pointer-events-none absolute top-1/3 left-1/4 w-72 h-72 rounded-full blur-[120px]"
-        style={{ background: "rgba(61,0,21,0.12)" }}
+        style={{ background: "rgba(0,160,210,0.1)" }}
       />
       <motion.div
         animate={{ x: [20, -20, 20], y: [10, -10, 10] }}
         transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 1 }}
         className="pointer-events-none absolute top-1/3 right-1/4 w-72 h-72 rounded-full blur-[120px]"
-        style={{ background: "rgba(232,67,147,0.1)" }}
+        style={{ background: "rgba(180,90,10,0.12)" }}
       />
 
       <motion.div
@@ -137,9 +138,9 @@ export default function Hero() {
           <span
             className="badge-animated inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.3em] backdrop-blur-sm"
             style={{
-              color: "var(--color-primary)",
-               background: "rgba(255,255,255,0.1)",
-               border: "1.5px solid rgba(0,0,0,0.2)",
+              color: "#00d4ff",
+               background: "rgba(0,212,255,0.08)",
+               border: "1.5px solid rgba(0,212,255,0.3)",
             }}
           >
             ✦ Welcome To ✦
@@ -196,14 +197,14 @@ export default function Hero() {
           variants={itemVariants}
           animate={{
             boxShadow: [
-              "0 0 0px rgba(61,0,21,0)",
-              "0 0 18px rgba(61,0,21,0.35)",
-              "0 0 0px rgba(61,0,21,0)",
+              "0 0 0px rgba(0,212,255,0)",
+              "0 0 18px rgba(0,212,255,0.25)",
+              "0 0 0px rgba(0,212,255,0)",
             ],
           }}
           transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
           className="text-xs md:text-sm font-black uppercase tracking-[0.35em] mb-16 px-6 py-2 rounded-full"
-          style={{ color: "#1A0500", background: "rgba(26,5,0,0.08)", border: "1.5px solid rgba(26,5,0,0.2)" }}
+          style={{ color: "#a0e8ff", background: "rgba(0,212,255,0.07)", border: "1.5px solid rgba(0,212,255,0.2)" }}
         >
           BUILD SMART &nbsp;•&nbsp; EARN SMART &nbsp;•&nbsp; GROW FAST
         </motion.p>
@@ -218,14 +219,14 @@ export default function Hero() {
               key={idx}
               whileHover={{
                 y: -8,
-                boxShadow: "0 0 30px rgba(232,67,147,0.35)",
-                borderColor: "rgba(232,67,147,0.7)",
+                boxShadow: "0 0 30px rgba(0,212,255,0.4)",
+                borderColor: "rgba(0,212,255,0.7)",
               }}
               animate={{
                 boxShadow: [
-                  "0 0 0px rgba(61,0,21,0.1)",
-                  "0 0 20px rgba(61,0,21,0.25)",
-                  "0 0 0px rgba(61,0,21,0.1)",
+                  "0 0 0px rgba(0,212,255,0.05)",
+                  "0 0 20px rgba(0,212,255,0.2)",
+                  "0 0 0px rgba(0,212,255,0.05)",
                 ],
               }}
               transition={{
@@ -237,19 +238,19 @@ export default function Hero() {
                 },
               }}
               className="flex flex-col items-center justify-center py-8 px-6 rounded-2xl backdrop-blur-sm transition-all duration-300 cursor-default"
-              style={{ background: "rgba(255,255,255,0.12)", border: "1.5px solid rgba(255,154,134,0.25)" }}
+              style={{ background: "rgba(0,20,50,0.65)", border: "1.5px solid rgba(0,212,255,0.2)" }}
             >
               <motion.span
                 animate={{ scale: [1, 1.06, 1] }}
                 transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut", delay: idx * 0.3 }}
                 className="text-3xl md:text-4xl font-display font-black mb-2"
-                style={{ color: "#2c2c2c", textShadow: "0 0 20px rgba(255,154,134,0.6)" }}
+                style={{ color: "#00d4ff", textShadow: "0 0 20px rgba(0,212,255,0.55)" }}
               >
                 {s.value}
               </motion.span>
               <span
                 className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-center"
-                style={{ color: "#2c2c2c" }}
+                style={{ color: "#00d4ff" }}
               >
                 {s.label}
               </span>
@@ -261,19 +262,20 @@ export default function Hero() {
         <motion.div variants={itemVariants}>
           <motion.a
             href="#join"
-            whileHover={{ scale: 1.05, boxShadow: "0 0 50px rgba(232,67,147,0.55)" }}
+            whileHover={{ scale: 1.05, boxShadow: "0 0 50px rgba(245,197,24,0.6)" }}
             whileTap={{ scale: 0.97 }}
             animate={{
               boxShadow: [
-                "0 0 20px rgba(232,67,147,0.2)",
-                "0 0 40px rgba(232,67,147,0.45)",
-                "0 0 20px rgba(232,67,147,0.2)",
+                "0 0 20px rgba(245,197,24,0.2)",
+                "0 0 40px rgba(245,197,24,0.5)",
+                "0 0 20px rgba(245,197,24,0.2)",
               ],
             }}
             transition={{
               boxShadow: { repeat: Infinity, duration: 2.5, ease: "easeInOut" },
             }}
-            className="inline-block px-12 py-5 rounded-full bg-gradient-to-r from-primary via-secondary to-highlight text-[#050505] text-base font-display font-black uppercase tracking-[0.25em] transition-all duration-300"
+            className="inline-block px-12 py-5 rounded-full text-[#111] text-base font-display font-black uppercase tracking-[0.25em] transition-all duration-300"
+            style={{ background: "linear-gradient(90deg, #f5c518, #ffe066, #e6a817)" }}
           >
             Join Now — Just $3
           </motion.a>
@@ -281,7 +283,7 @@ export default function Hero() {
       </motion.div>
 
       {/* Decorative Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,154,134,0.015)_1.5px,transparent_1.5px),linear-gradient(90deg,rgba(255,154,134,0.015)_1.5px,transparent_1.5px)] bg-[size:40px_40px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,212,255,0.03)_1.5px,transparent_1.5px),linear-gradient(90deg,rgba(0,212,255,0.03)_1.5px,transparent_1.5px)] bg-[size:40px_40px] pointer-events-none" />
     </section>
   );
 }

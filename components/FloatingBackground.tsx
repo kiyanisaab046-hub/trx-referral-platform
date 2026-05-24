@@ -15,22 +15,22 @@ export default function FloatingBackground() {
   return (
     <div
       className="fixed inset-0 overflow-hidden pointer-events-none z-[-1]"
-      style={{ background: 'linear-gradient(135deg, #ffe4f0 0%, #ffd6e8 20%, #ffecd2 50%, #fff5c2 75%, #fffbd6 100%)' }}
+      style={{ background: 'linear-gradient(135deg, #050d1a 0%, #071428 30%, #0a1e30 60%, #1a1200 85%, #251600 100%)' }}
     >
       {/* Subtle grid overlay */}
       <div 
         className="absolute inset-0 opacity-[0.06]" 
         style={{
           backgroundImage: `
-            linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px)
+            linear-gradient(rgba(0, 212, 255, 0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 212, 255, 0.06) 1px, transparent 1px)
           `,
           backgroundSize: "30px 30px",
           backgroundPosition: "center center"
         }}
       />
 
-      {/* Morphing Pink Glow (Top) */}
+      {/* Teal/Cyan Glow (Top-Left) */}
       <motion.div
         animate={{
           x: ["-5%", "5%", "-5%"],
@@ -42,13 +42,13 @@ export default function FloatingBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full opacity-60 blur-[100px] md:blur-[150px]"
+        className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full opacity-50 blur-[100px] md:blur-[150px]"
         style={{
-          background: "radial-gradient(circle, rgba(232, 67, 147, 0.55) 0%, rgba(232, 67, 147, 0) 70%)"
+          background: "radial-gradient(circle, rgba(0, 180, 220, 0.45) 0%, rgba(0, 100, 160, 0) 70%)"
         }}
       />
 
-      {/* Yellow/Gold Glow (Bottom) */}
+      {/* Amber/Orange Glow (Bottom-Right) — the warm side in the reference */}
       <motion.div
         animate={{
           x: ["5%", "-5%", "5%"],
@@ -60,13 +60,13 @@ export default function FloatingBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute -bottom-[20%] -right-[10%] w-[80%] h-[80%] rounded-full opacity-55 blur-[100px] md:blur-[150px]"
+        className="absolute -bottom-[10%] -right-[5%] w-[65%] h-[65%] rounded-full opacity-55 blur-[100px] md:blur-[150px]"
         style={{
-          background: "radial-gradient(circle, rgba(255, 210, 100, 0.7) 0%, rgba(255, 234, 167, 0) 70%)"
+          background: "radial-gradient(circle, rgba(180, 90, 10, 0.65) 0%, rgba(100, 40, 0, 0) 70%)"
         }}
       />
 
-      {/* Warm Peach Center Morph */}
+      {/* Deep navy center ambient */}
       <motion.div
         animate={{
           x: ["0%", "10%", "-10%", "0%"],
@@ -77,14 +77,14 @@ export default function FloatingBackground() {
           repeat: Infinity,
           ease: "easeInOut",
         }}
-        className="absolute top-[20%] left-[20%] w-[65%] h-[65%] rounded-full opacity-45 blur-[80px] md:blur-[130px]"
+        className="absolute top-[20%] left-[20%] w-[65%] h-[65%] rounded-full opacity-30 blur-[80px] md:blur-[130px]"
         style={{
-          background: "radial-gradient(circle, rgba(247, 143, 179, 0.5) 0%, rgba(245, 198, 170, 0) 70%)"
+          background: "radial-gradient(circle, rgba(0, 80, 120, 0.4) 0%, rgba(0, 40, 80, 0) 70%)"
         }}
       />
 
-      {/* Soft vignette */}
-      <div className="absolute inset-0 opacity-30" style={{ background: 'radial-gradient(circle at center, transparent 0%, rgba(200, 100, 100, 0.15) 100%)' }} />
+      {/* Soft dark vignette */}
+      <div className="absolute inset-0 opacity-40" style={{ background: 'radial-gradient(circle at center, transparent 0%, rgba(0, 5, 15, 0.5) 100%)' }} />
     </div>
   );
 }

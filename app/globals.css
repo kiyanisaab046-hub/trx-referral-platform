@@ -2,20 +2,20 @@
 
 @theme {
   /* === COLOR PALETTE === */
-  --color-deep-black: rgba(5, 10, 20, 0.4);
-  --color-dark-black:   #0A0A0A;
-  --color-rich-charcoal:#111111;
-  --color-card-bg:      rgba(255,255,255,0.06);
+  --color-deep-black: rgba(5, 10, 20, 0.6);
+  --color-dark-black:   #070e1a;
+  --color-rich-charcoal:#0d1b2a;
+  --color-card-bg:      rgba(0,20,40,0.55);
 
-  --color-primary: #e84393; /* deep pink */
-  --color-secondary: #f5c6aa; /* peach */
-  --color-accent: #ffeaa7; /* warm yellow */
-  --color-highlight: #f78fb3; /* rose */
+  --color-primary: #00d4ff; /* cyan */
+  --color-secondary: #00bcd4; /* teal */
+  --color-accent: #f5c518; /* gold/yellow */
+  --color-highlight: #00e5ff; /* bright cyan */
 
-  --color-gold: #ffaa00;
-  --color-gold-light: #ffcc00;
-  --color-bronze: #ff8800;
-  --color-yellow: #ffdd00;
+  --color-gold: #f5c518;
+  --color-gold-light: #ffe066;
+  --color-bronze: #e6a817;
+  --color-yellow: #ffe066;
 
   --color-dark-fg:      #E5E5E5;
   --color-soft-gray:    #BFBFBF;
@@ -35,12 +35,12 @@
    BASE
 ============================== */
 :root {
-  --color-primary: #e84393;
-  --color-secondary: #f5c6aa;
-  --color-highlight: #f78fb3;
-  --color-deep-black: rgba(5, 10, 20, 0.4);
-  --color-background-dark: transparent;
-  --color-background-gradient: linear-gradient(135deg, #0f0f0f, #1a1a1a);
+  --color-primary: #00d4ff;
+  --color-secondary: #00bcd4;
+  --color-highlight: #00e5ff;
+  --color-deep-black: rgba(5, 10, 20, 0.6);
+  --color-background-dark: #070e1a;
+  --color-background-gradient: linear-gradient(135deg, #070e1a, #0d1b2a);
   --animation-pulse: pulse 8s ease-in-out infinite;
 }
 
@@ -61,12 +61,12 @@ html {
 }
 
 body {
-  background-color: #ffe4f0;
-  color: #1a1a2e;
+  background-color: #070e1a;
+  color: #e0f7fa;
   font-family: var(--font-sans);
   overflow-x: hidden;
   max-width: 100vw;
-  color-scheme: light;
+  color-scheme: dark;
   cursor: auto;
 }
 
@@ -101,23 +101,23 @@ body {
 /* Glass card */
 .metricCard {
   padding: 1.5rem;
-  background: rgba(255,255,255,0.8); /* light translucent */
-  border: 1px solid #e0e0e0;
+  background: rgba(0, 30, 60, 0.6);
+  border: 1px solid rgba(0, 212, 255, 0.2);
   border-radius: 12px;
   transition: all 0.3s ease;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  box-shadow: 0 0 8px rgba(0,0,0,0.3);
 }
 
 .metricCard:hover {
-  border-color: rgba(0, 210, 255, 0.4);
+  border-color: rgba(0, 212, 255, 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 0 12px rgba(0, 210, 255, 0.3);
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.35);
 }
 .glass-card {
   backdrop-filter: blur(14px);
-  background: rgba(255,255,255,0.6);
-  box-shadow: var(--shadow-soft);
-  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(0, 30, 60, 0.55);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  border: 1px solid rgba(0, 212, 255, 0.15);
 }
 
 /* Gold gradient text (neon-style heading) */

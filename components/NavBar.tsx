@@ -58,7 +58,7 @@ export default function NavBar() {
   return (
     <>
       <motion.nav
-        className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 bg-transparent backdrop-blur-xl border-b border-primary/10"
+        className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 md:px-12 py-4 bg-[#0b1727]/95 backdrop-blur-xl border-b border-primary/20 shadow-[0_4px_30px_rgba(0,0,0,0.5)]"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -77,11 +77,10 @@ export default function NavBar() {
             <li key={txt}>
               <Link
                 href={`#${txt.toLowerCase()}`}
-                className="text-xs font-bold uppercase tracking-[0.2em] transition-colors duration-300 relative group"
-                style={{ color: 'var(--color-primary)' }}
+                className="text-xs font-bold uppercase tracking-[0.2em] transition-colors duration-300 relative group text-white hover:text-primary"
               >
                 {txt}
-                <span style={{ backgroundColor: 'var(--color-secondary)' }} className="absolute -bottom-1 left-0 w-0 h-[1px] transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-gradient-to-r from-accent to-bronze transition-all duration-300 group-hover:w-full" />
               </Link>
             </li>
           ))}
@@ -151,7 +150,7 @@ export default function NavBar() {
                 </Link>
                 <Link
                   href="/signup"
-                  className="px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] bg-gradient-to-r from-primary to-secondary text-[#050505] hover:shadow-[0_0_20px_rgba(var(--color-primary),0.4)] transition-all duration-300 rounded-full font-black"
+                  className="px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] bg-gradient-to-r from-gold to-gold-light text-[#050505] hover:shadow-[0_0_20px_rgba(245,197,24,0.4)] transition-all duration-300 rounded-full font-black"
                 >
                   Register
                 </Link>
@@ -244,7 +243,7 @@ export default function NavBar() {
                   <Link
                     onClick={() => setIsOpen(false)}
                     href="/signup"
-                    className="w-full py-4 text-center text-sm font-bold uppercase tracking-[0.2em] bg-gradient-to-r from-primary via-secondary to-highlight text-[#050505] rounded-full font-black shadow-[0_0_20px_rgba(255,154,134,0.2)]"
+                    className="w-full py-4 text-center text-sm font-bold uppercase tracking-[0.2em] bg-gradient-to-r from-gold to-gold-light text-[#050505] rounded-full font-black shadow-[0_0_20px_rgba(245,197,24,0.2)]"
                   >
                     Register
                   </Link>
