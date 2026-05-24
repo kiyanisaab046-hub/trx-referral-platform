@@ -1,4 +1,5 @@
 "use client";
+import SectionNavArrow from "./SectionNavArrow";
 import { motion } from "framer-motion";
 import { 
   ArrowTrendingUpIcon,
@@ -11,7 +12,7 @@ import {
 
 const incomeData = [
   { title: "Direct Income",       percent: "20%",            icon: ArrowTrendingUpIcon, desc: "Instantly earn 20% on every direct referral you bring into the ecosystem." },
-  { title: "Weekly Income",         percent: "Up to 10 Levels", icon: ChartBarIcon,       desc: "Passive earnings scaled across 10 levels of your growing team network." },
+
   { title: "Level Income Plane",    percent: "Up to 10 Levels", icon: ChartBarIcon,       desc: "Passive earnings scaled across 10 levels of your growing team network." },
   { title: "Team Building Bonus", percent: "Extra",           icon: CubeTransparentIcon, desc: "Special bonuses unlocked as you hit key milestones in team size." },
   { title: "Team Salary",         percent: "Weekly",          icon: BanknotesIcon,       desc: "A stable, weekly recurring salary based on your rank and performance." },
@@ -156,6 +157,7 @@ export default function IncomeTypes() {
           ))}
         </motion.div>
       </div>
+      <SectionNavArrow prev="#about" next="#features" />
     </section>
   );
 }

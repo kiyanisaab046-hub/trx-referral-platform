@@ -566,7 +566,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
           
 
           {/* 5. My Team Section */}
-          <section className={styles.communityTreeSection}>
+          {/* <section className={styles.communityTreeSection}>
             <Card className={styles.panelCard}>
               <h4 className={styles.panelTitle}>My Team</h4>
               {directMembers.length === 0 ? (

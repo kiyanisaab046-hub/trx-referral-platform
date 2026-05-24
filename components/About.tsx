@@ -8,6 +8,7 @@ import {
   ShieldCheckIcon, 
   PaperAirplaneIcon 
 } from "@heroicons/react/24/outline";
+import SectionNavArrow from "./SectionNavArrow";
 
 const cards = [
   { title: "Smart & Transparent", icon: SparklesIcon, delay: 0.1 },
@@ -140,6 +141,7 @@ export default function About() {
 
         </div>
       </div>
+      <SectionNavArrow prev="#" next="#income" />
     </section>
   );
 }
