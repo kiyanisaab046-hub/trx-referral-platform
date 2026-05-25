@@ -114,6 +114,8 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
           message: `${manualName} submitted a deposit via ${acct?.label}.`,
           amount: amount,
           manualName: manualName,
+          receiptUrl: receiptUrl,
+          timestamp: new Date().toLocaleString(),
         }),
       }).catch(err => console.error('Failed to send email notification:', err));
 
@@ -192,6 +194,8 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
             message: `${manualName} requested a withdrawal via ${acct?.label}.`,
             amount: amount,
             manualName: manualName,
+            receiptUrl: null,
+            timestamp: new Date().toLocaleString(),
           }),
         }).catch(err => console.error('Failed to send email notification:', err));
 
