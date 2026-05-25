@@ -1,10 +1,17 @@
-<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100">
   <defs>
-    <radialGradient id="grad" cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
-      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#ff9a86;stop-opacity:1" />
-    </radialGradient>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00d4ff"/>
+      <stop offset="50%" stop-color="#f5c518"/>
+      <stop offset="100%" stop-color="#ff6b6b"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
-  <circle cx="100" cy="100" r="90" fill="url(#grad)" />
-  <text x="50%" y="55%" text-anchor="middle" fill="#ffffff" font-family="'Inter', sans-serif" font-size="24" font-weight="800" letter-spacing="2">Uniqueincomeplane</text>
+  <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="48" fill="url(#grad)" filter="url(#glow)">Uniqueincomeplane</text>
 </svg>

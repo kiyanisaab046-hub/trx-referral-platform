@@ -127,9 +127,9 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
         const { data: wallet, error: walletErr } = await supabase.from('wallets').select('main_balance').eq('user_id', userId).single();
         if (walletErr || !wallet) throw new Error("Could not fetch wallet balance.");
         if (wallet.main_balance < amount) throw new Error("Insufficient balance.");
-        // Validate manual fields if not crypto
-        if (method !== 'crypto') {
-          if (!manualName || !manualNumber) throw new Error("Please provide receiver name and number.");
+        // Validate manual fields for manual withdrawals
+        if (isManual && (!manualName || !manualNumber)) {
+          throw new Error("Please provide receiver name and number.");
         }
 
         const { error: deductErr } = await supabase.from('wallets').update({ main_balance: wallet.main_balance - amount }).eq('user_id', userId);
