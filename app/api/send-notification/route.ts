@@ -39,14 +39,14 @@ export async function POST(request: Request) {
               <p style="margin: 5px 0; color: #333;"><strong>Type:</strong> ${type}</p>
               <p style="margin: 5px 0; color: #333;"><strong>Time:</strong> ${timeString}</p>
             </div>
-            ${receiptUrl ? \`
+            ${receiptUrl ? `
             <div style="margin-top: 20px; text-align: center;">
               <p style="color: #333; font-weight: bold; margin-bottom: 10px;">Attached Screenshot:</p>
-              <a href="\${receiptUrl}" target="_blank">
-                <img src="\${receiptUrl}" alt="Receipt Screenshot" style="max-width: 100%; max-height: 400px; border-radius: 8px; border: 1px solid #ddd;" />
+              <a href="${receiptUrl}" target="_blank">
+                <img src="${receiptUrl}" alt="Receipt Screenshot" style="max-width: 100%; max-height: 400px; border-radius: 8px; border: 1px solid #ddd;" />
               </a>
             </div>
-            \` : ''}
+            ` : ''}
             <div style="margin-top: 30px; text-align: center;">
               <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://trx-50h0k8edy-kiyani-s-projects.vercel.app'}/admin/payments" style="background-color: #00d2ff; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block;">View in Admin Panel</a>
             </div>
