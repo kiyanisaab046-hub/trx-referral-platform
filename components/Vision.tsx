@@ -125,19 +125,6 @@ export default function Vision() {
               <ChevronDoubleRightIcon className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
             </div>
 
-            {/* New premium card below the holographic card */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "150px 0px" }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-8 w-full max-w-md mx-auto p-6 rounded-xl bg-[rgba(0,20,50,0.75)] backdrop-blur-xl border border-primary/30 hover:border-primary/60 transition-all duration-300 shadow-lg"
-            >
-              <div className="flex items-center justify-center mb-4">
-              </div>
-              <h3 className="text-center text-xl font-bold text-white mb-2">Uniqueincomeplane</h3>
-              <p className="text-center text-sm text-gray-300">Premium financial ecosystem offering multiple income streams, transparent payouts, and elite community support.</p>
-            </motion.div>
           </motion.div>
         </div>
       </div>
