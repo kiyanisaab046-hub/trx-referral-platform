@@ -65,7 +65,7 @@ export default function NavBar() {
       >
         {/* Left — Brand */}
         <Link href="/" className="flex items-center gap-3 flex-shrink-0 group">
-          <img src="https://anyimage.io/storage/uploads/357abaf76df985e6480832402d9dafbc" alt="Logo" className="h-8 w-auto" style={{ filter: "brightness(0.8)" }} />
+          <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary), var(--color-highlight))', color: '#050505', fontWeight: 900, fontSize: '11px', letterSpacing: '0.05em', boxShadow: '0 0 18px rgba(0, 210, 255, 0.25)', border: '1px solid rgba(255,255,255,0.15)', flexShrink: 0 }}>UIP</span>
           <span className="font-display font-black text-sm uppercase tracking-[0.25em] hidden sm:block transition-all duration-300" style={{ color: 'var(--color-primary)' }}>
             Unique Income Plane
           </span>
