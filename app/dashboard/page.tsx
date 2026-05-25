@@ -307,7 +307,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
       <header className={styles.header}>
         <div className={styles.logoArea} onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
           <div className={styles.logoBadgeContainer}>
-            <img src="/logo.svg" alt="Uniqueincomeplane logo" className={styles.logoImg} />
             <span className={styles.logoBadge}>UIP</span>
           </div>
           <div className={styles.logoTitles}>

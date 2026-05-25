@@ -93,6 +93,30 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
         receipt_url: receiptUrl,
       });
       if (dbError) throw dbError;
+
+      // Send admin notification
+      await supabase.from('admin_notifications').insert({
+        type: 'deposit',
+        title: `New Deposit Request`,
+        message: `${manualName} submitted a $${amount.toFixed(2)} deposit via ${acct?.label}.`,
+        user_id: userId,
+        amount,
+        is_read: false,
+      });
+
+      // Send Email Notification
+      fetch('/api/send-notification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'deposit',
+          title: 'New Deposit Request',
+          message: `${manualName} submitted a deposit via ${acct?.label}.`,
+          amount: amount,
+          manualName: manualName,
+        }),
+      }).catch(err => console.error('Failed to send email notification:', err));
+
       const clr = acct?.color || '#2ecc71';
       setSuccessColor(clr);
       setSuccessMsg(`${acct?.label} deposit request submitted!\nWaiting for admin approval.`);
@@ -147,6 +171,30 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
           await supabase.from('wallets').update({ main_balance: wallet.main_balance }).eq('user_id', userId);
           throw withdrawErr;
         }
+
+        // Send admin notification
+        await supabase.from('admin_notifications').insert({
+          type: 'withdrawal',
+          title: `New Withdrawal Request`,
+          message: `${manualName} requested a $${amount.toFixed(2)} withdrawal via ${acct?.label}.`,
+          user_id: userId,
+          amount,
+          is_read: false,
+        });
+
+        // Send Email Notification
+        fetch('/api/send-notification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'withdrawal',
+            title: 'New Withdrawal Request',
+            message: `${manualName} requested a withdrawal via ${acct?.label}.`,
+            amount: amount,
+            manualName: manualName,
+          }),
+        }).catch(err => console.error('Failed to send email notification:', err));
+
         const clr = acct?.color || '#2ecc71';
         setSuccessColor(clr);
         setSuccessMsg('your withdrawal is gone for verification and you will receive it in 24 hours');
