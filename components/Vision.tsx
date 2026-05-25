@@ -113,7 +113,6 @@ export default function Vision() {
             {/* Glowing Logo */}
             <div className="relative mb-4">
               <div className="flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-primary/[0.08] to-transparent border border-primary/15 group-hover:border-primary/50 group-hover:shadow-[0_0_20px_rgba(255,154,134,0.15)] transition-all duration-500">
-                <img src="/logo.svg" alt="Uniqueincomeplane logo" className="w-12 h-12 object-contain" />
               </div>
             </div>
 
@@ -135,7 +134,6 @@ export default function Vision() {
               className="mt-8 w-full max-w-md mx-auto p-6 rounded-xl bg-[rgba(0,20,50,0.75)] backdrop-blur-xl border border-primary/30 hover:border-primary/60 transition-all duration-300 shadow-lg"
             >
               <div className="flex items-center justify-center mb-4">
-                <img src="/logo.svg" alt="Uniqueincomeplane logo" className="w-16 h-16 object-contain" />
               </div>
               <h3 className="text-center text-xl font-bold text-white mb-2">Uniqueincomeplane</h3>
               <p className="text-center text-sm text-gray-300">Premium financial ecosystem offering multiple income streams, transparent payouts, and elite community support.</p>
