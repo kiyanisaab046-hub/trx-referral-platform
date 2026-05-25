@@ -18,12 +18,24 @@ const PAYMENT_ACCOUNTS: Record<Exclude<PayMethod, 'crypto'>, { label: string; nu
   sadapay:   { label: 'SadaPay',   number: '03345872858', name: 'Muhammad Banaras', color: '#8e44ad' },
 };
 
+const WITHDRAW_METHODS = [
+  { id: 'easypaisa', label: 'Easypaisa', accountLabel: 'Easypaisa Number', placeholder: '03XX XXXXXXX' },
+  { id: 'jazzcash', label: 'JazzCash', accountLabel: 'JazzCash Number', placeholder: '03XX XXXXXXX' },
+  { id: 'sadapay', label: 'SadaPay', accountLabel: 'SadaPay Number', placeholder: '03XX XXXXXXX' },
+  { id: 'nayapay', label: 'NayaPay', accountLabel: 'NayaPay Number', placeholder: '03XX XXXXXXX' },
+  { id: 'meezan', label: 'Meezan Bank', accountLabel: 'IBAN / Account Number', placeholder: 'PKXX MEZN XXXXX...' },
+  { id: 'hbl', label: 'HBL', accountLabel: 'IBAN / Account Number', placeholder: 'PKXX HABB XXXXX...' },
+  { id: 'ubl', label: 'UBL', accountLabel: 'IBAN / Account Number', placeholder: 'PKXX UNIL XXXXX...' },
+  { id: 'mcb', label: 'MCB Bank', accountLabel: 'IBAN / Account Number', placeholder: 'PKXX MUCB XXXXX...' },
+  { id: 'allied', label: 'Allied Bank', accountLabel: 'IBAN / Account Number', placeholder: 'PKXX ABPA XXXXX...' },
+  { id: 'crypto', label: 'Crypto Wallet (USDT/BTC/TRX)', accountLabel: 'Wallet Address', placeholder: 'e.g. TRC20 Address' },
+];
+
 export default function WalletModal({ type, open, onClose }: WalletModalProps) {
   const [method, setMethod] = useState<PayMethod>('crypto');
+  const [withdrawMethod, setWithdrawMethod] = useState<string>('easypaisa');
   const [amount, setAmount] = useState(10);
-  const [address, setAddress] = useState("");
-  const [cryptoCurrency, setCryptoCurrency] = useState("btc");
-
+  
   // Manual fields
   const [manualName, setManualName] = useState("");
   const [manualNumber, setManualNumber] = useState("");
@@ -47,10 +59,19 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
     });
   }, [supabase]);
 
+  // Reset fields when type changes
+  useEffect(() => {
+    setAmount(10);
+    setManualName("");
+    setManualNumber("");
+    setError(null);
+  }, [type]);
+
   if (!open) return null;
 
   const isManual = method !== 'crypto';
   const acct = isManual ? PAYMENT_ACCOUNTS[method as Exclude<PayMethod, 'crypto'>] : null;
+  const activeWithdrawMethod = WITHDRAW_METHODS.find(m => m.id === withdrawMethod);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -131,81 +152,79 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
   };
 
   const handleWithdrawSubmit = async () => {
-    if (amount <= 0 || !address) {
-      setError("Please enter a valid amount and details.");
+    if (amount <= 0 || !manualNumber) {
+      setError("Please enter a valid amount and account details.");
       return;
     }
+    
+    // Require name for non-crypto
+    if (withdrawMethod !== 'crypto' && !manualName) {
+      setError("Please enter the Receiver Name.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
-      if (method === 'crypto') {
-        const res = await fetch("/api/withdraw", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount, address, currency: cryptoCurrency }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Crypto withdraw failed");
-        setSuccessColor('#00d2ff');
-        setSuccessMsg('Crypto withdrawal request sent!');
-        setTimeout(() => onClose(), 2500);
-      } else {
-        const { data: wallet, error: walletErr } = await supabase.from('wallets').select('main_balance').eq('user_id', userId).single();
-        if (walletErr || !wallet) throw new Error("Could not fetch wallet balance.");
-        if (wallet.main_balance < amount) throw new Error("Insufficient balance.");
-        // Validate manual fields for manual withdrawals
-        if (isManual && (!manualName || !manualNumber)) {
-          throw new Error("Please provide receiver name and number.");
-        }
+      const { data: wallet, error: walletErr } = await supabase.from('wallets').select('main_balance').eq('user_id', userId).single();
+      if (walletErr || !wallet) throw new Error("Could not fetch wallet balance.");
+      if (wallet.main_balance < amount) throw new Error("Insufficient balance.");
 
-        const { error: deductErr } = await supabase.from('wallets').update({ main_balance: wallet.main_balance - amount }).eq('user_id', userId);
-        if (deductErr) throw deductErr;
+      // Deduct balance immediately
+      const { error: deductErr } = await supabase.from('wallets').update({ main_balance: wallet.main_balance - amount }).eq('user_id', userId);
+      if (deductErr) throw deductErr;
 
-        const { error: withdrawErr } = await supabase.from('withdrawals').insert({
-          user_id: userId,
-          amount,
-          address: `${acct?.label}: ${address} (Name: ${manualName}, Number: ${manualNumber})`,
-          status: 'pending',
-          currency: 'USD'
-        });
+      const methodLabel = activeWithdrawMethod?.label || 'Withdrawal';
+      // Format address field depending on whether it's crypto or bank/wallet
+      const formattedAddress = withdrawMethod === 'crypto' 
+        ? `${methodLabel}: ${manualNumber}`
+        : `${methodLabel}: ${manualNumber} (Name: ${manualName})`;
 
-        if (withdrawErr) {
-          await supabase.from('wallets').update({ main_balance: wallet.main_balance }).eq('user_id', userId);
-          throw withdrawErr;
-        }
+      const { error: withdrawErr } = await supabase.from('withdrawals').insert({
+        user_id: userId,
+        amount,
+        address: formattedAddress,
+        status: 'pending',
+        currency: 'USD'
+      });
 
-        // Send admin notification
-        await supabase.from('admin_notifications').insert({
-          type: 'withdrawal',
-          title: `New Withdrawal Request`,
-          message: `${manualName} requested a $${amount.toFixed(2)} withdrawal via ${acct?.label}.`,
-          user_id: userId,
-          amount,
-          is_read: false,
-        });
-
-        // Send Email Notification
-        fetch('/api/send-notification', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'withdrawal',
-            title: 'New Withdrawal Request',
-            message: `${manualName} requested a withdrawal via ${acct?.label}.`,
-            amount: amount,
-            manualName: manualName,
-            receiptUrl: null,
-            timestamp: new Date().toLocaleString(),
-          }),
-        }).catch(err => console.error('Failed to send email notification:', err));
-
-        const clr = acct?.color || '#2ecc71';
-        setSuccessColor(clr);
-        setSuccessMsg('your withdrawal is gone for verification and you will receive it in 24 hours');
-        setTimeout(() => onClose(), 2500);
+      if (withdrawErr) {
+        // Rollback balance deduction
+        await supabase.from('wallets').update({ main_balance: wallet.main_balance }).eq('user_id', userId);
+        throw withdrawErr;
       }
+
+      // Send admin notification
+      await supabase.from('admin_notifications').insert({
+        type: 'withdrawal',
+        title: `New Withdrawal Request`,
+        message: `${manualName || 'User'} requested a $${amount.toFixed(2)} withdrawal via ${methodLabel}.`,
+        user_id: userId,
+        amount,
+        is_read: false,
+      });
+
+      // Send Email Notification
+      fetch('/api/send-notification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'withdrawal',
+          title: 'New Withdrawal Request',
+          message: `${manualName || 'User'} requested a withdrawal via ${methodLabel}.`,
+          amount: amount,
+          manualName: manualName || 'N/A',
+          receiptUrl: null,
+          timestamp: new Date().toLocaleString(),
+        }),
+      }).catch(err => console.error('Failed to send email notification:', err));
+
+      setSuccessColor('#00d2ff');
+      setSuccessMsg('Your withdrawal has been sent for verification.\nYou will receive it within 24 hours.');
+      setTimeout(() => onClose(), 2500);
+      
     } catch (err: any) {
-      setError(err.message || "Failed to submit withdraw request.");
+      setError(err.message || "Failed to submit withdraw request. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -247,18 +266,20 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
           {type === "deposit" ? "Deposit Funds" : "Request Withdraw"}
         </h2>
 
-        {/* Method Toggle - 4 options */}
-        <div className="grid grid-cols-4 bg-[#00000040] rounded-xl p-1 mb-6 border border-primary/20 gap-1">
-          {methodBtns.map(btn => (
-            <button
-              key={btn.key}
-              onClick={() => setMethod(btn.key)}
-              className={`py-2 text-[11px] font-bold rounded-lg transition-all ${method === btn.key ? btn.activeColor : 'text-soft-gray hover:text-white'}`}
-            >
-              {btn.label}
-            </button>
-          ))}
-        </div>
+        {/* --- DEPOSIT UI Toggle --- */}
+        {type === "deposit" && (
+          <div className="grid grid-cols-4 bg-[#00000040] rounded-xl p-1 mb-6 border border-primary/20 gap-1">
+            {methodBtns.map(btn => (
+              <button
+                key={btn.key}
+                onClick={() => setMethod(btn.key)}
+                className={`py-2 text-[11px] font-bold rounded-lg transition-all ${method === btn.key ? btn.activeColor : 'text-soft-gray hover:text-white'}`}
+              >
+                {btn.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {error && <p className="text-red-400 text-sm mb-4 bg-red-900/20 p-3 rounded-lg border border-red-900/50">{error}</p>}
 
@@ -325,58 +346,56 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
           </>
         )}
 
-        {/* --- WITHDRAW UI --- */}
+        {/* --- WITHDRAW UI (Unified Form) --- */}
         {type === "withdraw" && (
           <>
-            {method === 'crypto' && (
-              <div className="mb-4">
-                <label className="block text-xs font-bold mb-1.5 text-soft-gray uppercase tracking-widest">Currency</label>
-                <select value={cryptoCurrency} onChange={e => setCryptoCurrency(e.target.value)}
-                  className="w-full px-4 py-3 bg-[#00000040] border border-primary/20 rounded-xl focus:outline-none focus:border-primary/60 text-white transition-all">
-                  <option value="btc">BTC</option>
-                  <option value="eth">ETH</option>
-                  <option value="bnb">BNB</option>
-                </select>
+            <div className="mb-4">
+              <label className="block text-xs font-bold mb-1.5 text-soft-gray uppercase tracking-widest">Withdrawal Method</label>
+              <select 
+                value={withdrawMethod} 
+                onChange={e => setWithdrawMethod(e.target.value)}
+                className="w-full px-4 py-3 bg-[#00000040] border border-primary/20 rounded-xl focus:outline-none focus:border-primary/60 text-white transition-all appearance-none"
+              >
+                {WITHDRAW_METHODS.map(m => (
+                  <option key={m.id} value={m.id} className="bg-[#120d1d] text-white">
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-xs font-bold mb-1.5 text-soft-gray uppercase tracking-widest">
+                {activeWithdrawMethod?.accountLabel}
+              </label>
+              <input type="text"
+                placeholder={activeWithdrawMethod?.placeholder}
+                value={manualNumber} 
+                onChange={e => setManualNumber(e.target.value)}
+                className="w-full px-4 py-3 bg-[#00000040] border border-primary/20 rounded-xl focus:outline-none focus:border-primary/60 text-white transition-all" 
+              />
+            </div>
+
+            {withdrawMethod !== 'crypto' && (
+              <div className="mb-6">
+                <label className="block text-xs font-bold mb-1.5 text-soft-gray uppercase tracking-widest">Receiver Name</label>
+                <input type="text" placeholder="Account Title / Full Name" value={manualName}
+                  onChange={e => setManualName(e.target.value)}
+                  className="w-full px-4 py-3 bg-[#00000040] border border-primary/20 rounded-xl focus:outline-none focus:border-primary/60 text-white transition-all" 
+                />
               </div>
             )}
 
-            <div className="mb-6">
-              <label className="block text-xs font-bold mb-1.5 text-soft-gray uppercase tracking-widest">
-                {method === 'crypto' ? "Receiving Crypto Address" : `Your ${acct?.label} Account (Number)`}
-              </label>
-              <input type="text"
-                placeholder={method === 'crypto' ? "e.g. TRC20 Address" : "Account Number"}
-                value={address} onChange={e => setAddress(e.target.value)}
-                className="w-full px-4 py-3 bg-[#00000040] border border-primary/20 rounded-xl focus:outline-none focus:border-primary/60 text-white transition-all" />
+            <div className="mt-2 mb-6 p-4 rounded-xl bg-[#00d2ff15] border border-[#00d2ff30]">
+              <p className="text-xs text-[#00d2ff] font-semibold text-center m-0 leading-relaxed">
+                ⚠️ <strong className="text-white">Note:</strong> All withdrawal requests are processed manually and may take up to <strong className="text-white">24 hours</strong> to be completed.
+              </p>
             </div>
-
-            {/* Manual fields for name and receiver number */}
-            {isManual && (
-              <>
-                <div className="mb-4">
-                  <label className="block text-xs font-bold mb-1.5 text-soft-gray uppercase tracking-widest">Receiver Name</label>
-                  <input type="text" placeholder="Full Name" value={manualName}
-                    onChange={e => setManualName(e.target.value)}
-                    className="w-full px-4 py-3 bg-[#00000040] border border-primary/20 rounded-xl focus:outline-none focus:border-primary/60 text-white transition-all" />
-                </div>
-                <div className="mb-4">
-                  <label className="block text-xs font-bold mb-1.5 text-soft-gray uppercase tracking-widest">Receiver Account Number</label>
-                  <input type="text" placeholder="03XXXXXXXXX" value={manualNumber}
-                    onChange={e => setManualNumber(e.target.value)}
-                    className="w-full px-4 py-3 bg-[#00000040] border border-primary/20 rounded-xl focus:outline-none focus:border-primary/60 text-white transition-all" />
-                </div>
-              </>
-            )}
 
             <div className="flex gap-3 mt-2">
               <button onClick={onClose} disabled={loading} className="flex-1 py-3 rounded-xl bg-transparent border border-white/10 text-soft-gray font-bold hover:bg-white/5 transition">Cancel</button>
               <button onClick={handleWithdrawSubmit} disabled={loading}
-                className={isManual ? "flex-1 py-3 rounded-xl font-black transition-all disabled:opacity-50" : "flex-1 py-3 rounded-xl bg-gradient-to-r from-primary to-highlight text-black font-black hover:shadow-[0_4px_20px_rgba(232,67,147,0.4)] transition-all disabled:opacity-50"}
-                style={isManual && acct ? {
-                  background: acct.color,
-                  boxShadow: `0 4px 20px ${acct.color}66`,
-                  color: '#fff',
-                } : undefined}
+                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-primary to-highlight text-black font-black hover:shadow-[0_4px_20px_rgba(232,67,147,0.4)] transition-all disabled:opacity-50"
               >
                 {loading ? "Processing..." : "Confirm Withdraw"}
               </button>
