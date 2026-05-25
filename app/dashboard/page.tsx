@@ -7,7 +7,7 @@ import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import styles from './dashboard.module.css';
-import CryptoPayButton from '../../components/CryptoPayButton';
+// import CryptoPayButton from '../../components/CryptoPayButton';
 import WalletModal from '../../components/WalletModal';
 
 interface UserProfile {
@@ -318,11 +318,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
           <button className={styles.homeBtn} onClick={() => router.push('/')}>
             🏠 Back to Website
           </button>
-          {user?.role === 'admin' && (
-            <button className={styles.adminPortalBtn} onClick={() => router.push('/admin')}>
-              🛡️ Admin Panel
-            </button>
-          )}
+
           <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>
         </div>
       </header>
@@ -352,12 +348,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>Current Rank</span>
               <span className={styles.statusTextVal}>Rank {rankInfo.rank}: {rankInfo.name}</span>
-              {/* Crypto upgrade button */}
-              <CryptoPayButton
-                amount={10}
-                description={`Upgrade to Rank ${rankInfo.rank + 1}`}
-                onSuccess={() => { /* optional refresh */ }}
-              />
+              {/* Crypto upgrade button removed */}
             </div>
             <span className={styles.statusBadge}>$3 Investment</span>
           </Card>
@@ -367,6 +358,22 @@ const directMembers = communityTree.filter(member => member.level === 1);
               <span className={styles.statusTextVal}>Active</span>
             </div>
             <span className={styles.statusBadge}>From Scratch</span>
+          </Card>
+          {/* Team Size */}
+          <Card className={styles.statusCard}>
+            <div className={styles.statusMeta}>
+              <span className={styles.statusLabel}>Team Size</span>
+              <span className={styles.statusTextVal}>{directMembers.length} members</span>
+            </div>
+            <span className={styles.statusBadge}>Direct</span>
+          </Card>
+          {/* Community Size */}
+          <Card className={styles.statusCard}>
+            <div className={styles.statusMeta}>
+              <span className={styles.statusLabel}>Community Size</span>
+              <span className={styles.statusTextVal}>{communityTree.length} members</span>
+            </div>
+            <span className={styles.statusBadge}>All</span>
           </Card>
         </section>
 
@@ -409,7 +416,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
 
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
-              <span className={styles.metricTitle}>Weekly Salary</span>
+              <span className={styles.metricTitle}>Weekly Income</span>
             </div>
             <h3 className={styles.metricValue}>${weeklySalarySum.toFixed(2)}</h3>
           </Card>
@@ -554,9 +561,9 @@ const directMembers = communityTree.filter(member => member.level === 1);
                   type="text"
                   readOnly
                   value={user ? `${window.location.origin}/signup?ref=${user.referral_code}` : ''}
-                  className={styles.referralInput}
-                />
+                  className={styles.referralInput} />
                 <button className={styles.referralCopyBtn} onClick={copyReferralLink}>
+                  {copied ? 'Copied!' : 'Copy Link'}
                   {copied ? 'Copied!' : 'Copy Link'}
                 </button>
               </div>
@@ -583,20 +590,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
         </section>
 
             {/* 6. Community Size Section */}
-            <section className={styles.communitySizeSection}>
-              <Card className={styles.panelCard}>
-                <h4 className={styles.panelTitle}>Community Size</h4>
-                {communityTree.length === 0 ? (
-                  <p className={styles.emptyState}>No referrals yet.</p>
-                ) : (
-                  <ul className={styles.treeList}>
-                    {communityTree.map(member => (
-                      <li key={member.id}>{member.name} (Level {member.level})</li>
-                    ))}
-                  </ul>
-                )}
-              </Card>
-            </section>
+            {/* Community Size moved to top status cards */}
 
             {/* 6. LEDGER / TRANSACTION HISTORY */}
         <section className={styles.singleGrid}>

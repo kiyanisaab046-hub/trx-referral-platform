@@ -22,14 +22,7 @@ function SignInContent() {
     setLoading(true);
     setError(null);
 
-    // Hardcoded admin shortcut for demo credentials
-    if (email === 'fazal@gmail.com' && password === '786786') {
-      // Skip Supabase and go straight to admin dashboard
-      sessionStorage.setItem('isAdmin', 'true');
-      router.push('/admin');
-      setLoading(false);
-      return;
-    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -109,14 +102,7 @@ function SignInContent() {
         <div className={styles.footer}>
           <p>Don't have an account? <a href="/auth/signup" className={styles.link}>Register NOW</a></p>
 
-          <div className="mt-8 pt-6 border-t border-primary/20 text-center">
-            <p className="text-xs text-soft-gray uppercase tracking-wider font-bold mb-2">Admin Panel Access</p>
-            <div className="bg-black/30 border border-primary/10 rounded-xl p-4 inline-block text-left text-sm text-gray-300">
-              <p><strong>Email:</strong> fazal@gmail.com</p>
-              <p><strong>Pass:</strong> 786786</p>
-              <button onClick={() => router.push('/admin')} className={styles.link} style={{ background: 'transparent', border: 'none', padding: 0, cursor: 'pointer', color: 'inherit' }}>Go to Admin Dashboard →</button>
-            </div>
-          </div>
+
         </div>
       </Card>
     </div>

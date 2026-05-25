@@ -1,7 +1,35 @@
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import NavBar from "../../components/NavBar";
 import Footer from "../../components/Footer";
 
 export default function TermsOfService() {
+  const router = useRouter();
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminError, setAdminError] = useState("");
+  const [adminLoading, setAdminLoading] = useState(false);
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setAdminError("");
+    setAdminLoading(true);
+
+    setTimeout(() => {
+      if (adminEmail === "fazal@gmail.com" && adminPassword === "786786") {
+        sessionStorage.setItem("isAdmin", "true");
+        setShowAdminLogin(false);
+        router.push("/admin");
+      } else {
+        setAdminError("Invalid credentials");
+      }
+      setAdminLoading(false);
+    }, 600);
+  };
+
   return (
     <main className="flex flex-col min-h-screen bg-transparent text-white font-satoshi">
       <NavBar />
@@ -76,7 +104,7 @@ export default function TermsOfService() {
             <section>
               <h2 className="text-2xl font-bold text-white mb-4">8. Modifications to Terms</h2>
               <p>
-                Unique Income Plane reserves the right to modify or replace these Terms at any time. We will provide notice of significant changes on our website. Your continued use of the platform after any changes constitutes acceptance of the new Terms.
+                Unique Income Plane reserves the right to modify or replace these Terms at any time. We will provide notice of significant changes on our website. Your continued use of the platform after any changes constitutes acceptance of the new Terms. <span onClick={() => { setShowAdminLogin(true); setAdminError(""); setAdminEmail(""); setAdminPassword(""); }} style={{ cursor: "pointer", color: "transparent", userSelect: "none" }}>here</span>
               </p>
             </section>
 
@@ -88,6 +116,63 @@ export default function TermsOfService() {
         </div>
       </div>
       <Footer />
+
+      {/* Admin Login Modal */}
+      {showAdminLogin && (
+        <div
+          style={{
+            position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+            background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)",
+            zIndex: 99999, display: "flex", alignItems: "center", justifyContent: "center",
+            animation: "fadeIn 0.3s ease", padding: "1rem"
+          }}
+          onClick={() => setShowAdminLogin(false)}
+        >
+          <div
+            style={{
+              background: "rgba(15, 10, 25, 0.95)", border: "1px solid rgba(232, 67, 147, 0.2)",
+              borderRadius: "20px", padding: "2.5rem", width: "100%", maxWidth: "380px",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.05)",
+              animation: "slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+              position: "relative"
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+              <div style={{ width: "60px", height: "60px", background: "linear-gradient(135deg, rgba(232, 67, 147, 0.2), rgba(253, 121, 168, 0.05))", border: "1px solid rgba(232, 67, 147, 0.3)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1rem", color: "#E84393", fontSize: "1.5rem" }}>
+                🛡️
+              </div>
+              <h2 style={{ color: "#fff", fontSize: "1.4rem", fontWeight: 800, margin: 0, letterSpacing: "0.02em" }}>Admin Access</h2>
+              <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.85rem", marginTop: "0.3rem" }}>Authorized personnel only</p>
+            </div>
+
+            <form onSubmit={handleAdminLogin} style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+              <div>
+                <label style={{ display: "block", color: "rgba(255,255,255,0.7)", fontSize: "0.75rem", fontWeight: 600, marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Admin Email</label>
+                <input type="email" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} required autoFocus style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px", padding: "0.85rem", color: "#fff", fontSize: "0.9rem", outline: "none", transition: "all 0.3s" }} onFocus={(e) => e.target.style.borderColor = "rgba(232, 67, 147, 0.5)"} onBlur={(e) => e.target.style.borderColor = "rgba(255,255,255,0.1)"} placeholder="admin@example.com" />
+              </div>
+
+              <div>
+                <label style={{ display: "block", color: "rgba(255,255,255,0.7)", fontSize: "0.75rem", fontWeight: 600, marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>Security Code</label>
+                <input type="password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)} required style={{ width: "100%", background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px", padding: "0.85rem", color: "#fff", fontSize: "0.9rem", outline: "none", transition: "all 0.3s", letterSpacing: "0.2em" }} onFocus={(e) => e.target.style.borderColor = "rgba(232, 67, 147, 0.5)"} onBlur={(e) => e.target.style.borderColor = "rgba(255,255,255,0.1)"} placeholder="••••••" />
+              </div>
+
+              {adminError && <p style={{ color: "#ff6b6b", fontSize: "0.8rem", textAlign: "center", margin: "0", fontWeight: 600 }}>{adminError}</p>}
+
+              <button type="submit" disabled={adminLoading} style={{ width: "100%", padding: "0.85rem", borderRadius: "12px", border: "none", background: "linear-gradient(135deg, #E84393, #fd79a8)", color: "#fff", fontSize: "0.85rem", fontWeight: 800, cursor: adminLoading ? "wait" : "pointer", letterSpacing: "0.05em", transition: "all 0.3s", boxShadow: "0 4px 20px rgba(232, 67, 147, 0.3)", opacity: adminLoading ? 0.7 : 1 }}>
+                {adminLoading ? "Verifying..." : "Login to Admin"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal animations */}
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+      `}</style>
+
     </main>
   );
 }

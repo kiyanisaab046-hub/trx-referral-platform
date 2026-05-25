@@ -91,15 +91,14 @@ export default function HowToJoin() {
 
               <div className="relative p-8 h-full rounded-2xl bg-[#0c0a10]/80 border border-primary/[0.08] group-hover:border-primary/40 backdrop-blur-sm transition-all duration-500 flex flex-col justify-between">
                 
-{/* Step Number Watermark */}
-<motion.div
-  className="text-5xl font-display font-black text-primary/8 group-hover:text-primary/20 transition-colors duration-500 mb-6"
-  whileHover={{ scale: 1.07 }}
-  whileTap={{ scale: 0.95 }}
->
-
-
-                </div>
+                {/* Step Number Watermark */}
+                <motion.div
+                  className="text-5xl font-display font-black text-primary/8 group-hover:text-primary/20 transition-colors duration-500 mb-6"
+                  whileHover={{ scale: 1.07 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <strong className="font-bold">{step.number}</strong>
+                </motion.div>
 
                 <div>
                   <h3 className="text-lg font-display font-black text-accent group-hover:text-secondary uppercase tracking-wider mb-3 transition-colors duration-300">

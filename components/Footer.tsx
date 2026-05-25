@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const navLinks = [
   { label: "About", href: "#about" },
@@ -9,7 +10,6 @@ const navLinks = [
   { label: "Ranks", href: "#ranks" },
   { label: "Rewards", href: "#rewards" },
   { label: "Join", href: "#join" },
-  { label: "Admin", href: "/admin-login" },
 ];
 
 const supportLinks = [
@@ -20,6 +20,9 @@ const supportLinks = [
 ];
 
 export default function Footer() {
+  const router = useRouter();
+
+
   return (
     <footer className="bg-transparent border-t border-primary/15 pt-24 pb-12">
       <div className="container mx-auto px-6">
@@ -90,15 +93,17 @@ export default function Footer() {
           <p className="text-xs text-soft-gray font-light">
             © 2024 Unique Income Plane. All rights reserved.
           </p>
-          <div className="flex gap-3">
-            {["T", "F", "I"].map((s) => (
-              <div
-                key={s}
-                className="w-10 h-10 rounded-full border border-primary/20 hover:border-primary/60 flex items-center justify-center text-xs font-black text-primary/80 hover:bg-primary/[0.06] hover:text-secondary transition-all duration-300 cursor-pointer"
-              >
-                {s}
-              </div>
-            ))}
+          <div className="flex items-center gap-4">
+            <div className="flex gap-3">
+              {["T", "F", "I"].map((s) => (
+                <div
+                  key={s}
+                  className="w-10 h-10 rounded-full border border-primary/20 hover:border-primary/60 flex items-center justify-center text-xs font-black text-primary/80 hover:bg-primary/[0.06] hover:text-secondary transition-all duration-300 cursor-pointer"
+                >
+                  {s}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

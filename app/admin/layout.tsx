@@ -1,8 +1,32 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  LayoutDashboard,
+  Users,
+  Settings,
+  Bell,
+  MessageSquare,
+  Wrench,
+  Sparkles,
+  LogOut,
+  ArrowLeft,
+  CreditCard
+} from "lucide-react";
+import styles from "./admin.module.css";
+
+const navItems = [
+  { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
+  { name: "Users", path: "/admin/users", icon: Users },
+  { name: "Payments", path: "/admin/payments", icon: CreditCard },
+  { name: "Design Settings", path: "/admin/settings", icon: Settings },
+  { name: "Notifications", path: "/admin/notifications", icon: Bell },
+  { name: "Support System", path: "/admin/support", icon: MessageSquare },
+  { name: "Maintenance", path: "/admin/maintenance", icon: Wrench },
+  { name: "Extra Features", path: "/admin/extra", icon: Sparkles },
+];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -10,110 +34,90 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Allow access only if admin bypass flag is set (set by /admin/login)
-    const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+    // Check if admin is logged in
+    const isAdmin = sessionStorage.getItem("isAdmin") === "true";
     if (!isAdmin) {
-      router.push('/admin-login');
+      router.push("/");
     } else {
       setLoading(false);
     }
   }, [router]);
 
-  const navItems = [
-    { name: 'Dashboard',       path: '/admin',               icon: '📊' },
-    { name: 'User Management', path: '/admin/users',         icon: '👥' },
-    { name: 'Design Settings', path: '/admin/settings',      icon: '🎨' },
-    { name: 'Notifications',   path: '/admin/notifications', icon: '🔔' },
-    { name: 'Support System',  path: '/admin/support',       icon: '💬' },
-    { name: 'Maintenance',     path: '/admin/maintenance',   icon: '⚙️' },
-    { name: 'Extra Features',  path: '/admin/extra',         icon: '✨' },
-  ];
+  const handleLogout = () => {
+    sessionStorage.removeItem("isAdmin");
+    router.push("/");
+  };
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', background: '#050505', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ width: '48px', height: '48px', border: '4px solid #E84393', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      <div className={styles.adminLayout} style={{ alignItems: "center", justifyContent: "center" }}>
+        <div style={{ width: "40px", height: "40px", border: "3px solid #FF7E67", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0710] text-gray-200 font-satoshi flex">
+    <div className={styles.adminLayout}>
       {/* Sidebar */}
-      <aside className="w-64 bg-[#120D1D]/80 backdrop-blur-xl border-r border-primary/10 flex flex-col fixed h-full z-20 shadow-[5px_0_30px_rgba(232,67,147,0.05)]">
-        <div className="p-6 border-b border-primary/10">
-          <h2 className="text-2xl font-black font-display text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary uppercase tracking-widest">UIP Admin</h2>
-          <p className="text-xs text-soft-gray mt-1 font-bold tracking-widest">Premium Control</p>
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarHeader}>
+          <h2 className={styles.sidebarTitle}>UIP Admin</h2>
+          <p className={styles.sidebarSubtitle}>Premium Control</p>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <nav className={styles.navContainer}>
           {navItems.map((item) => {
-            const isActive = pathname === item.path || (item.path !== '/admin' && pathname.startsWith(`${item.path}/`));
+            const isActive = pathname === item.path || (item.path !== "/admin" && pathname.startsWith(`${item.path}/`));
+            const Icon = item.icon;
             return (
               <Link
                 key={item.path}
                 href={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all duration-300 ${
-                  isActive
-                    ? 'bg-primary/20 text-white border border-primary/30 shadow-[0_0_15px_rgba(232,67,147,0.2)]'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent hover:border-white/10'
-                }`}
+                className={`${styles.navItem} ${isActive ? styles.navItemActive : ""}`}
               >
-                <span className="text-lg">{item.icon}</span>
+                <Icon size={20} />
                 {item.name}
               </Link>
             );
           })}
         </nav>
 
-        <div className="p-4 border-t border-primary/10 space-y-2">
-          <Link href="/dashboard" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 text-sm font-bold transition-all border border-white/10 text-gray-300 hover:text-white">
-            ← Exit to App
+        <div className={styles.sidebarFooter}>
+          <Link href="/dashboard" className={styles.exitBtn}>
+            <ArrowLeft size={18} /> Exit to App
           </Link>
-          <button
-            onClick={() => { sessionStorage.removeItem('isAdmin'); router.push('/'); }}
-            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-red-900/20 hover:bg-red-900/40 text-sm font-bold transition-all border border-red-800/30 text-red-400 hover:text-red-300"
-          >
-            🔓 Logout
+          <button onClick={handleLogout} className={styles.logoutBtn}>
+            <LogOut size={18} /> Logout
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 flex flex-col min-h-screen relative">
-        {/* Soft Background Glows */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-          <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-primary/10 rounded-full blur-[150px]"></div>
-          <div className="absolute bottom-[-20%] left-[-10%] w-[60%] h-[60%] bg-secondary/5 rounded-full blur-[150px]"></div>
-        </div>
-
+      <main className={styles.mainContent}>
         {/* Topbar */}
-        <header className="h-20 bg-[#120D1D]/50 backdrop-blur-md border-b border-primary/10 flex items-center justify-between px-8 z-10 sticky top-0">
-          <div className="flex items-center gap-4">
-            <div className="h-8 w-1 bg-gradient-to-b from-primary to-secondary rounded-full"></div>
-            <h1 className="text-xl font-bold text-white capitalize">{pathname.split('/').pop() || 'Dashboard'}</h1>
-          </div>
+        <header className={styles.topbar}>
+          <h1 className={styles.pageTitle}>
+            {navItems.find((item) => item.path === pathname)?.name || "Dashboard"}
+          </h1>
 
-          <div className="flex items-center gap-6">
-            <button className="relative w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
-              🔔
-              <span className="absolute top-0 right-0 w-3 h-3 bg-primary rounded-full border-2 border-[#120D1D]"></span>
+          <div className={styles.topbarRight}>
+            <button className={styles.notificationBtn}>
+              <Bell size={20} />
+              <span className={styles.notificationBadge}></span>
             </button>
-            <div className="flex items-center gap-3 pl-6 border-l border-white/10">
-              <div className="text-right hidden md:block">
-                <p className="text-sm font-bold text-white">Super Admin</p>
-                <p className="text-xs text-primary">fazal@gmail.com</p>
+            <div className={styles.adminProfile}>
+              <div className={styles.adminInfo}>
+                <p className={styles.adminRole}>Super Admin</p>
+                <p className={styles.adminEmail}>fazal@gmail.com</p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-black font-black shadow-[0_0_15px_rgba(232,67,147,0.3)]">
-                ZK
-              </div>
+              <div className={styles.adminAvatar}>ZK</div>
             </div>
           </div>
         </header>
 
-        {/* Content Area */}
-        <div className="flex-1 p-8 z-10">
+        {/* Dynamic Page Content */}
+        <div className={styles.contentArea}>
           {children}
         </div>
       </main>

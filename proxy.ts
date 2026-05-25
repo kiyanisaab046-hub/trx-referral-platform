@@ -45,23 +45,8 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    if (pathname.startsWith('/admin')) {
-      if (!user) {
-        const url = request.nextUrl.clone();
-        url.pathname = '/signin';
-        return NextResponse.redirect(url);
-      }
-      const { data: profile } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-      if (!profile || profile.role !== 'admin') {
-        const url = request.nextUrl.clone();
-        url.pathname = '/dashboard';
-        return NextResponse.redirect(url);
-      }
-    }
+
+
 
     if ((pathname.startsWith('/signin') || pathname.startsWith('/signup')) && user) {
       const url = request.nextUrl.clone();
