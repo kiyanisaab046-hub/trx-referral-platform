@@ -67,6 +67,19 @@ useEffect(() => {
     const fullPhoneNumber = `${selectedCountry.code}${cleanNumber}`;
 
     // Step 1: Sign up in Supabase Auth
+    // Validate sponsor code before proceeding
+    if (sponsorCode) {
+      const { data: sponsorUser, error: sponsorCheckErr } = await supabase
+        .from('users')
+        .select('id')
+        .eq('referral_code', sponsorCode)
+        .single();
+      if (sponsorCheckErr || !sponsorUser?.id) {
+        setError('Invalid sponsor/referral code provided.');
+        setLoading(false);
+        return;
+      }
+    }
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
