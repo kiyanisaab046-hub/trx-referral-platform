@@ -33,6 +33,19 @@ interface Transaction {
   created_at: string;
 }
 
+const ranks = [
+  { id: 1, name: "Starter", price: 3 },
+  { id: 2, name: "Builder", price: 6 },
+  { id: 3, name: "Grower", price: 12 },
+  { id: 4, name: "Achiever", price: 24 },
+  { id: 5, name: "Advancer", price: 48 },
+  { id: 6, name: "Progressor", price: 96 },
+  { id: 7, name: "Leader", price: 192 },
+  { id: 8, name: "Pioneer", price: 384 },
+  { id: 9, name: "Champion", price: 768 },
+  { id: 10, name: "Legend", price: 1536 },
+];
+
 export default function Dashboard() {
   const supabase = createClient();
   const router = useRouter();
@@ -55,6 +68,8 @@ export default function Dashboard() {
   const [communityTree, setCommunityTree] = useState<Array<{id:string; name:string; level:number}>>([]);
 const directMembers = communityTree.filter(member => member.level === 1);
   const [mobileSliderIndex, setMobileSliderIndex] = useState(-1);
+  const [purchasedRank, setPurchasedRank] = useState(0);
+  const [achievingRank, setAchievingRank] = useState<number | null>(null);
   const [debugInfo, setDebugInfo] = useState<{
     authUserId?: string;
     authUserEmail?: string;
@@ -147,6 +162,20 @@ const directMembers = communityTree.filter(member => member.level === 1);
           }
         } catch (e: any) {
           logs.referralsStatus = `Exception: ${e.message || e}`;
+        }
+
+        // 4.5 Fetch purchased rank
+        try {
+          const { data: rankData } = await supabase
+            .from('user_ranks')
+            .select('rank')
+            .eq('user_id', authUser.id)
+            .single();
+          if (rankData) {
+            setPurchasedRank(rankData.rank);
+          }
+        } catch (e: any) {
+          // Ignore if not found
         }
 
         // 5. Fetch recent transactions
@@ -274,11 +303,55 @@ const directMembers = communityTree.filter(member => member.level === 1);
     return { rank: 1, name: 'Starter', nextRank: 'Builder', target: 3, progress: Math.floor((referrals / 3) * 100) };
   };
 
-  const rankInfo = getRankInfo(stats.referralsCount);
+  const baseRankInfo = getRankInfo(stats.referralsCount);
+  const effectiveRankNum = Math.max(baseRankInfo.rank, purchasedRank);
+  const rankInfo = effectiveRankNum > baseRankInfo.rank 
+    ? { 
+        rank: effectiveRankNum, 
+        name: ranks[effectiveRankNum - 1].name, 
+        nextRank: effectiveRankNum < 10 ? ranks[effectiveRankNum].name : 'Max Rank Reached', 
+        target: 0, 
+        progress: 100 
+      }
+    : baseRankInfo;
+  
   const totalEarnings = (wallet?.income_balance || 0) + (wallet?.withdrawal_balance || 0);
   const currentSliderIndex = mobileSliderIndex === -1 ? Math.max(0, rankInfo.rank - 1) : mobileSliderIndex;
 
 
+
+  const handleAchieveRank = async (rank: typeof ranks[0]) => {
+    if (!user || !wallet || wallet.main_balance < rank.price) return;
+    if (!confirm(`Are you ready to claim your position as ${rank.name}? This will deduct $${rank.price} from your wallet.`)) return;
+
+    setAchievingRank(rank.id);
+    try {
+      const { error: deductErr } = await supabase
+        .from('wallets')
+        .update({ main_balance: wallet.main_balance - rank.price })
+        .eq('user_id', user.id);
+      if (deductErr) throw deductErr;
+
+      const { error: rankErr } = await supabase
+        .from('user_ranks')
+        .upsert({ user_id: user.id, rank: rank.id });
+      if (rankErr) throw rankErr;
+
+      await supabase.from('transactions').insert({
+        user_id: user.id,
+        amount: -rank.price,
+        type: 'rank_purchase',
+        description: `Achieved ${rank.name} Rank`,
+      });
+
+      alert(`Congratulations! You are now a ${rank.name}!`);
+      window.location.reload();
+    } catch (err: any) {
+      alert("Error achieving rank: " + err.message);
+    } finally {
+      setAchievingRank(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -567,6 +640,60 @@ const directMembers = communityTree.filter(member => member.level === 1);
                   {copied ? 'Copied!' : 'Copy Link'}
                 </button>
               </div>
+            </div>
+          </Card>
+          
+          {/* New Dynamic Rank Achievement Section */}
+          <Card className={styles.panelCard}>
+            <h4 className={styles.panelTitle}>Achieve New Ranks</h4>
+            <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+              Use your wallet balance to skip requirements and claim higher ranks instantly.
+            </p>
+            <div style={{ display: 'grid', gap: '0.75rem' }}>
+              {ranks.map((rank) => {
+                const isAchieved = rank.id <= rankInfo.rank;
+                const canAfford = (wallet?.main_balance || 0) >= rank.price;
+                return (
+                  <div key={rank.id} style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between', 
+                    padding: '1rem', 
+                    background: 'rgba(255,255,255,0.02)', 
+                    border: '1px solid rgba(255,255,255,0.05)', 
+                    borderRadius: '12px' 
+                  }}>
+                    <div>
+                      <h4 style={{ fontWeight: 700, margin: 0, color: isAchieved ? '#888' : '#fff' }}>{rank.name}</h4>
+                      <span style={{ fontSize: '0.85rem', color: '#00d2ff', fontWeight: 600 }}>${rank.price}</span>
+                    </div>
+                    {isAchieved ? (
+                      <span style={{ color: '#2ecc71', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        ✓ Achieved
+                      </span>
+                    ) : (
+                      <button 
+                        disabled={!canAfford || achievingRank === rank.id}
+                        onClick={() => handleAchieveRank(rank)}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          borderRadius: '8px',
+                          background: canAfford ? 'linear-gradient(135deg, #00d2ff, #0080ff)' : 'rgba(255,255,255,0.05)',
+                          color: canAfford ? '#fff' : 'rgba(255,255,255,0.3)',
+                          border: 'none',
+                          cursor: canAfford ? 'pointer' : 'not-allowed',
+                          fontWeight: 700,
+                          fontSize: '0.85rem',
+                          boxShadow: canAfford ? '0 4px 15px rgba(0,210,255,0.3)' : 'none',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        {achievingRank === rank.id ? 'Processing...' : (canAfford ? 'Achieve Rank' : 'Insufficient Balance')}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </Card>
           </section>
