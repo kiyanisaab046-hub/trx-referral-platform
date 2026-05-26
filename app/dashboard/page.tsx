@@ -66,6 +66,7 @@ export default function Dashboard() {
   const [dailyIncome, setDailyIncome] = useState(0);
   const [communityTree, setCommunityTree] = useState<Array<{id:string; name:string; level:number}>>([]);
   const [myDirectMembers, setMyDirectMembers] = useState<Array<{id:string; name:string}>>([]);
+  const [myTeamMembers, setMyTeamMembers] = useState<Array<{id:string; name:string}>>([]);
   const [mobileSliderIndex, setMobileSliderIndex] = useState(-1);
   const [purchasedRank, setPurchasedRank] = useState(0);
   const [achievingRank, setAchievingRank] = useState<number | null>(null);
@@ -219,6 +220,32 @@ export default function Dashboard() {
                   .select('sponsor_id, referred_id, level')
                   .order('level', { ascending: true });
                 if (allRefs) {
+                  // Compute full team (direct + indirect) hierarchy
+                  const computeTeam = (rootId: string, allRefs: any[]) => {
+                    const visited = new Set<string>();
+                    const stack = [rootId];
+                    while (stack.length) {
+                      const cur = stack.pop()!;
+                      const children = allRefs.filter(r => r.sponsor_id === cur);
+                      children.forEach(r => {
+                        if (!visited.has(r.referred_id)) {
+                          visited.add(r.referred_id);
+                          stack.push(r.referred_id);
+                        }
+                      });
+                    }
+                    return Array.from(visited);
+                  };
+                  if (authUser) {
+                    const teamIds = computeTeam(authUser.id, allRefs);
+                    const { data: teamUsers } = await supabase
+                      .from('users')
+                      .select('id, full_name')
+                      .in('id', teamIds);
+                    const teamList = teamUsers?.map(u => ({ id: u.id, name: u.full_name })) || [];
+                    setMyTeamMembers(teamList);
+                  }
+
                   const referredIds = allRefs.map(r => r.referred_id);
                   const { data: usersData } = await supabase
                     .from('users')
@@ -480,21 +507,22 @@ export default function Dashboard() {
             </div>
             <span className={styles.statusBadge}>From Scratch</span>
           </Card>
-          <Card className={styles.statusCard} style={{ display: 'block' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+          <Card className={styles.statusCard}>
+            <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>My Team</span>
-              <span className={styles.statusBadge}>{myDirectMembers.length} Direct</span>
+              <span className={styles.statusBadge}>{myDirectMembers.length} Direct Members</span>
             </div>
             {myDirectMembers.length === 0 ? (
-              <p style={{ margin: 0, fontSize: '0.85rem', color: '#888' }}>No direct referrals yet.</p>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: '#888' }}>No direct members yet.</p>
             ) : (
-              <ul style={{ margin: 0, paddingLeft: '1.2rem', color: '#eee', fontSize: '0.85rem', maxHeight: '80px', overflowY: 'auto' }}>
+              <ul style={{ margin: 0, paddingLeft: '1.2rem', color: '#eee', fontSize: '0.85rem', maxHeight: '120px', overflowY: 'auto' }}>
                 {myDirectMembers.map(member => (
                   <li key={member.id} style={{ marginBottom: '0.25rem' }}>{member.name}</li>
                 ))}
               </ul>
             )}
           </Card>
+
           <Card className={styles.statusCard}>
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>Community Size</span>

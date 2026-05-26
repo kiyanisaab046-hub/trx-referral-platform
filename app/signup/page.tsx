@@ -84,25 +84,36 @@ export default function SignUp() {
 
       if (signUpError) throw signUpError;
 
-// Insert referral relationship (level 1 – direct) if sponsor code provided
-if (sponsorCode) {
-  const { data: sponsorUser, error: sponsorErr } = await supabase
-    .from('users')
-    .select('id')
-    .eq('referral_code', sponsorCode)
-    .single();
-  if (sponsorErr) throw sponsorErr;
-  if (sponsorUser?.id) {
-    const { error: refErr } = await supabase
-      .from('referrals')
-      .insert({
-        sponsor_id: sponsorUser.id,
-        referred_id: data.user?.id,
-        level: 1,
-      });
-    if (refErr) throw refErr;
-  }
-}
+      // Ensure we have a valid user ID before proceeding
+      const userId = data.user?.id;
+      if (!userId) {
+        console.error('User ID missing after signup');
+        throw new Error('Registration failed: missing user ID');
+      }
+
+      // Insert referral relationship (level 1 – direct) if sponsor code provided
+      if (sponsorCode) {
+        const { data: sponsorUser, error: sponsorErr } = await supabase
+          .from('users')
+          .select('id')
+          .eq('referral_code', sponsorCode)
+          .maybeSingle(); // returns null if not found
+        if (sponsorErr) {
+          console.error('Sponsor lookup error:', sponsorErr);
+        }
+        if (sponsorUser?.id) {
+          const { error: refErr } = await supabase
+            .from('referrals')
+            .insert({
+              sponsor_id: sponsorUser.id,
+              referred_id: userId,
+              level: 1,
+            });
+          if (refErr) {
+            console.error('Referral insertion error:', refErr);
+          }
+        }
+      }
       
       setSuccess(true);
       setTimeout(() => {
