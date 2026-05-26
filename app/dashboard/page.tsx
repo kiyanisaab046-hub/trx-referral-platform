@@ -672,7 +672,11 @@ const directMembers = communityTree.filter(member => member.level === 1);
                   className={styles.referralInput} />
                 <button className={styles.referralCopyBtn} onClick={copyReferralLink}>
                   {copied ? 'Copied!' : 'Copy Link'}
-            <Card className={styles.panelCard}>
+                </button>
+              </div>
+            </div>
+
+            <div className={styles.panelCard}>
               <h4 className={styles.panelTitle}>My Team</h4>
               {directMembers.length === 0 ? (
                 <p className={styles.emptyState}>No direct referrals yet.</p>
