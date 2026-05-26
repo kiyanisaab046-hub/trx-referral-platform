@@ -696,7 +696,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
                   ))}
                 </ul>
               )}
-            </div>
+            </Card>
           
         </section>
 
