@@ -83,6 +83,26 @@ export default function SignUp() {
       });
 
       if (signUpError) throw signUpError;
+
+// Insert referral relationship (level 1 – direct) if sponsor code provided
+if (sponsorCode) {
+  const { data: sponsorUser, error: sponsorErr } = await supabase
+    .from('users')
+    .select('id')
+    .eq('referral_code', sponsorCode)
+    .single();
+  if (sponsorErr) throw sponsorErr;
+  if (sponsorUser?.id) {
+    const { error: refErr } = await supabase
+      .from('referrals')
+      .insert({
+        sponsor_id: sponsorUser.id,
+        referred_id: data.user?.id,
+        level: 1,
+      });
+    if (refErr) throw refErr;
+  }
+}
       
       setSuccess(true);
       setTimeout(() => {
