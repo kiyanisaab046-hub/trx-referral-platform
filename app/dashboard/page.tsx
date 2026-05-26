@@ -584,8 +584,17 @@ const directMembers = communityTree.filter(member => member.level === 1);
           cursor: canAfford ? 'pointer' : 'not-allowed',
           fontWeight: 700,
           fontSize: '0.85rem',
-
-          </Card>
+          boxShadow: canAfford ? '0 4px 15px rgba(0,210,255,0.3)' : 'none',
+          transition: 'all 0.2s',
+        }}>
+          {achievingRank === rank.id ? 'Processing...' : (canAfford ? 'Achieve Rank' : 'Insufficient Balance')}
+        </button>
+      )}
+    </div>
+  );
+})}
+</div>
+</Card>
 
           {/* Right: Wallet Balance & Withdrawal Operations */}
           <Card className={styles.panelCard}>
@@ -676,7 +685,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
               </div>
             </div>
 
-            <div className={styles.panelCard}>
+            <Card className={styles.panelCard}>
               <h4 className={styles.panelTitle}>My Team</h4>
               {directMembers.length === 0 ? (
                 <p className={styles.emptyState}>No direct referrals yet.</p>
@@ -687,7 +696,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
                   ))}
                 </ul>
               )}
-            </Card>
+            </div>
           
         </section>
 
