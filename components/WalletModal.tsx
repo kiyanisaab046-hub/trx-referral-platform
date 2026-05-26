@@ -143,7 +143,10 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
       const clr = acct?.color || '#2ecc71';
       setSuccessColor(clr);
       setSuccessMsg(`${acct?.label} deposit request submitted!\nWaiting for admin approval.`);
-      setTimeout(() => onClose(), 2500);
+      setTimeout(() => {
+        onClose();
+        window.location.reload();
+      }, 2500);
     } catch (err: any) {
       setError(err.message || "Failed to submit deposit.");
     } finally {
@@ -221,7 +224,10 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
 
       setSuccessColor('#00d2ff');
       setSuccessMsg('Your withdrawal has been sent for verification.\nYou will receive it within 24 hours.');
-      setTimeout(() => onClose(), 2500);
+      setTimeout(() => {
+        onClose();
+        window.location.reload();
+      }, 2500);
       
     } catch (err: any) {
       setError(err.message || "Failed to submit withdraw request. Please try again.");
