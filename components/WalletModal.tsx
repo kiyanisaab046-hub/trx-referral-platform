@@ -14,7 +14,7 @@ type PayMethod = 'crypto' | 'easypaisa' | 'jazzcash' | 'sadapay';
 
 const PAYMENT_ACCOUNTS: Record<Exclude<PayMethod, 'crypto'>, { label: string; number: string; name: string; color: string }> = {
   easypaisa: { label: 'Easypaisa', number: '03499197936', name: 'Muhammad Banaras', color: '#2ecc71' },
-  jazzcash:  { label: 'JazzCash',  number: '03495870442', name: 'Muhammad Banaras', color: '#e74c3c' },
+  jazzcash:  { label: 'JazzCash',  number: '03165870442', name: 'Muhammad Banaras', color: '#e74c3c' },
   sadapay:   { label: 'SadaPay',   number: '03345872858', name: 'Muhammad Banaras', color: '#8e44ad' },
 };
 

@@ -416,12 +416,20 @@ export default function Dashboard() {
             </div>
             <span className={styles.statusBadge}>From Scratch</span>
           </Card>
-          <Card className={styles.statusCard}>
-            <div className={styles.statusMeta}>
-              <span className={styles.statusLabel}>Team Size</span>
-              <span className={styles.statusTextVal}>{directMembers.length} members</span>
+          <Card className={styles.statusCard} style={{ display: 'block' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <span className={styles.statusLabel}>My Team</span>
+              <span className={styles.statusBadge}>{directMembers.length} Direct</span>
             </div>
-            <span className={styles.statusBadge}>Direct</span>
+            {directMembers.length === 0 ? (
+              <p style={{ margin: 0, fontSize: '0.85rem', color: '#888' }}>No direct referrals yet.</p>
+            ) : (
+              <ul style={{ margin: 0, paddingLeft: '1.2rem', color: '#eee', fontSize: '0.85rem', maxHeight: '80px', overflowY: 'auto' }}>
+                {directMembers.map(member => (
+                  <li key={member.id} style={{ marginBottom: '0.25rem' }}>{member.name}</li>
+                ))}
+              </ul>
+            )}
           </Card>
           <Card className={styles.statusCard}>
             <div className={styles.statusMeta}>
@@ -668,18 +676,7 @@ export default function Dashboard() {
                 </button>
               </div>
             </div>
-            <Card className={styles.panelCard}>
-              <h4 className={styles.panelTitle}>My Team</h4>
-              {directMembers.length === 0 ? (
-                <p className={styles.emptyState}>No direct referrals yet.</p>
-              ) : (
-                <ul className={styles.treeList}>
-                  {directMembers.map(member => (
-                    <li key={member.id}>{member.name}</li>
-                  ))}
-                </ul>
-              )}
-            </Card>
+
 
 
           
