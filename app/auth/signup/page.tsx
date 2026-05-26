@@ -53,60 +53,61 @@ useEffect(() => {
 }, []);
 
     const handleRegister = async (e: React.FormEvent) => {
-      setError('You must accept the terms and conditions to proceed.');
-      setLoading(false);
-      return;
-    }
+  e.preventDefault();
+  // Validate terms acceptance
+  if (!agreeTerms) {
+    setError('You must accept the terms and conditions to proceed.');
+    setLoading(false);
+    return;
+  }
+  setLoading(true);
+  setError(null);
+  try {
+    const cleanNumber = phoneNumber.trim().replace(/^0+/, '');
+    const fullPhoneNumber = `${selectedCountry.code}${cleanNumber}`;
 
-    try {
-      const cleanNumber = phoneNumber.trim().replace(/^0+/, '');
-      const fullPhoneNumber = `${selectedCountry.code}${cleanNumber}`;
-
-      // Step 1: Sign up in Supabase Auth
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName,
-            phone_number: fullPhoneNumber,
-            sponsor_code: sponsorCode || null,
-          },
+    // Step 1: Sign up in Supabase Auth
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          phone_number: fullPhoneNumber,
+          sponsor_code: sponsorCode || null,
         },
-      });
+      },
+    });
+    if (signUpError) throw signUpError;
 
-      if (signUpError) throw signUpError;
-
-      // Insert referral relationship (level 1 – direct) if sponsor code provided
-      if (sponsorCode) {
-        // Find sponsor by their unique referral code
-        const { data: sponsorUser, error: sponsorErr } = await supabase
-          .from('users')
-          .select('id')
-          .eq('referral_code', sponsorCode)
-          .single();
-        if (sponsorErr) throw sponsorErr;
-        if (sponsorUser?.id) {
-          // Insert a referral relationship (level 1 – direct)
-          const { error: refErr } = await supabase
-            .from('referrals')
-            .insert({
-              sponsor_id: sponsorUser.id,
-              referred_id: data.user?.id,
-              level: 1,
-            });
-          if (refErr) throw refErr;
-        }
+    // Insert referral relationship (level 1 – direct) if sponsor code provided
+    if (sponsorCode) {
+      const { data: sponsorUser, error: sponsorErr } = await supabase
+        .from('users')
+        .select('id')
+        .eq('referral_code', sponsorCode)
+        .single();
+      if (sponsorErr) throw sponsorErr;
+      if (sponsorUser?.id) {
+        const { error: refErr } = await supabase
+          .from('referrals')
+          .insert({
+            sponsor_id: sponsorUser.id,
+            referred_id: data.user?.id,
+            level: 1,
+          });
+        if (refErr) throw refErr;
       }
-      setSuccess(true);
-      setTimeout(() => router.push('/auth/signin'), 3000);
-    } catch (err: any) {
-      setError(err.message || 'Registration failed');
-    } finally {
-      setLoading(false);
     }
-  };
-
+    setSuccess(true);
+    setTimeout(() => router.push('/auth/signin'), 3000);
+  } catch (err: any) {
+    setError(err.message || 'Registration failed');
+  } finally {
+    setLoading(false);
+  }
+};
+            
   return (
     <div className={styles.container}>
       <Card className={styles.card}>
