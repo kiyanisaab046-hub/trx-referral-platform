@@ -196,8 +196,6 @@ export default function Dashboard() {
                 const lvlToday = txData
                   .filter(t => t.type === 'commission_level' && t.created_at.startsWith(today))
                   .reduce((acc, curr) => acc + Number(curr.amount), 0);
-                setDirectSum(directToday);
-                setLevelSum(lvlToday);
                 setDailyIncome(directToday + lvlToday);
 
                 const { data: allRefs } = await supabase
@@ -226,9 +224,15 @@ export default function Dashboard() {
                   .from('transactions')
                   .select('amount, type, created_at')
                   .eq('user_id', authUser.id)
-                  .in('type', ['commission_team', 'commission_salary', 'commission_reward']);
+                  .in('type', ['commission_direct', 'commission_level', 'commission_team', 'commission_salary', 'commission_reward']);
                 
                 if (aggregateTxData) {
+                  const dSum = aggregateTxData
+                    .filter(t => t.type === 'commission_direct')
+                    .reduce((acc, curr) => acc + Number(curr.amount), 0);
+                  const lSum = aggregateTxData
+                    .filter(t => t.type === 'commission_level')
+                    .reduce((acc, curr) => acc + Number(curr.amount), 0);
                   const tSum = aggregateTxData
                     .filter(t => t.type === 'commission_team')
                     .reduce((acc, curr) => acc + Number(curr.amount), 0);
@@ -239,6 +243,8 @@ export default function Dashboard() {
                     .filter(t => t.type === 'commission_reward')
                     .reduce((acc, curr) => acc + Number(curr.amount), 0);
                   
+                  setDirectSum(dSum);
+                  setLevelSum(lSum);
                   setTeamSum(tSum);
                   setSalarySum(sSum);
                   setRewardSum(rSum);
@@ -332,6 +338,48 @@ export default function Dashboard() {
         type: 'rank_purchase',
         description: `Achieved ${rank.name} Rank`,
       });
+
+      // --- PHASE 1 DISTRIBUTION LOGIC: Direct Income (20%) ---
+      const directIncomeAmount = rank.price * 0.20;
+      
+      // 1. Find direct sponsor
+      const { data: referralData } = await supabase
+        .from('referrals')
+        .select('sponsor_id')
+        .eq('referred_id', user.id)
+        .eq('level', 1)
+        .single();
+        
+      if (referralData && referralData.sponsor_id) {
+        const sponsorId = referralData.sponsor_id;
+        
+        // 2. Fetch sponsor's wallet
+        const { data: sponsorWallet } = await supabase
+          .from('wallets')
+          .select('main_balance, income_balance')
+          .eq('user_id', sponsorId)
+          .single();
+          
+        if (sponsorWallet) {
+          // 3. Credit 20% to sponsor
+          await supabase
+            .from('wallets')
+            .update({
+              main_balance: sponsorWallet.main_balance + directIncomeAmount,
+              income_balance: sponsorWallet.income_balance + directIncomeAmount
+            })
+            .eq('user_id', sponsorId);
+            
+          // 4. Create transaction log for sponsor
+          await supabase.from('transactions').insert({
+            user_id: sponsorId,
+            amount: directIncomeAmount,
+            type: 'commission_direct',
+            description: `Received 20% Direct Income from referral ${user.full_name} for achieving ${rank.name}`
+          });
+        }
+      }
+      // --- END PHASE 1 DISTRIBUTION ---
 
       alert(`Congratulations! You are now a ${rank.name}!`);
       window.location.reload();
