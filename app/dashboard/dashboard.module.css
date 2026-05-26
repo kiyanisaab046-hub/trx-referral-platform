@@ -273,11 +273,13 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.5rem;
+  align-items: flex-start;
 }
 
 @media (min-width: 900px) {
   .doubleGrid {
     grid-template-columns: 1fr 1fr;
+    align-items: flex-start;
   }
 }
 

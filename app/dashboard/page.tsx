@@ -69,7 +69,10 @@ export default function Dashboard() {
   const [mobileSliderIndex, setMobileSliderIndex] = useState(-1);
   const [purchasedRank, setPurchasedRank] = useState(0);
   const [achievingRank, setAchievingRank] = useState<number | null>(null);
-  const [showRanks, setShowRanks] = useState(true); // Toggle rank list visibility
+  const [showLowerRanks, setShowLowerRanks] = useState(false); // Controls visibility of lower ranks
+
+  // Split ranks into always-visible top ranks (up to current) and lower ranks
+  const topRanks = ranks.filter(r => r.id <= purchasedRank);
 
   const [debugInfo, setDebugInfo] = useState<{
     authUserId?: string;
@@ -482,25 +485,37 @@ export default function Dashboard() {
 
         <section className={styles.doubleGrid}>
           <Card className={styles.panelCard}>
+            {/* Rank Progress Header with toggle for lower ranks */}
             <div className={styles.rankProgressHeaderRow}>
               <h4 className={styles.panelTitle}>Rank Progress</h4>
-              <div className={styles.mobileSliderControls}>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <div className={styles.mobileSliderControls}>
+                  <button 
+                    className={styles.mobileSliderBtn} 
+                    disabled={currentSliderIndex === 0}
+                    onClick={() => setMobileSliderIndex(Math.max(0, currentSliderIndex - 1))}
+                  >
+                    &lt;
+                  </button>
+                  <button 
+                    className={styles.mobileSliderBtn} 
+                    disabled={currentSliderIndex === rankList.length - 1}
+                    onClick={() => setMobileSliderIndex(Math.min(rankList.length - 1, currentSliderIndex + 1))}
+                  >
+                    &gt;
+                  </button>
+                </div>
                 <button 
                   className={styles.mobileSliderBtn} 
-                  disabled={currentSliderIndex === 0}
-                  onClick={() => setMobileSliderIndex(Math.max(0, currentSliderIndex - 1))}
+                  onClick={() => setShowLowerRanks(!showLowerRanks)} 
+                  aria-label="Toggle lower ranks"
                 >
-                  &lt;
-                </button>
-                <button 
-                  className={styles.mobileSliderBtn} 
-                  disabled={currentSliderIndex === rankList.length - 1}
-                  onClick={() => setMobileSliderIndex(Math.min(rankList.length - 1, currentSliderIndex + 1))}
-                >
-                  &gt;
+                  {showLowerRanks ? '🔼' : '🔽'}
                 </button>
               </div>
             </div>
+
+            {/* Always show progress stepper */}
             <div className={styles.rankStepper}>
               {rankList.map((r, i) => {
                 const isActive = rankInfo.rank >= r.num;
@@ -517,6 +532,7 @@ export default function Dashboard() {
                 );
               })}
             </div>
+
             <div className={styles.rankProgressFooter}>
               <div className={styles.progressPercentRow}>
                 <span>Progress: {rankInfo.progress}% to next rank</span>
@@ -525,43 +541,47 @@ export default function Dashboard() {
                 <div className={styles.barFill} style={{ width: `${rankInfo.progress}%` }} />
               </div>
             </div>
-  
-            <h4 className={styles.subSectionTitle}>Achieve New Ranks</h4>
-            <div style={{ display: 'grid', gap: '0.75rem' }}>
-              {ranks.map((rank) => (
-                <div key={rank.id} style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '0.75rem',
-                  background: (rank.id <= rankInfo.rank) ? 'rgba(46,204,113,0.1)' : 'rgba(255,255,255,0.02)',
-                  border: (rank.id <= rankInfo.rank) ? '1px solid rgba(46,204,113,0.3)' : '1px solid rgba(255,255,255,0.05)',
-                  borderRadius: '12px',
-                }}>
-                  <div>
-                    <h4 style={{ fontWeight: 700, margin: 0, color: (rank.id <= rankInfo.rank) ? '#2ecc71' : '#fff' }}>{rank.name}</h4>
-                    <span style={{ fontSize: '0.85rem', color: '#00d2ff', fontWeight: 600 }}>${rank.price}</span>
-                  </div>
-                  {(rank.id <= rankInfo.rank) ? (
-                    <span style={{ color: '#2ecc71', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>✓ Achieved</span>
-                  ) : (
-                    <button disabled={!((wallet?.main_balance || 0) >= rank.price) || achievingRank === rank.id} onClick={() => handleAchieveRank(rank)} style={{
-                      padding: '0.5rem 1rem',
-                      borderRadius: '8px',
-                      background: ((wallet?.main_balance || 0) >= rank.price) ? 'linear-gradient(135deg, #00d2ff, #0080ff)' : 'rgba(255,255,255,0.05)',
-                      color: ((wallet?.main_balance || 0) >= rank.price) ? '#fff' : 'rgba(255,255,255,0.3)',
-                      border: 'none',
-                      cursor: ((wallet?.main_balance || 0) >= rank.price) ? 'pointer' : 'not-allowed',
-                      fontWeight: 700,
-                      fontSize: '0.85rem',
-                      boxShadow: ((wallet?.main_balance || 0) >= rank.price) ? '0 4px 15px rgba(0,210,255,0.3)' : 'none',
-                      transition: 'all 0.2s',
-                    }}>{achievingRank === rank.id ? 'Processing...' : (((wallet?.main_balance || 0) >= rank.price) ? 'Achieve Rank' : 'Insufficient Balance')}</button>
-                  )}
+
+            {showLowerRanks && (
+              <div style={{ marginTop: '2rem' }}>
+                <h4 className={styles.subSectionTitle}>Achieve New Ranks</h4>
+                <div style={{ display: 'grid', gap: '0.75rem' }}>
+                  {ranks.map((rank) => (
+                    <div key={rank.id} style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '0.75rem',
+                      background: (rank.id <= rankInfo.rank) ? 'rgba(46,204,113,0.1)' : 'rgba(255,255,255,0.02)',
+                      border: (rank.id <= rankInfo.rank) ? '1px solid rgba(46,204,113,0.3)' : '1px solid rgba(255,255,255,0.05)',
+                      borderRadius: '12px',
+                    }}>
+                      <div>
+                        <h4 style={{ fontWeight: 700, margin: 0, color: (rank.id <= rankInfo.rank) ? '#2ecc71' : '#fff' }}>{rank.name}</h4>
+                        <span style={{ fontSize: '0.85rem', color: '#00d2ff', fontWeight: 600 }}>${rank.price}</span>
+                      </div>
+                      {(rank.id <= rankInfo.rank) ? (
+                        <span style={{ color: '#2ecc71', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>✓ Achieved</span>
+                      ) : (
+                        <button disabled={!((wallet?.main_balance || 0) >= rank.price) || achievingRank === rank.id} onClick={() => handleAchieveRank(rank)} style={{
+                          padding: '0.5rem 1rem',
+                          borderRadius: '8px',
+                          background: ((wallet?.main_balance || 0) >= rank.price) ? 'linear-gradient(135deg, #00d2ff, #0080ff)' : 'rgba(255,255,255,0.05)',
+                          color: ((wallet?.main_balance || 0) >= rank.price) ? '#fff' : 'rgba(255,255,255,0.3)',
+                          border: 'none',
+                          cursor: ((wallet?.main_balance || 0) >= rank.price) ? 'pointer' : 'not-allowed',
+                          fontWeight: 700,
+                          fontSize: '0.85rem',
+                          boxShadow: ((wallet?.main_balance || 0) >= rank.price) ? '0 4px 15px rgba(0,210,255,0.3)' : 'none',
+                          transition: 'all 0.2s',
+                        }}>{achievingRank === rank.id ? 'Processing...' : (((wallet?.main_balance || 0) >= rank.price) ? 'Achieve Rank' : 'Insufficient Balance')}</button>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-</Card>
+              </div>
+            )}
+          </Card>
 
           <Card className={styles.panelCard}>
             <h4 className={styles.panelTitle}>Wallet Balance</h4>
