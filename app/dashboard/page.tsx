@@ -662,6 +662,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
                 </button>
               </div>
             </div>
+            </Card>
             {/* Wallet Modals */}
             {showDepositModal && (
               <WalletModal type="deposit" open={showDepositModal} onClose={() => setShowDepositModal(false)} />
@@ -684,7 +685,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
                 </button>
               </div>
             </div>
-
+    </Card>
             <Card className={styles.panelCard}>
               <h4 className={styles.panelTitle}>My Team</h4>
               {directMembers.length === 0 ? (
@@ -698,6 +699,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
               )}
             </Card>
           
+
         </section>
 
             {/* 6. Community Size Section */}
