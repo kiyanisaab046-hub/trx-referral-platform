@@ -1,5 +1,4 @@
-'use client';
-
+"use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../lib/supabase/client';
@@ -7,7 +6,6 @@ import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import styles from './dashboard.module.css';
-// import CryptoPayButton from '../../components/CryptoPayButton';
 import WalletModal from '../../components/WalletModal';
 
 interface UserProfile {
@@ -58,6 +56,7 @@ export default function Dashboard() {
   const [copied, setCopied] = useState(false);
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+
   const [directSum, setDirectSum] = useState(0);
   const [levelSum, setLevelSum] = useState(0);
   const [teamSum, setTeamSum] = useState(0);
@@ -66,10 +65,12 @@ export default function Dashboard() {
   const [weeklySalarySum, setWeeklySalarySum] = useState(0);
   const [dailyIncome, setDailyIncome] = useState(0);
   const [communityTree, setCommunityTree] = useState<Array<{id:string; name:string; level:number}>>([]);
-const directMembers = communityTree.filter(member => member.level === 1);
+  const directMembers = communityTree.filter(member => member.level === 1);
   const [mobileSliderIndex, setMobileSliderIndex] = useState(-1);
   const [purchasedRank, setPurchasedRank] = useState(0);
   const [achievingRank, setAchievingRank] = useState<number | null>(null);
+  const [showRanks, setShowRanks] = useState(true); // Toggle rank list visibility
+
   const [debugInfo, setDebugInfo] = useState<{
     authUserId?: string;
     authUserEmail?: string;
@@ -87,7 +88,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
         urlOrigin: typeof window !== 'undefined' ? window.location.origin : 'undefined',
       };
       try {
-        // 1. Get logged-in user session
         const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
         if (authError || !authUser) {
           logs.errorMsg = `Auth error: ${authError?.message || 'No active session'}`;
@@ -99,7 +99,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
         logs.authUserId = authUser.id;
         logs.authUserEmail = authUser.email;
 
-        // 2. Fetch public user profile
         try {
           const { data: profile, error: profileError } = await supabase
             .from('users')
@@ -119,7 +118,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
           logs.profileStatus = `Exception: ${e.message || e}`;
         }
 
-        // 3. Fetch user wallet balances
         try {
           const { data: walletData, error: walletError } = await supabase
             .from('wallets')
@@ -139,7 +137,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
           logs.walletStatus = `Exception: ${e.message || e}`;
         }
 
-        // 4. Fetch referrals count
         try {
           const { count: referralsCount, error: refError } = await supabase
             .from('referrals')
@@ -164,7 +161,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
           logs.referralsStatus = `Exception: ${e.message || e}`;
         }
 
-        // 4.5 Fetch purchased rank
         try {
           const { data: rankData } = await supabase
             .from('user_ranks')
@@ -175,10 +171,8 @@ const directMembers = communityTree.filter(member => member.level === 1);
             setPurchasedRank(rankData.rank);
           }
         } catch (e: any) {
-          // Ignore if not found
         }
 
-        // 5. Fetch recent transactions
         try {
           const { data: txData, error: txError } = await supabase
             .from('transactions')
@@ -201,16 +195,13 @@ const directMembers = communityTree.filter(member => member.level === 1);
                   .reduce((acc, curr) => acc + Number(curr.amount), 0);
                 setDirectSum(directToday);
                 setLevelSum(lvlToday);
-                // Compute daily income (sum of direct and level commissions for today)
                 setDailyIncome(directToday + lvlToday);
 
-                // 7. Fetch community tree referrals (all levels)
                 const { data: allRefs } = await supabase
                   .from('referrals')
                   .select('sponsor_id, referred_id, level')
                   .order('level', { ascending: true });
                 if (allRefs) {
-                  // Gather all referred IDs to fetch user names
                   const referredIds = allRefs.map(r => r.referred_id);
                   const { data: usersData } = await supabase
                     .from('users')
@@ -228,7 +219,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
             }
             logs.transactionsStatus = 'Success';
           }
-                // 6. Fetch total team, salary, reward and weekly salary income
                 const { data: aggregateTxData } = await supabase
                   .from('transactions')
                   .select('amount, type, created_at')
@@ -250,7 +240,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
                   setSalarySum(sSum);
                   setRewardSum(rSum);
                   
-                  // Weekly salary (last 7 days)
                   const now = new Date();
                   const weekAgo = new Date();
                   weekAgo.setDate(now.getDate() - 6);
@@ -289,7 +278,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Dynamic rank calculation
   const getRankInfo = (referrals: number) => {
     if (referrals >= 120) return { rank: 10, name: 'Legend', nextRank: 'Max Rank Reached', target: 120, progress: 100 };
     if (referrals >= 80) return { rank: 9, name: 'Champion', nextRank: 'Legend', target: 120, progress: Math.floor(((referrals - 80) / 40) * 100) };
@@ -317,8 +305,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
   
   const totalEarnings = (wallet?.income_balance || 0) + (wallet?.withdrawal_balance || 0);
   const currentSliderIndex = mobileSliderIndex === -1 ? Math.max(0, rankInfo.rank - 1) : mobileSliderIndex;
-
-
 
   const handleAchieveRank = async (rank: typeof ranks[0]) => {
     if (!user || !wallet || wallet.main_balance < rank.price) return;
@@ -376,7 +362,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
 
   return (
     <div className={styles.dashboardContainer}>
-      {/* 1. TOP HEADER NAVIGATION */}
       <header className={styles.header}>
         <div className={styles.logoArea} onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
           <div className={styles.logoBadgeContainer}>
@@ -391,12 +376,10 @@ const directMembers = communityTree.filter(member => member.level === 1);
           <button className={styles.homeBtn} onClick={() => router.push('/')}>
             🏠 Back to Website
           </button>
-
           <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>
         </div>
       </header>
 
-      {/* Sub header welcome bar */}
       <div className={styles.welcomeSubBar}>
         <div className={styles.welcomeInfo}>
           <h1 className={styles.welcomeTitle}>Welcome, {user?.full_name}</h1>
@@ -405,7 +388,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
       </div>
 
       <main className={styles.mainContent}>
-        {/* 2. THREE-COLUMN STATUS ROW */}
         <section className={styles.statusRow}>
           <Card className={styles.statusCard}>
             <div className={styles.statusMeta}>
@@ -421,7 +403,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>Current Rank</span>
               <span className={styles.statusTextVal}>Rank {rankInfo.rank}: {rankInfo.name}</span>
-              {/* Crypto upgrade button removed */}
             </div>
             <span className={styles.statusBadge}>$3 Investment</span>
           </Card>
@@ -432,7 +413,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
             </div>
             <span className={styles.statusBadge}>From Scratch</span>
           </Card>
-          {/* Team Size */}
           <Card className={styles.statusCard}>
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>Team Size</span>
@@ -440,7 +420,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
             </div>
             <span className={styles.statusBadge}>Direct</span>
           </Card>
-          {/* Community Size */}
           <Card className={styles.statusCard}>
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>Community Size</span>
@@ -450,7 +429,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
           </Card>
         </section>
 
-        {/* 3. METRICS CARDS GRID */}
         <section className={styles.metricsGrid}>
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
@@ -502,10 +480,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
           </Card>
         </section>
 
-
-
         <section className={styles.doubleGrid}>
-          {/* Left: Rank Progress step list */}
           <Card className={styles.panelCard}>
             <div className={styles.rankProgressHeaderRow}>
               <h4 className={styles.panelTitle}>Rank Progress</h4>
@@ -550,60 +525,50 @@ const directMembers = communityTree.filter(member => member.level === 1);
                 <div className={styles.barFill} style={{ width: `${rankInfo.progress}%` }} />
               </div>
             </div>
-                        {/* Achieve New Ranks */}
   
-                <h4 className={styles.subSectionTitle}>Achieve New Ranks</h4>
-                <div style={{ display: 'grid', gap: '0.75rem' }}>
-                  {ranks.map((rank) => {
-
-  const isAchieved = rank.id <= rankInfo.rank;
-  const canAfford = (wallet?.main_balance || 0) >= rank.price;
-  return (
-    <div key={rank.id} style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '0.75rem',
-      background: 'rgba(255,255,255,0.02)',
-      border: '1px solid rgba(255,255,255,0.05)',
-      borderRadius: '12px',
-    }}>
-      <div>
-        <h4 style={{ fontWeight: 700, margin: 0, color: isAchieved ? '#888' : '#fff' }}>{rank.name}</h4>
-        <span style={{ fontSize: '0.85rem', color: '#00d2ff', fontWeight: 600 }}>${rank.price}</span>
-      </div>
-      {isAchieved ? (
-        <span style={{ color: '#2ecc71', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>✓ Achieved</span>
-      ) : (
-        <button disabled={!canAfford || achievingRank === rank.id} onClick={() => handleAchieveRank(rank)} style={{
-          padding: '0.5rem 1rem',
-          borderRadius: '8px',
-          background: canAfford ? 'linear-gradient(135deg, #00d2ff, #0080ff)' : 'rgba(255,255,255,0.05)',
-          color: canAfford ? '#fff' : 'rgba(255,255,255,0.3)',
-          border: 'none',
-          cursor: canAfford ? 'pointer' : 'not-allowed',
-          fontWeight: 700,
-          fontSize: '0.85rem',
-          boxShadow: canAfford ? '0 4px 15px rgba(0,210,255,0.3)' : 'none',
-          transition: 'all 0.2s',
-        }}>
-          {achievingRank === rank.id ? 'Processing...' : (canAfford ? 'Achieve Rank' : 'Insufficient Balance')}
-        </button>
-      )}
-    </div>
-  );
-})}
-</div>
+            <h4 className={styles.subSectionTitle}>Achieve New Ranks</h4>
+            <div style={{ display: 'grid', gap: '0.75rem' }}>
+              {ranks.map((rank) => (
+                <div key={rank.id} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0.75rem',
+                  background: (rank.id <= rankInfo.rank) ? 'rgba(46,204,113,0.1)' : 'rgba(255,255,255,0.02)',
+                  border: (rank.id <= rankInfo.rank) ? '1px solid rgba(46,204,113,0.3)' : '1px solid rgba(255,255,255,0.05)',
+                  borderRadius: '12px',
+                }}>
+                  <div>
+                    <h4 style={{ fontWeight: 700, margin: 0, color: (rank.id <= rankInfo.rank) ? '#2ecc71' : '#fff' }}>{rank.name}</h4>
+                    <span style={{ fontSize: '0.85rem', color: '#00d2ff', fontWeight: 600 }}>${rank.price}</span>
+                  </div>
+                  {(rank.id <= rankInfo.rank) ? (
+                    <span style={{ color: '#2ecc71', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>✓ Achieved</span>
+                  ) : (
+                    <button disabled={!((wallet?.main_balance || 0) >= rank.price) || achievingRank === rank.id} onClick={() => handleAchieveRank(rank)} style={{
+                      padding: '0.5rem 1rem',
+                      borderRadius: '8px',
+                      background: ((wallet?.main_balance || 0) >= rank.price) ? 'linear-gradient(135deg, #00d2ff, #0080ff)' : 'rgba(255,255,255,0.05)',
+                      color: ((wallet?.main_balance || 0) >= rank.price) ? '#fff' : 'rgba(255,255,255,0.3)',
+                      border: 'none',
+                      cursor: ((wallet?.main_balance || 0) >= rank.price) ? 'pointer' : 'not-allowed',
+                      fontWeight: 700,
+                      fontSize: '0.85rem',
+                      boxShadow: ((wallet?.main_balance || 0) >= rank.price) ? '0 4px 15px rgba(0,210,255,0.3)' : 'none',
+                      transition: 'all 0.2s',
+                    }}>{achievingRank === rank.id ? 'Processing...' : (((wallet?.main_balance || 0) >= rank.price) ? 'Achieve Rank' : 'Insufficient Balance')}</button>
+                  )}
+                </div>
+              ))}
+            </div>
 </Card>
 
-          {/* Right: Wallet Balance & Withdrawal Operations */}
           <Card className={styles.panelCard}>
             <h4 className={styles.panelTitle}>Wallet Balance</h4>
             <div className={styles.walletBox}>
               <h3 className={styles.mainBalanceDisplay}>${wallet?.main_balance.toFixed(2) || '0.00'}</h3>
               <p className={styles.balanceStatusLabel}>Available for withdrawal</p>
               
-              {/* Premium Deposit & Withdraw Buttons */}
               <div style={{
                 display: 'flex',
                 gap: '0.75rem',
@@ -663,7 +628,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
               </div>
             </div>
             </Card>
-            {/* Wallet Modals */}
             {showDepositModal && (
               <WalletModal type="deposit" open={showDepositModal} onClose={() => setShowDepositModal(false)} />
             )}
@@ -671,7 +635,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
               <WalletModal type="withdraw" open={showWithdrawModal} onClose={() => setShowWithdrawModal(false)} />
             )}
 
-            {/* Referral Sponsor Link */}
             <div className={styles.referralLinkContainer}>
               <span className={styles.referralLabel}>Your unique link:</span>
               <div className={styles.referralInputRow}>
@@ -685,7 +648,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
                 </button>
               </div>
             </div>
-
             <Card className={styles.panelCard}>
               <h4 className={styles.panelTitle}>My Team</h4>
               {directMembers.length === 0 ? (
@@ -698,6 +660,8 @@ const directMembers = communityTree.filter(member => member.level === 1);
                 </ul>
               )}
             </Card>
+
+
           
 
         </section>
