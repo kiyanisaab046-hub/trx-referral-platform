@@ -584,52 +584,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
           cursor: canAfford ? 'pointer' : 'not-allowed',
           fontWeight: 700,
           fontSize: '0.85rem',
-          boxShadow: canAfford ? '0 4px 15px rgba(0,210,255,0.3)' : 'none',
-          transition: 'all 0.2s',
 
-
-              <h4 className={styles.subSectionTitle}>Achieve New Ranks</h4>
-              <div style={{ display: 'grid', gap: '0.75rem' }}>
-                {ranks.map((rank) => {
-  
-                  const canAfford = (wallet?.main_balance || 0) >= rank.price;
-                  return (
-                    <div key={rank.id} style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '0.75rem',
-                      background: 'rgba(255,255,255,0.02)',
-                      border: '1px solid rgba(255,255,255,0.05)',
-                      borderRadius: '12px',
-                    }}>
-                      <div>
-                        <h4 style={{ fontWeight: 700, margin: 0, color: isAchieved ? '#888' : '#fff' }}>{rank.name}</h4>
-                        <span style={{ fontSize: '0.85rem', color: '#00d2ff', fontWeight: 600 }}>${rank.price}</span>
-                      </div>
-                      {isAchieved ? (
-                        <span style={{ color: '#2ecc71', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>✓ Achieved</span>
-                      ) : (
-                        <button disabled={!canAfford || achievingRank === rank.id} onClick={() => handleAchieveRank(rank)} style={{
-                          padding: '0.5rem 1rem',
-                          borderRadius: '8px',
-                          background: canAfford ? 'linear-gradient(135deg, #00d2ff, #0080ff)' : 'rgba(255,255,255,0.05)',
-                          color: canAfford ? '#fff' : 'rgba(255,255,255,0.3)',
-                          border: 'none',
-                          cursor: canAfford ? 'pointer' : 'not-allowed',
-                          fontWeight: 700,
-                          fontSize: '0.85rem',
-                          boxShadow: canAfford ? '0 4px 15px rgba(0,210,255,0.3)' : 'none',
-                          transition: 'all 0.2s',
-                        }}>
-                          {achievingRank === rank.id ? 'Processing...' : (canAfford ? 'Achieve Rank' : 'Insufficient Balance')}
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
           </Card>
 
           {/* Right: Wallet Balance & Withdrawal Operations */}
@@ -638,46 +593,7 @@ const directMembers = communityTree.filter(member => member.level === 1);
             <div className={styles.walletBox}>
               <h3 className={styles.mainBalanceDisplay}>${wallet?.main_balance.toFixed(2) || '0.00'}</h3>
               <p className={styles.balanceStatusLabel}>Available for withdrawal</p>
-
-
-  <h4 className={styles.subSectionTitle}>Achieve New Ranks</h4>
-  <div style={{ display: 'grid', gap: '0.75rem' }}>
-    {ranks.map((rank) => {
-      const isAchieved = rank.id <= rankInfo.rank;
-      const canAfford = (wallet?.main_balance || 0) >= rank.price;
-      return (
-        <div key={rank.id} style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0.75rem',
-          background: 'rgba(255,255,255,0.02)',
-          border: '1px solid rgba(255,255,255,0.05)',
-          borderRadius: '12px',
-        }}>
-          <div>
-            <h4 style={{ fontWeight: 700, margin: 0, color: isAchieved ? '#888' : '#fff' }}>{rank.name}</h4>
-            <span style={{ fontSize: '0.85rem', color: '#00d2ff', fontWeight: 600 }}>${rank.price}</span>
-          </div>
-          {isAchieved ? (
-            <span style={{ color: '#2ecc71', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>✓ Achieved</span>
-          ) : (
-            <button disabled={!canAfford || achievingRank === rank.id} onClick={() => handleAchieveRank(rank)} style={{
-              padding: '0.5rem 1rem',
-              borderRadius: '8px',
-              background: canAfford ? 'linear-gradient(135deg, #00d2ff, #0080ff)' : 'rgba(255,255,255,0.05)',
-              color: canAfford ? '#fff' : 'rgba(255,255,255,0.3)',
-              border: 'none',
-              cursor: canAfford ? 'pointer' : 'not-allowed',
-              fontWeight: 700,
-              fontSize: '0.85rem',
-              boxShadow: canAfford ? '0 4px 15px rgba(0,210,255,0.3)' : 'none',
-              transition: 'all 0.2s',
-            }}>
-              {achievingRank === rank.id ? 'Processing...' : (canAfford ? 'Achieve Rank' : 'Insufficient Balance')}
-            </button>
-          )}
-        </div>
+              
               {/* Premium Deposit & Withdraw Buttons */}
               <div style={{
                 display: 'flex',
@@ -756,62 +672,6 @@ const directMembers = communityTree.filter(member => member.level === 1);
                   className={styles.referralInput} />
                 <button className={styles.referralCopyBtn} onClick={copyReferralLink}>
                   {copied ? 'Copied!' : 'Copy Link'}
-                  {copied ? 'Copied!' : 'Copy Link'}
-                </button>
-              </div>
-            </div>
-          </Card>
-  
-
-                const canAfford = (wallet?.main_balance || 0) >= rank.price;
-                return (
-                  <div key={rank.id} style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'space-between', 
-                    padding: '1rem', 
-                    background: 'rgba(255,255,255,0.02)', 
-                    border: '1px solid rgba(255,255,255,0.05)', 
-                    borderRadius: '12px' 
-                  }}>
-                    <div>
-                      <h4 style={{ fontWeight: 700, margin: 0, color: isAchieved ? '#888' : '#fff' }}>{rank.name}</h4>
-                      <span style={{ fontSize: '0.85rem', color: '#00d2ff', fontWeight: 600 }}>${rank.price}</span>
-                    </div>
-                    {isAchieved ? (
-                      <span style={{ color: '#2ecc71', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        ✓ Achieved
-                      </span>
-                    ) : (
-                      <button 
-                        disabled={!canAfford || achievingRank === rank.id}
-                        onClick={() => handleAchieveRank(rank)}
-                        style={{
-                          padding: '0.5rem 1rem',
-                          borderRadius: '8px',
-                          background: canAfford ? 'linear-gradient(135deg, #00d2ff, #0080ff)' : 'rgba(255,255,255,0.05)',
-                          color: canAfford ? '#fff' : 'rgba(255,255,255,0.3)',
-                          border: 'none',
-                          cursor: canAfford ? 'pointer' : 'not-allowed',
-                          fontWeight: 700,
-                          fontSize: '0.85rem',
-                          boxShadow: canAfford ? '0 4px 15px rgba(0,210,255,0.3)' : 'none',
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        {achievingRank === rank.id ? 'Processing...' : (canAfford ? 'Achieve Rank' : 'Insufficient Balance')}
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
-          </section>
-          
-
-          {/* 5. My Team Section */}
-          {/* <section className={styles.communityTreeSection}>
             <Card className={styles.panelCard}>
               <h4 className={styles.panelTitle}>My Team</h4>
               {directMembers.length === 0 ? (
