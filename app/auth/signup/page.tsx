@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../lib/supabase';
 import { Card } from '../../../components/Card';
@@ -43,12 +43,16 @@ export default function SignUp() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+// Prefill sponsor code from referral link if present
+useEffect(() => {
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) setSponsorCode(ref);
+  }
+}, []);
 
-    if (!agreeTerms) {
+    const handleRegister = async (e: React.FormEvent) => {
       setError('You must accept the terms and conditions to proceed.');
       setLoading(false);
       return;
@@ -73,14 +77,29 @@ export default function SignUp() {
 
       if (signUpError) throw signUpError;
 
-      // In a real application with a backend API:
-      // We would invoke our secure backend API (/api/auth/register) to register the user,
-      // create their default wallet, generate unique referral codes, and assign sponsor credits.
-      
+      // Insert referral relationship (level 1 – direct) if sponsor code provided
+      if (sponsorCode) {
+        // Find sponsor by their unique referral code
+        const { data: sponsorUser, error: sponsorErr } = await supabase
+          .from('users')
+          .select('id')
+          .eq('referral_code', sponsorCode)
+          .single();
+        if (sponsorErr) throw sponsorErr;
+        if (sponsorUser?.id) {
+          // Insert a referral relationship (level 1 – direct)
+          const { error: refErr } = await supabase
+            .from('referrals')
+            .insert({
+              sponsor_id: sponsorUser.id,
+              referred_id: data.user?.id,
+              level: 1,
+            });
+          if (refErr) throw refErr;
+        }
+      }
       setSuccess(true);
-      setTimeout(() => {
-        router.push('/auth/signin');
-      }, 3000);
+      setTimeout(() => router.push('/auth/signin'), 3000);
     } catch (err: any) {
       setError(err.message || 'Registration failed');
     } finally {

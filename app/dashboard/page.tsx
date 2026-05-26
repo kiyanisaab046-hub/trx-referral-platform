@@ -65,7 +65,7 @@ export default function Dashboard() {
   const [weeklySalarySum, setWeeklySalarySum] = useState(0);
   const [dailyIncome, setDailyIncome] = useState(0);
   const [communityTree, setCommunityTree] = useState<Array<{id:string; name:string; level:number}>>([]);
-  const directMembers = communityTree.filter(member => member.level === 1);
+  const [myDirectMembers, setMyDirectMembers] = useState<Array<{id:string; name:string}>>([]);
   const [mobileSliderIndex, setMobileSliderIndex] = useState(-1);
   const [purchasedRank, setPurchasedRank] = useState(0);
   const [achievingRank, setAchievingRank] = useState<number | null>(null);
@@ -197,6 +197,22 @@ export default function Dashboard() {
                   .filter(t => t.type === 'commission_level' && t.created_at.startsWith(today))
                   .reduce((acc, curr) => acc + Number(curr.amount), 0);
                 setDailyIncome(directToday + lvlToday);
+
+                // Fetch direct members for current user
+                const { data: directRefs } = await supabase
+                  .from('referrals')
+                  .select('referred_id')
+                  .eq('sponsor_id', authUser.id)
+                  .eq('level', 1);
+                if (directRefs) {
+                  const directIds = directRefs.map(r => r.referred_id);
+                  const { data: directUsers } = await supabase
+                    .from('users')
+                    .select('id, full_name')
+                    .in('id', directIds);
+                  const directList = directUsers?.map(u => ({ id: u.id, name: u.full_name })) || [];
+                  setMyDirectMembers(directList);
+                }
 
                 const { data: allRefs } = await supabase
                   .from('referrals')
@@ -467,13 +483,13 @@ export default function Dashboard() {
           <Card className={styles.statusCard} style={{ display: 'block' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
               <span className={styles.statusLabel}>My Team</span>
-              <span className={styles.statusBadge}>{directMembers.length} Direct</span>
+              <span className={styles.statusBadge}>{myDirectMembers.length} Direct</span>
             </div>
-            {directMembers.length === 0 ? (
+            {myDirectMembers.length === 0 ? (
               <p style={{ margin: 0, fontSize: '0.85rem', color: '#888' }}>No direct referrals yet.</p>
             ) : (
               <ul style={{ margin: 0, paddingLeft: '1.2rem', color: '#eee', fontSize: '0.85rem', maxHeight: '80px', overflowY: 'auto' }}>
-                {directMembers.map(member => (
+                {myDirectMembers.map(member => (
                   <li key={member.id} style={{ marginBottom: '0.25rem' }}>{member.name}</li>
                 ))}
               </ul>
