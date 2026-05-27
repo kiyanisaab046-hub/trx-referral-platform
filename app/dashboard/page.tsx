@@ -527,18 +527,9 @@ export default function Dashboard() {
               <span className={styles.statusTextVal}>{communityTree.length} members</span>
             </div>
             <div className={styles.statusBadge}>All</div>
-            <button className={styles.toggleBtn} onClick={() => setShowCommunityTree(!showCommunityTree)} style={{marginTop:'0.5rem',fontSize:'0.85rem',background:'rgba(255,255,255,0.1)',border:'none',borderRadius:'6px',padding:'4px 8px',color:'#fff',cursor:'pointer'}}>
-              {showCommunityTree ? 'Hide' : 'Show'} Tree
+            <button className={styles.toggleBtn} onClick={() => router.push('/dashboard/community-tree')} style={{marginTop:'0.5rem',fontSize:'0.85rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'6px',padding:'6px 12px',color:'#fff',cursor:'pointer', fontWeight: 600}}>
+              View Full Tree
             </button>
-            {showCommunityTree && (
-              <ul style={{marginTop:'0.5rem',paddingLeft:'1rem',color:'#eee',fontSize:'0.85rem',maxHeight:'150px',overflowY:'auto'}}>
-                {communityTree.map(member => (
-                  <li key={member.id} style={{marginBottom:'0.25rem',marginLeft: `${member.level * 12}px`}}>
-                    {member.name} (Level {member.level})
-                  </li>
-                ))}
-              </ul>
-            )}
           </Card>
         </section>
 

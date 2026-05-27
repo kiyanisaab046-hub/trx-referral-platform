@@ -1,0 +1,180 @@
+.treeContainer {
+  width: 100%;
+  overflow-x: auto;
+  padding: 2rem;
+  background: rgba(10, 15, 30, 0.4);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: center;
+}
+
+.tree, .tree ul {
+  padding-top: 20px; 
+  position: relative;
+  transition: all 0.5s;
+  display: flex;
+  justify-content: center;
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.tree li {
+  float: left;
+  text-align: center;
+  list-style-type: none;
+  position: relative;
+  padding: 20px 10px 0 10px;
+  transition: all 0.5s;
+}
+
+/* Connectors */
+.tree li::before, .tree li::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 50%;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  width: 50%;
+  height: 20px;
+}
+
+.tree li::after {
+  right: auto;
+  left: 50%;
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Only single child */
+.tree li:only-child::after, .tree li:only-child::before {
+  display: none;
+}
+.tree li:only-child {
+  padding-top: 0;
+}
+
+/* First and last child corner curves */
+.tree li:first-child::before, .tree li:last-child::after {
+  border: 0 none;
+}
+.tree li:last-child::before {
+  border-right: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0 5px 0 0;
+}
+.tree li:first-child::after {
+  border-radius: 5px 0 0 0;
+}
+
+/* Downward line from parent */
+.tree ul::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
+  width: 0;
+  height: 20px;
+  margin-left: -1px;
+}
+
+/* Node styles */
+.nodeWrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00d2ff, #0080ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  border: 3px solid #1a1e29;
+  box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+  z-index: 2;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.nodeWrapper:hover .avatar {
+  transform: scale(1.1);
+}
+
+.nodeInfo {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-top: 8px;
+  min-width: 100px;
+  backdrop-filter: blur(10px);
+}
+
+.nodeName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.badgeDir {
+  background: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.badgeInd {
+  background: rgba(243, 156, 18, 0.2);
+  color: #f39c12;
+  border: 1px solid rgba(243, 156, 18, 0.3);
+}
+
+.badgeMe {
+  background: rgba(0, 210, 255, 0.2);
+  color: #00d2ff;
+  border: 1px solid rgba(0, 210, 255, 0.3);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .treeContainer {
+    padding: 1rem;
+    justify-content: flex-start;
+  }
+  .avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 1rem;
+  }
+  .nodeInfo {
+    padding: 6px 8px;
+    min-width: 80px;
+  }
+  .nodeName {
+    font-size: 0.75rem;
+    max-width: 90px;
+  }
+}
