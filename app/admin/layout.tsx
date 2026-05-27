@@ -13,7 +13,8 @@ import {
   Sparkles,
   LogOut,
   ArrowLeft,
-  CreditCard
+  CreditCard,
+  Layers
 } from "lucide-react";
 import styles from "./admin.module.css";
 
@@ -21,6 +22,7 @@ const navItems = [
   { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
   { name: "Users", path: "/admin/users", icon: Users },
   { name: "Payments", path: "/admin/payments", icon: CreditCard },
+  { name: "Distribution", path: "/admin/distribution", icon: Layers },
   { name: "Design Settings", path: "/admin/settings", icon: Settings },
   { name: "Notifications", path: "/admin/notifications", icon: Bell },
   { name: "Support System", path: "/admin/support", icon: MessageSquare },
