@@ -67,19 +67,6 @@ useEffect(() => {
     const fullPhoneNumber = `${selectedCountry.code}${cleanNumber}`;
 
     // Step 1: Sign up in Supabase Auth
-    // Validate sponsor code before proceeding
-    if (sponsorCode) {
-      const { data: sponsorUser, error: sponsorCheckErr } = await supabase
-        .from('users')
-        .select('id')
-        .eq('referral_code', sponsorCode)
-        .single();
-      if (sponsorCheckErr || !sponsorUser?.id) {
-        setError('Invalid sponsor/referral code provided.');
-        setLoading(false);
-        return;
-      }
-    }
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
@@ -93,27 +80,8 @@ useEffect(() => {
     });
     if (signUpError) throw signUpError;
 
-    // Insert referral relationship (level 1 – direct) if sponsor code provided
-// Insert referral relationship (level 1 – direct) if sponsor code provided
-if (sponsorCode) {
-  const { data: sponsorUser, error: sponsorErr } = await supabase
-    .from('users')
-    .select('id')
-    .eq('referral_code', sponsorCode)
-    .single();
-  if (sponsorErr || !sponsorUser?.id) {
-    throw sponsorErr ?? new Error('Sponsor not found');
-  }
-  // Insert referral relationship
-  const { error: refErr } = await supabase
-    .from('referrals')
-    .insert({
-      sponsor_id: sponsorUser.id,
-      referred_id: data.user?.id,
-      level: 1,
-    });
-  if (refErr) throw refErr;
-}
+    // The Supabase trigger handle_new_user() automatically generates the referral code
+    // and inserts the referral relationship using the sponsor_code in raw_user_meta_data.
     setSuccess(true);
     setTimeout(() => router.push('/auth/signin'), 3000);
   } catch (err: any) {
