@@ -508,16 +508,12 @@ export default function Dashboard() {
           <Card className={styles.statusCard}>
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>My Team</span>
-              <span className={styles.statusBadge}>{myDirectMembers.length} Direct Members</span>
+              <span className={styles.statusBadge}>{myDirectMembers.length} Direct</span>
             </div>
             {myDirectMembers.length === 0 ? (
               <p style={{ margin: 0, fontSize: '0.85rem', color: '#888' }}>No direct members yet.</p>
             ) : (
-              <ul style={{ margin: 0, paddingLeft: '1.2rem', color: '#eee', fontSize: '0.85rem', maxHeight: '120px', overflowY: 'auto' }}>
-                {myDirectMembers.map(member => (
-                  <li key={member.id} style={{ marginBottom: '0.25rem' }}>{member.name}</li>
-                ))}
-              </ul>
+              <button onClick={() => router.push('/dashboard/community-tree')} style={{marginTop:'0.4rem',fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em'}}>View Tree</button>
             )}
           </Card>
 
@@ -526,10 +522,10 @@ export default function Dashboard() {
               <span className={styles.statusLabel}>Community Size</span>
               <span className={styles.statusTextVal}>{communityTree.length} members</span>
             </div>
-            <div className={styles.statusBadge}>All</div>
-            <button className={styles.toggleBtn} onClick={() => router.push('/dashboard/community-tree')} style={{marginTop:'0.5rem',fontSize:'0.85rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'6px',padding:'6px 12px',color:'#fff',cursor:'pointer', fontWeight: 600}}>
-              View Full Tree
-            </button>
+            <div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}>
+              <span className={styles.statusBadge}>All</span>
+              <button onClick={() => router.push('/dashboard/community-tree')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View Tree</button>
+            </div>
           </Card>
         </section>
 
