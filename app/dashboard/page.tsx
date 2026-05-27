@@ -66,7 +66,7 @@ export default function Dashboard() {
   const [dailyIncome, setDailyIncome] = useState(0);
   const [communityTree, setCommunityTree] = useState<Array<{id:string; name:string; level:number}>>([]);
   const [myDirectMembers, setMyDirectMembers] = useState<Array<{id:string; name:string}>>([]);
-  const [myTeamMembers, setMyTeamMembers] = useState<Array<{id:string; name:string}>>([]);
+  const [showCommunityTree, setShowCommunityTree] = useState(false);
   const [mobileSliderIndex, setMobileSliderIndex] = useState(-1);
   const [purchasedRank, setPurchasedRank] = useState(0);
   const [achievingRank, setAchievingRank] = useState<number | null>(null);
@@ -242,8 +242,6 @@ export default function Dashboard() {
                       .from('users')
                       .select('id, full_name')
                       .in('id', teamIds);
-                    const teamList = teamUsers?.map(u => ({ id: u.id, name: u.full_name })) || [];
-                    setMyTeamMembers(teamList);
                   }
 
                   const referredIds = allRefs.map(r => r.referred_id);
@@ -528,7 +526,19 @@ export default function Dashboard() {
               <span className={styles.statusLabel}>Community Size</span>
               <span className={styles.statusTextVal}>{communityTree.length} members</span>
             </div>
-            <span className={styles.statusBadge}>All</span>
+            <div className={styles.statusBadge}>All</div>
+            <button className={styles.toggleBtn} onClick={() => setShowCommunityTree(!showCommunityTree)} style={{marginTop:'0.5rem',fontSize:'0.85rem',background:'rgba(255,255,255,0.1)',border:'none',borderRadius:'6px',padding:'4px 8px',color:'#fff',cursor:'pointer'}}>
+              {showCommunityTree ? 'Hide' : 'Show'} Tree
+            </button>
+            {showCommunityTree && (
+              <ul style={{marginTop:'0.5rem',paddingLeft:'1rem',color:'#eee',fontSize:'0.85rem',maxHeight:'150px',overflowY:'auto'}}>
+                {communityTree.map(member => (
+                  <li key={member.id} style={{marginBottom:'0.25rem',marginLeft: `${member.level * 12}px`}}>
+                    {member.name} (Level {member.level})
+                  </li>
+                ))}
+              </ul>
+            )}
           </Card>
         </section>
 

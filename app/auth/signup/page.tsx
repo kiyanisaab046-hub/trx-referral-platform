@@ -94,24 +94,31 @@ useEffect(() => {
     if (signUpError) throw signUpError;
 
     // Insert referral relationship (level 1 – direct) if sponsor code provided
-    if (sponsorCode) {
-      const { data: sponsorUser, error: sponsorErr } = await supabase
-        .from('users')
-        .select('id')
-        .eq('referral_code', sponsorCode)
-        .single();
-      if (sponsorErr) throw sponsorErr;
-      if (sponsorUser?.id) {
-        const { error: refErr } = await supabase
-          .from('referrals')
-          .insert({
-            sponsor_id: sponsorUser.id,
-            referred_id: data.user?.id,
-            level: 1,
-          });
-        if (refErr) throw refErr;
-      }
-    }
+if (sponsorCode) {
+  const { data: sponsorUser, error: sponsorErr } = await supabase
+    .from('users')
+    .select('id')
+    .eq('referral_code', sponsorCode)
+    .single();
+  if (sponsorErr || !sponsorUser?.id) {
+    throw sponsorErr ?? new Error('Sponsor not found');
+  }
+  // Insert referral relationship
+  const { error: refErr } = await supabase
+    .from('referrals')
+    .insert({
+      sponsor_id: sponsorUser.id,
+      referred_id: data.user?.id,
+      level: 1,
+    });
+  if (refErr) throw refErr;
+  // Update user's referredBy field
+  const { error: updateErr } = await supabase
+    .from('users')
+    .update({ referred_by: sponsorUser.id })
+    .eq('id', data.user?.id);
+  if (updateErr) throw updateErr;
+}
     setSuccess(true);
     setTimeout(() => router.push('/auth/signin'), 3000);
   } catch (err: any) {
