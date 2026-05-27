@@ -381,44 +381,17 @@ export default function Dashboard() {
       });
 
       // --- PHASE 1 DISTRIBUTION LOGIC: Direct Income (20%) ---
-      const directIncomeAmount = rank.price * 0.20;
+      // We call the secure backend RPC to distribute the 20% commission to the sponsor.
+      // This bypasses client-side RLS limits and executes atomically on the server.
+      const { error: rpcError } = await supabase.rpc('distribute_investment', { 
+        investor_id: user.id, 
+        investment_amount: rank.price 
+      });
       
-      // 1. Find direct sponsor
-      const { data: referralData } = await supabase
-        .from('referrals')
-        .select('sponsor_id')
-        .eq('referred_id', user.id)
-        .eq('level', 1)
-        .single();
-        
-      if (referralData && referralData.sponsor_id) {
-        const sponsorId = referralData.sponsor_id;
-        
-        // 2. Fetch sponsor's wallet
-        const { data: sponsorWallet } = await supabase
-          .from('wallets')
-          .select('main_balance, income_balance')
-          .eq('user_id', sponsorId)
-          .single();
-          
-        if (sponsorWallet) {
-          // 3. Credit 20% to sponsor
-          await supabase
-            .from('wallets')
-            .update({
-              main_balance: sponsorWallet.main_balance + directIncomeAmount,
-              income_balance: sponsorWallet.income_balance + directIncomeAmount
-            })
-            .eq('user_id', sponsorId);
-            
-          // 4. Create transaction log for sponsor
-          await supabase.from('transactions').insert({
-            user_id: sponsorId,
-            amount: directIncomeAmount,
-            type: 'commission_direct',
-            description: `Received 20% Direct Income from referral ${user.full_name} for achieving ${rank.name}`
-          });
-        }
+      if (rpcError) {
+        console.error("Direct Income Distribution Error:", rpcError);
+        // Note: Even if distribution fails, we don't necessarily want to reverse the user's rank upgrade, 
+        // but we log it for admin review.
       }
       // --- END PHASE 1 DISTRIBUTION ---
 
