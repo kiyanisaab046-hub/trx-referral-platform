@@ -328,7 +328,9 @@ export default function Dashboard() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const getRankInfo = (referrals: number) => {
+  const getRankInfo = (referrals: number, currentPurchased: number) => {
+    if (currentPurchased === 0) return { rank: 0, name: 'Unranked', nextRank: 'Starter', target: 0, progress: 0 };
+    
     if (referrals >= 120) return { rank: 10, name: 'Legend', nextRank: 'Max Rank Reached', target: 120, progress: 100 };
     if (referrals >= 80) return { rank: 9, name: 'Champion', nextRank: 'Legend', target: 120, progress: Math.floor(((referrals - 80) / 40) * 100) };
     if (referrals >= 50) return { rank: 8, name: 'Pioneer', nextRank: 'Champion', target: 80, progress: Math.floor(((referrals - 50) / 30) * 100) };
@@ -341,7 +343,7 @@ export default function Dashboard() {
     return { rank: 1, name: 'Starter', nextRank: 'Builder', target: 3, progress: Math.floor((referrals / 3) * 100) };
   };
 
-  const baseRankInfo = getRankInfo(stats.referralsCount);
+  const baseRankInfo = getRankInfo(stats.referralsCount, purchasedRank);
   const effectiveRankNum = Math.max(baseRankInfo.rank, purchasedRank);
   const rankInfo = effectiveRankNum > baseRankInfo.rank 
     ? { 
@@ -467,7 +469,7 @@ export default function Dashboard() {
           <Card className={styles.statusCard}>
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>Current Rank</span>
-              <span className={styles.statusTextVal}>Rank {rankInfo.rank}: {rankInfo.name}</span>
+              <span className={styles.statusTextVal}>{rankInfo.rank > 0 ? `Rank ${rankInfo.rank}: ` : ''}{rankInfo.name}</span>
             </div>
             <span className={styles.statusBadge}>$3 Investment</span>
           </Card>
