@@ -4,8 +4,9 @@ import styles from './NetworkTree.module.css';
 export interface TreeNode {
   id: string;
   name: string;
-  level: number; // 0 for root, 1 for direct, 2+ for indirect
+  level: number; // Visual depth level
   children: TreeNode[];
+  isDirect?: boolean;
 }
 
 interface NetworkTreeProps {
@@ -24,9 +25,9 @@ const getInitials = (name: string) => {
 const TreeNodeComponent: React.FC<{ node: TreeNode; isRoot?: boolean }> = ({ node, isRoot = false }) => {
   const badgeClass = isRoot 
     ? styles.badgeMe 
-    : (node.level === 1 ? styles.badgeDir : styles.badgeInd);
+    : (node.isDirect ? styles.badgeDir : styles.badgeInd);
     
-  const badgeText = isRoot ? 'YOU' : (node.level === 1 ? 'DIR' : 'IND');
+  const badgeText = isRoot ? 'YOU' : (node.isDirect ? 'DIR' : 'IND');
 
   return (
     <li>
