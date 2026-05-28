@@ -494,7 +494,7 @@ export default function Dashboard() {
 
           <Card className={styles.statusCard}>
             <div className={styles.statusMeta}>
-              <span className={styles.statusLabel}>Level Size</span>
+              <span className={styles.statusLabel}>My Team</span>
               <span className={styles.statusTextVal}>{communityTree.length} members</span>
             </div>
             <div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}>
