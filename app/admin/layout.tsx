@@ -14,7 +14,9 @@ import {
   LogOut,
   ArrowLeft,
   CreditCard,
-  Layers
+  Layers,
+  Menu,
+  X
 } from "lucide-react";
 import styles from "./admin.module.css";
 
@@ -34,6 +36,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const pathname = usePathname();
   const [loading, setLoading] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     // Check if admin is logged in
@@ -61,7 +64,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className={styles.adminLayout}>
-      {/* Sidebar */}
+      {/* Mobile Header */}
+      <div className={styles.mobileHeader}>
+        <h2 className={styles.sidebarTitle}>UIP Admin</h2>
+        <button className={styles.hamburgerBtn} onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Desktop Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
           <h2 className={styles.sidebarTitle}>UIP Admin</h2>
@@ -77,6 +88,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 key={item.path}
                 href={item.path}
                 className={`${styles.navItem} ${isActive ? styles.navItemActive : ""}`}
+                onClick={() => setMobileMenuOpen(false)}
               >
                 <Icon size={20} />
                 {item.name}
@@ -94,6 +106,35 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </button>
         </div>
       </aside>
+
+      {/* Mobile Overlay Nav */}
+      {mobileMenuOpen && (
+        <aside className={styles.mobileNav}>
+          <nav className={styles.mobileNavContainer}>
+            {navItems.map((item) => {
+              const isActive = pathname === item.path || (item.path !== "/admin" && pathname.startsWith(`${item.path}/`));
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.path}
+                  href={item.path}
+                  className={`${styles.navItem} ${isActive ? styles.navItemActive : ""}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Icon size={20} />
+                  {item.name}
+                </Link>
+              );
+            })}
+            <Link href="/dashboard" className={styles.exitBtn} onClick={() => setMobileMenuOpen(false)}>
+              <ArrowLeft size={18} /> Exit to App
+            </Link>
+            <button onClick={() => { handleLogout(); setMobileMenuOpen(false); }} className={styles.logoutBtn}>
+              <LogOut size={18} /> Logout
+            </button>
+          </nav>
+        </aside>
+      )}
 
       {/* Main Content */}
       <main className={styles.mainContent}>
