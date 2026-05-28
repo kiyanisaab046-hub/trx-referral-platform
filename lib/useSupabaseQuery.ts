@@ -31,8 +31,13 @@ export function useSupabaseQuery<T>(
 
   const fetcher = async () => {
     let query = client.from(table).select(select ?? '*');
-    if (typeof limit === 'number') query = query.limit(limit);
-    if (typeof offset === 'number') query = query.offset(offset);
+    if (typeof limit === 'number' && typeof offset === 'number') {
+      query = query.range(offset, offset + limit - 1);
+    } else if (typeof limit === 'number') {
+      query = query.limit(limit);
+    } else if (typeof offset === 'number') {
+      query = query.range(offset, offset + 9999);
+    }
     // Merge any extra filter arguments (e.g., .eq, .in)
     if (args) {
       Object.entries(args).forEach(([method, params]) => {

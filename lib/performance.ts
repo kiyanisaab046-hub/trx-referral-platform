@@ -8,12 +8,12 @@ export function reportWebVitals(metric: any) {
 export default function initPerformance() {
   if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
     // Import web-vitals lazily
-    import('web-vitals').then(({ getCLS, getFID, getLCP, getFCP, getTTFB }) => {
-      getCLS(reportWebVitals);
-      getFID(reportWebVitals);
-      getLCP(reportWebVitals);
-      getFCP(reportWebVitals);
-      getTTFB(reportWebVitals);
+    import('web-vitals').then(({ onCLS, onINP, onLCP, onFCP, onTTFB }) => {
+      onCLS(reportWebVitals);
+      onINP(reportWebVitals);
+      onLCP(reportWebVitals);
+      onFCP(reportWebVitals);
+      onTTFB(reportWebVitals);
     });
   }
 }
