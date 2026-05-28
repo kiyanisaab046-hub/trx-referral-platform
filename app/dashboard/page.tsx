@@ -482,7 +482,7 @@ export default function Dashboard() {
           </Card>
           <Card className={styles.statusCard}>
             <div className={styles.statusMeta}>
-              <span className={styles.statusLabel}>Level Members</span>
+              <span className={styles.statusLabel}>Level Income</span>
               <span className={styles.statusBadge}>{myDirectMembers.length} Direct</span>
             </div>
             {myDirectMembers.length === 0 ? (
