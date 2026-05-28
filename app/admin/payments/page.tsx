@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 import { CheckCircle, XCircle, ArrowDownCircle, CreditCard, RefreshCw, MoreVertical, Eye, Bell, Check, CheckCheck } from "lucide-react";
+import Image from "next/image";
 import styles from "../admin.module.css";
 
 const METHOD_COLORS: Record<string, string> = {

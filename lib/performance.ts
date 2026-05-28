@@ -1,6 +1,6 @@
 
 
-export function reportWebVitals(metric) {
+export function reportWebVitals(metric: any) {
   // Custom logging - you can send to analytics endpoint
   console.log('[Web Vitals]', metric);
 }
