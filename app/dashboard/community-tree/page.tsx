@@ -51,65 +51,60 @@ export default function CommunityTreePage() {
         const userMap: Record<string, string> = {};
         usersData?.forEach(u => { userMap[u.id] = u.full_name; });
 
-        // 1. Gather all downline members (directs + indirects)
-        const allRefsSafe = allRefs || [];
-        const visited = new Set<string>();
-        const myDownlineRefs: any[] = [];
-        const stack = [authUser.id];
-        
-        while (stack.length) {
-          const cur = stack.pop()!;
-          const children = allRefsSafe.filter(r => r.sponsor_id === cur);
-          children.forEach(r => {
-            if (!visited.has(r.referred_id)) {
-              visited.add(r.referred_id);
-              stack.push(r.referred_id);
-              myDownlineRefs.push(r);
-            }
-          });
-        }
+        // Build a map of all users (including current user) to TreeNode objects
+        const nodeMap: Record<string, TreeNode> = {};
 
-        // 2. Separate into directs and indirects
-        const directs = myDownlineRefs
-          .filter(r => r.sponsor_id === authUser.id)
-          .map(r => ({ id: r.referred_id, name: userMap[r.referred_id] || 'User', level: 1, isDirect: true, children: [] as TreeNode[] }));
-          
-        const indirects = myDownlineRefs
-          .filter(r => r.sponsor_id !== authUser.id)
-          .map(r => ({ id: r.referred_id, name: userMap[r.referred_id] || 'User', level: 2, isDirect: false, children: [] as TreeNode[] }));
-
-        // 3. Create the pool: forces directs to be the first available nodes (first 2 will definitely be directs if they exist)
-        const pool = [...directs, ...indirects];
-
-        const rootName = currentUserProfile?.full_name || 'Me';
-        const fullTree: TreeNode = {
+        // Root node (current user)
+        const rootNode: TreeNode = {
           id: authUser.id,
-          name: rootName,
+          name: currentUserProfile?.full_name || 'Me',
           level: 0,
           isDirect: false,
           children: []
         };
+        nodeMap[authUser.id] = rootNode;
 
-        // 4. Breadth-First Search (BFS) to map into a perfect binary matrix (2, 4, 8)
-        const nodeQueue = [fullTree];
-        let poolIndex = 0;
+        const allRefsSafe = allRefs || [];
 
-        while (poolIndex < pool.length && nodeQueue.length > 0) {
-          const currentParent = nodeQueue.shift()!;
-          
-          // Force max 2 branches per node
-          for (let i = 0; i < 2; i++) {
-            if (poolIndex < pool.length) {
-              const child = pool[poolIndex];
-              child.level = currentParent.level + 1; // visual depth row
-              currentParent.children.push(child);
-              nodeQueue.push(child);
-              poolIndex++;
-            }
+        // Ensure a node exists for every referred user and sponsor
+        allRefsSafe.forEach(ref => {
+          if (!nodeMap[ref.referred_id]) {
+            nodeMap[ref.referred_id] = {
+              id: ref.referred_id,
+              name: userMap[ref.referred_id] || 'User',
+              level: 0,
+              isDirect: false,
+              children: []
+            };
           }
-        }
-        
-        setTreeData(fullTree);
+          if (!nodeMap[ref.sponsor_id]) {
+            nodeMap[ref.sponsor_id] = {
+              id: ref.sponsor_id,
+              name: userMap[ref.sponsor_id] || 'User',
+              level: 0,
+              isDirect: false,
+              children: []
+            };
+          }
+        });
+
+        // Attach children based on referral relationships
+        allRefsSafe.forEach(ref => {
+          const sponsorNode = nodeMap[ref.sponsor_id];
+          const childNode = nodeMap[ref.referred_id];
+          // Mark direct referrals (children of the current user)
+          childNode.isDirect = ref.sponsor_id === authUser.id;
+          sponsorNode.children.push(childNode);
+        });
+
+        // Recursively compute depth levels for rendering
+        const computeLevels = (node: TreeNode, depth: number) => {
+          node.level = depth;
+          node.children.forEach(child => computeLevels(child, depth + 1));
+        };
+        computeLevels(rootNode, 0);
+
+        setTreeData(rootNode);
       } catch (err: any) {
         console.error('Error fetching tree:', err);
         setError(err.message || 'Failed to load community tree');
