@@ -11,18 +11,7 @@ import {
   TrendingUp,
   Activity
 } from "lucide-react";
-const Recharts = dynamic(() => import("recharts"), { ssr: false });
-const {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-} = Recharts;
+import {
   AreaChart,
   Area,
   XAxis,
