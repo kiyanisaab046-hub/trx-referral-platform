@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = 'force-dynamic';
 
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { createBrowserClient } from "@supabase/ssr";
@@ -608,7 +609,7 @@ export default function AdminPayments() {
             {inspectItem.receipt_url ? (
               <div style={{ marginBottom: "1.5rem", borderRadius: "12px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.5)" }}>
                 <a href={inspectItem.receipt_url} target="_blank" rel="noreferrer">
-                  <img src={inspectItem.receipt_url} alt="Receipt" style={{ width: "100%", maxHeight: "300px", objectFit: "contain", display: "block" }} />
+                  <Image src={inspectItem.receipt_url} alt="Receipt" width={800} height={600} style={{ width: "100%", maxHeight: "300px", objectFit: "contain", display: "block" }} />
                 </a>
                 <div style={{ textAlign: "center", padding: "0.5rem", fontSize: "0.75rem", color: "rgba(255,255,255,0.5)" }}>Click image to open full size</div>
               </div>

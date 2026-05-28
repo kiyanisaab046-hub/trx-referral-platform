@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 // Font imports removed due to Turbopack build issue
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import "@/lib/performance";
 import FloatingBackground from "../components/FloatingBackground";
 
 

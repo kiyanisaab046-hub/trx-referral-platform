@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useSupabaseQuery } from "@/lib/useSupabaseQuery";
+import dynamic from "next/dynamic";
 import { createBrowserClient } from "@supabase/ssr";
 import {
   Users,
@@ -9,7 +11,18 @@ import {
   TrendingUp,
   Activity
 } from "lucide-react";
-import {
+const Recharts = dynamic(() => import("recharts"), { ssr: false });
+const {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+} = Recharts;
   AreaChart,
   Area,
   XAxis,
@@ -56,37 +69,32 @@ export default function AdminDashboard() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
+  // Fetch user count using direct supabase (count needed)
   useEffect(() => {
-    async function fetchStats() {
-      // Fetch user count
+    async function fetchUserCount() {
       const { count: userCount } = await supabase
         .from("users")
         .select("*", { count: "exact", head: true });
-
-      // Fetch sum of completed deposits
-      const { data: deposits } = await supabase
-        .from("payments")
-        .select("amount")
-        .eq("status", "completed");
-      const depositSum = deposits?.reduce((acc, curr) => acc + curr.amount, 0) || 0;
-
-      // Fetch sum of completed withdrawals
-      const { data: withdrawals } = await supabase
-        .from("withdrawals")
-        .select("amount")
-        .eq("status", "completed");
-      const withdrawalSum = withdrawals?.reduce((acc, curr) => acc + curr.amount, 0) || 0;
-
-      setStats({
-        totalUsers: userCount || 0,
-        totalDeposits: depositSum,
-        totalWithdrawals: withdrawalSum,
-        totalEarnings: depositSum * 0.15, // Example internal metric calculation
-      });
+      setStats((prev) => ({ ...prev, totalUsers: userCount || 0 }));
     }
-
-    fetchStats();
+    fetchUserCount();
   }, [supabase]);
+
+  // Fetch deposits and withdrawals using useSupabaseQuery hook
+  const { data: deposits } = useSupabaseQuery<any>("payments", { select: "amount", role: "anon" }, { eq: ["status", "completed"] });
+  const { data: withdrawals } = useSupabaseQuery<any>("withdrawals", { select: "amount", role: "anon" }, { eq: ["status", "completed"] });
+
+  const depositSum = deposits?.reduce((acc, cur) => acc + cur.amount, 0) || 0;
+  const withdrawalSum = withdrawals?.reduce((acc, cur) => acc + cur.amount, 0) || 0;
+
+  useEffect(() => {
+    setStats((prev) => ({
+      ...prev,
+      totalDeposits: depositSum,
+      totalWithdrawals: withdrawalSum,
+      totalEarnings: depositSum * 0.15,
+    }));
+  }, [depositSum, withdrawalSum]);
 
   return (
     <div>

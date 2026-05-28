@@ -1,9 +1,11 @@
 "use client";
+export const dynamic = 'force-dynamic';
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 import { Search, Filter, Ban, MoreVertical, ShieldAlert } from "lucide-react";
 import styles from "../admin.module.css";
+import { useSupabaseQuery } from "@/lib/useSupabaseQuery";
 
 type User = {
   id: string;
@@ -16,8 +18,7 @@ type User = {
 };
 
 export default function AdminUsers() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: users = [], isLoading: loading } = useSupabaseQuery<User>('users', { role: 'anon' }, { order: ['created_at', 'desc'] });
   const [searchTerm, setSearchTerm] = useState("");
   const [actionMenuUserId, setActionMenuUserId] = useState<string | null>(null);
   const [upgradeUserId, setUpgradeUserId] = useState<string | null>(null);
@@ -29,22 +30,7 @@ export default function AdminUsers() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  useEffect(() => {
-    async function fetchUsers() {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("users")
-        .select("*")
-        .order("created_at", { ascending: false });
-      
-      if (!error && data) {
-        setUsers(data);
-      }
-      setLoading(false);
-    }
-
-    fetchUsers();
-  }, [supabase]);
+  // Users are fetched via useSupabaseQuery hook; no manual effect needed.
 
   const filteredUsers = users.filter(user => 
     (user.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) || 
