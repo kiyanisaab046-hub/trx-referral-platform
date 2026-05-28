@@ -7,6 +7,7 @@ import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import styles from './dashboard.module.css';
 import WalletModal from '../../components/WalletModal';
+import { MemberModal } from '../../components/MemberModal';
 
 interface UserProfile {
   id: string;
@@ -67,6 +68,7 @@ export default function Dashboard() {
   const [communityTree, setCommunityTree] = useState<Array<{id:string; name:string; level:number}>>([]);
   const [myDirectMembers, setMyDirectMembers] = useState<Array<{id:string; name:string}>>([]);
   const [showCommunityTree, setShowCommunityTree] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<{id:string; name:string} | null>(null);
   const [mobileSliderIndex, setMobileSliderIndex] = useState(-1);
   const [purchasedRank, setPurchasedRank] = useState(0);
   const [achievingRank, setAchievingRank] = useState<number | null>(null);
@@ -502,6 +504,17 @@ export default function Dashboard() {
               <button onClick={() => router.push('/dashboard/community-tree')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View Levels</button>
             </div>
           </Card>
+
+          <Card className={styles.statusCard}>
+            <div className={styles.statusMeta}>
+              <span className={styles.statusLabel}>Community</span>
+              <span className={styles.statusTextVal}>{communityTree.length} total</span>
+            </div>
+            <div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}>
+              <span className={styles.statusBadge}>All Members</span>
+              <button onClick={() => router.push('/dashboard/community-info')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #9b59b6, #8e44ad)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View All</button>
+            </div>
+          </Card>
         </section>
 
         <section className={styles.metricsGrid}>
@@ -788,6 +801,13 @@ export default function Dashboard() {
 
 
       </main>
+      {selectedMember && (
+        <MemberModal
+          memberId={selectedMember.id}
+          memberName={selectedMember.name}
+          onClose={() => setSelectedMember(null)}
+        />
+      )}
     </div>
   );
 }
