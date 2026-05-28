@@ -240,25 +240,24 @@ export default function Dashboard() {
                   };
                   if (authUser) {
                     const teamIds = computeTeam(authUser.id, allRefs);
-                    const { data: teamUsers } = await supabase
+                    const teamRefs = allRefs.filter(r => teamIds.includes(r.referred_id));
+                    
+                    const referredIds = teamRefs.map(r => r.referred_id);
+                    const { data: usersData } = await supabase
                       .from('users')
                       .select('id, full_name')
-                      .in('id', teamIds);
+                      .in('id', referredIds);
+                      
+                    const userMap: Record<string, string> = {};
+                    usersData?.forEach(u => { userMap[u.id] = u.full_name; });
+                    
+                    const tree = teamRefs.map(r => ({
+                      id: r.referred_id,
+                      name: userMap[r.referred_id] || 'User',
+                      level: r.level
+                    }));
+                    setCommunityTree(tree);
                   }
-
-                  const referredIds = allRefs.map(r => r.referred_id);
-                  const { data: usersData } = await supabase
-                    .from('users')
-                    .select('id, full_name')
-                    .in('id', referredIds);
-                  const userMap: Record<string, string> = {};
-                  usersData?.forEach(u => { userMap[u.id] = u.full_name; });
-                  const tree = allRefs.map(r => ({
-                    id: r.referred_id,
-                    name: userMap[r.referred_id] || 'User',
-                    level: r.level
-                  }));
-                  setCommunityTree(tree);
                 }
             }
             logs.transactionsStatus = 'Success';
