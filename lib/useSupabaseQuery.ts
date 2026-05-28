@@ -1,8 +1,8 @@
 // lib/useSupabaseQuery.ts
 import useSWR from 'swr';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Session } from '@supabase/supabase-js';
-import { supabase } from "../lib/supabase";
+
+import { supabase } from "./supabase";
 
 // Initialize anon client (public anon key should be stored in env)
 const anonSupabase = createClient(
@@ -29,15 +29,16 @@ export function useSupabaseQuery<T>(
     ? supabase
     : anonSupabase;
 
-  const fetcher = async (url: string) => {
+  const fetcher = async () => {
     let query = client.from(table).select(select ?? '*');
     if (typeof limit === 'number') query = query.limit(limit);
     if (typeof offset === 'number') query = query.offset(offset);
     // Merge any extra filter arguments (e.g., .eq, .in)
     if (args) {
       Object.entries(args).forEach(([method, params]) => {
-        if (typeof (query as Record<string, unknown>)[method] === 'function') {
-          query = (query as Record<string, (...args: unknown[]) => any>)[method](...params);
+         
+        if (typeof (query as any)[method] === 'function') {
+          query = (query as any)[method](...params);
         }
       });
     }

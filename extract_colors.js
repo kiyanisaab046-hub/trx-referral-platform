@@ -1,5 +1,6 @@
-const fs = require('fs');
-const { PNG } = require('pngjs');
+import fs from 'fs';
+import path from 'path';
+import { PNG } from 'pngjs';
 
 const imgPath = 'C:\\Users\\03165\\.gemini\\antigravity\\brain\\907c9ea0-2299-45b8-965f-2d10af8a6c66\\media__1779355839707.png';
 

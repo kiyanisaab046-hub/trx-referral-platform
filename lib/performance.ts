@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+
 
 export function reportWebVitals(metric) {
   // Custom logging - you can send to analytics endpoint
