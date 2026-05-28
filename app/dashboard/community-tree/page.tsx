@@ -123,7 +123,7 @@ export default function CommunityTreePage() {
             <span className={styles.logoBadge}>UIP</span>
           </div>
           <div className={styles.logoTitles}>
-            <h2 className={styles.logoText}>Team Income</h2>
+            <h2 className={styles.logoText}>Level Income</h2>
             <span className={styles.logoSlogan}>Level-wise Downline</span>
           </div>
         </div>
@@ -148,7 +148,7 @@ export default function CommunityTreePage() {
           <LevelIncome levels={levels} totalMembers={totalMembers} />
         ) : (
           <div style={{ textAlign: 'center', color: '#888', padding: '4rem 2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px' }}>
-            <h2>No Team Members Yet</h2>
+            <h2>No Level Members Yet</h2>
             <p>Share your referral link to start building your level income network!</p>
           </div>
         )}

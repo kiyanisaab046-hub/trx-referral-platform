@@ -144,7 +144,7 @@ export default function MyTeamPage() {
             <span className={styles.logoBadge}>UIP</span>
           </div>
           <div className={styles.logoTitles}>
-            <h2 className={styles.logoText}>My Team</h2>
+            <h2 className={styles.logoText}>My Level Income</h2>
             <span className={styles.logoSlogan}>Your Referral Network</span>
           </div>
         </div>
@@ -212,8 +212,8 @@ export default function MyTeamPage() {
           </div>
         ) : (
           <div style={{ textAlign: 'center', color: '#888', padding: '4rem 2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px' }}>
-            <h2 style={{ color: '#ccc', marginBottom: '0.5rem' }}>No Team Members Yet</h2>
-            <p>Share your referral link to start building your team!</p>
+            <h2 style={{ color: '#ccc', marginBottom: '0.5rem' }}>No Level Members Yet</h2>
+            <p>Share your referral link to start building your level income network!</p>
           </div>
         )}
       </main>
