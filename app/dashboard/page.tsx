@@ -494,12 +494,12 @@ export default function Dashboard() {
 
           <Card className={styles.statusCard}>
             <div className={styles.statusMeta}>
-              <span className={styles.statusLabel}>Community Size</span>
+              <span className={styles.statusLabel}>Team Size</span>
               <span className={styles.statusTextVal}>{communityTree.length} members</span>
             </div>
             <div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}>
               <span className={styles.statusBadge}>All</span>
-              <button onClick={() => router.push('/dashboard/community-tree')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View Tree</button>
+              <button onClick={() => router.push('/dashboard/community-tree')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View Team</button>
             </div>
           </Card>
         </section>

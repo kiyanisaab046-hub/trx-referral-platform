@@ -3,16 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../../lib/supabase/client';
-import { NetworkTree, TreeNode } from '../../../components/NetworkTree';
+import { LevelIncome, LevelGroup } from '../../../components/LevelIncome';
 import { LoadingSpinner } from '../../../components/LoadingSpinner';
-import styles from '../dashboard.module.css'; // Reuse dashboard styles for layout consistency
+import styles from '../dashboard.module.css';
 
 export default function CommunityTreePage() {
   const router = useRouter();
   const supabase = createClient();
   
   const [loading, setLoading] = useState(true);
-  const [treeData, setTreeData] = useState<TreeNode | null>(null);
+  const [levels, setLevels] = useState<LevelGroup[]>([]);
+  const [totalMembers, setTotalMembers] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -24,90 +25,88 @@ export default function CommunityTreePage() {
           return;
         }
 
-        // Fetch current user's profile
-        const { data: currentUserProfile } = await supabase
-          .from('users')
-          .select('id, full_name')
-          .eq('id', authUser.id)
-          .single();
-
-        // Fetch all referrals
-        // NOTE: If RLS is strictly enforced on 'referrals', this will only return rows 
-        // the user is allowed to see. If you want the full downline, make sure the Supabase 
-        // SQL policies are updated properly (see implementation plan).
+        // Fetch all referrals (RLS ensures we only get our downline if policy is configured correctly)
         const { data: allRefs, error: refsError } = await supabase
           .from('referrals')
-          .select('sponsor_id, referred_id');
+          .select('sponsor_id, referred_id, joined_at');
 
         if (refsError) throw refsError;
 
-        // Fetch all users to map names
+        if (!allRefs || allRefs.length === 0) {
+          setLevels([]);
+          setTotalMembers(0);
+          setLoading(false);
+          return;
+        }
+
+        // Extract all unique user IDs from the referral relationships
+        const userIds = new Set<string>();
+        allRefs.forEach(ref => {
+          userIds.add(ref.sponsor_id);
+          userIds.add(ref.referred_id);
+        });
+
+        // Fetch user profiles for names
         const { data: usersData, error: usersError } = await supabase
           .from('users')
-          .select('id, full_name');
+          .select('id, full_name')
+          .in('id', Array.from(userIds));
           
         if (usersError) throw usersError;
 
         const userMap: Record<string, string> = {};
         usersData?.forEach(u => { userMap[u.id] = u.full_name; });
 
-        // Build a map of all users (including current user) to TreeNode objects
-        const nodeMap: Record<string, TreeNode> = {};
-
-        // Root node (current user)
-        const rootNode: TreeNode = {
-          id: authUser.id,
-          name: currentUserProfile?.full_name || 'Me',
-          level: 0,
-          isDirect: false,
-          children: []
-        };
-        nodeMap[authUser.id] = rootNode;
-
-        const allRefsSafe = allRefs || [];
-
-        // Ensure a node exists for every referred user and sponsor
-        allRefsSafe.forEach(ref => {
-          if (!nodeMap[ref.referred_id]) {
-            nodeMap[ref.referred_id] = {
-              id: ref.referred_id,
-              name: userMap[ref.referred_id] || 'User',
-              level: 0,
-              isDirect: false,
-              children: []
-            };
+        // Build Adjacency List for downward traversal: sponsor_id -> [referred_id, ...]
+        const downlineMap: Record<string, any[]> = {};
+        allRefs.forEach(ref => {
+          if (!downlineMap[ref.sponsor_id]) {
+            downlineMap[ref.sponsor_id] = [];
           }
-          if (!nodeMap[ref.sponsor_id]) {
-            nodeMap[ref.sponsor_id] = {
-              id: ref.sponsor_id,
-              name: userMap[ref.sponsor_id] || 'User',
-              level: 0,
-              isDirect: false,
-              children: []
-            };
-          }
+          downlineMap[ref.sponsor_id].push({
+            id: ref.referred_id,
+            joinedAt: ref.joined_at
+          });
         });
 
-        // Attach children based on referral relationships
-        allRefsSafe.forEach(ref => {
-          const sponsorNode = nodeMap[ref.sponsor_id];
-          const childNode = nodeMap[ref.referred_id];
-          // Mark direct referrals (children of the current user)
-          childNode.isDirect = ref.sponsor_id === authUser.id;
-          sponsorNode.children.push(childNode);
-        });
+        // BFS or Level-order traversal to group by levels
+        const calculatedLevels: LevelGroup[] = [];
+        let currentLevelNodes = downlineMap[authUser.id] || [];
+        let currentLevelNum = 1;
+        let totalCount = 0;
 
-        // Recursively compute depth levels for rendering
-        const computeLevels = (node: TreeNode, depth: number) => {
-          node.level = depth;
-          node.children.forEach(child => computeLevels(child, depth + 1));
-        };
-        computeLevels(rootNode, 0);
+        while (currentLevelNodes.length > 0) {
+          const nextLevelNodes: any[] = [];
+          const membersInThisLevel = [];
 
-        setTreeData(rootNode);
+          for (const node of currentLevelNodes) {
+            membersInThisLevel.push({
+              id: node.id,
+              name: userMap[node.id] || 'Unknown User',
+              joinedAt: node.joinedAt
+            });
+            totalCount++;
+
+            // Gather children of this node for the next level
+            if (downlineMap[node.id]) {
+              nextLevelNodes.push(...downlineMap[node.id]);
+            }
+          }
+
+          calculatedLevels.push({
+            level: currentLevelNum,
+            members: membersInThisLevel
+          });
+
+          currentLevelNodes = nextLevelNodes;
+          currentLevelNum++;
+        }
+
+        setLevels(calculatedLevels);
+        setTotalMembers(totalCount);
       } catch (err: any) {
-        console.error('Error fetching tree:', err);
-        setError(err.message || 'Failed to load community tree');
+        console.error('Error fetching downline:', err);
+        setError(err.message || 'Failed to load community data');
       } finally {
         setLoading(false);
       }
@@ -124,8 +123,8 @@ export default function CommunityTreePage() {
             <span className={styles.logoBadge}>UIP</span>
           </div>
           <div className={styles.logoTitles}>
-            <h2 className={styles.logoText}>Community Tree</h2>
-            <span className={styles.logoSlogan}>Visual Downline Network</span>
+            <h2 className={styles.logoText}>Team Income</h2>
+            <span className={styles.logoSlogan}>Level-wise Downline</span>
           </div>
         </div>
         <div className={styles.profileHeader}>
@@ -142,17 +141,15 @@ export default function CommunityTreePage() {
           </div>
         ) : error ? (
           <div style={{ textAlign: 'center', color: '#ff4444', padding: '2rem' }}>
-            <h2>Error Loading Tree</h2>
+            <h2>Error Loading Downline</h2>
             <p>{error}</p>
           </div>
-        ) : treeData && treeData.children.length > 0 ? (
-          <div style={{ background: 'rgba(255,255,255,0.02)', padding: '2rem', borderRadius: '16px', overflowX: 'auto' }}>
-            <NetworkTree data={treeData} />
-          </div>
+        ) : levels.length > 0 ? (
+          <LevelIncome levels={levels} totalMembers={totalMembers} />
         ) : (
           <div style={{ textAlign: 'center', color: '#888', padding: '4rem 2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px' }}>
-            <h2>No Community Members Yet</h2>
-            <p>Share your referral link to start building your network!</p>
+            <h2>No Team Members Yet</h2>
+            <p>Share your referral link to start building your level income network!</p>
           </div>
         )}
       </main>
