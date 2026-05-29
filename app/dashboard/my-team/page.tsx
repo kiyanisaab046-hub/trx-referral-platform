@@ -144,8 +144,8 @@ export default function MyTeamPage() {
             <span className={styles.logoBadge}>UIP</span>
           </div>
           <div className={styles.logoTitles}>
-            <h2 className={styles.logoText}>My Level Income</h2>
-            <span className={styles.logoSlogan}>Your Referral Network</span>
+            <h2 className={styles.logoText}>My Team</h2>
+            <span className={styles.logoSlogan}>Your Team Members</span>
           </div>
         </div>
         <div className={styles.profileHeader}>
@@ -194,6 +194,17 @@ export default function MyTeamPage() {
                 Level {level}: {count} {Number(level) === 1 ? 'Direct' : 'Indirect'}
               </div>
             ))}
+          </div>
+        )}
+        {/* Empty state when no members */}
+        {!loading && !error && totalCount === 0 && (
+          <div style={{
+            padding: '2rem',
+            textAlign: 'center',
+            color: 'rgba(255,255,255,0.6)',
+            fontStyle: 'italic'
+          }}>
+            No team members yet. Invite people to join your network!
           </div>
         )}
 

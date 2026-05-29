@@ -119,21 +119,13 @@ export default function About() {
                 className="absolute w-[160%] h-[160%] rounded-full border-[1px] border-accent/10 border-b-accent/50 border-l-primary/40" 
               />
 
-              {/* Floating Glass Plate in the center */}
+              {/* Logo centered in the orb */}
               <motion.div 
                 animate={{ rotateX: [0, 10, 0], rotateY: [0, -10, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute w-44 h-44 rounded-2xl bg-white/[0.05] backdrop-blur-2xl border border-white/20 shadow-2xl flex flex-col items-center justify-center transform-gpu"
+                className="absolute w-28 h-28 rounded-full flex items-center justify-center transform-gpu overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent rounded-2xl pointer-events-none" />
-                <span className="relative font-display font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 text-5xl tracking-tighter drop-shadow-lg">
-                  UIP
-                </span>
-                <div className="relative mt-3 px-3 py-1 rounded-full bg-black/40 border border-white/10">
-                  <span className="text-primary text-[10px] tracking-[0.2em] uppercase font-bold">
-                    Since 2024
-                  </span>
-                </div>
+                <img src="https://anyimage.io/storage/uploads/1e8989e032dd9f2e468d25cc9077a3b5" alt="UIP Logo" className="w-full h-full object-cover rounded-full" />
               </motion.div>
 
             </motion.div>
