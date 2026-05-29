@@ -63,6 +63,7 @@ export default function Dashboard() {
   const [teamSum, setTeamSum] = useState(0);
   const [salarySum, setSalarySum] = useState(0);
   const [rewardSum, setRewardSum] = useState(0);
+  const [teamBusiness, setTeamBusiness] = useState(0);
   const [weeklySalarySum, setWeeklySalarySum] = useState(0);
   const [dailyIncome, setDailyIncome] = useState(0);
   const [communityTree, setCommunityTree] = useState<Array<{id:string; name:string; level:number}>>([]);
@@ -257,6 +258,18 @@ export default function Dashboard() {
                       level: r.level
                     }));
                     setCommunityTree(tree);
+
+                    if (teamIds.length > 0) {
+                      const { data: businessTx } = await supabase
+                        .from('transactions')
+                        .select('amount')
+                        .in('user_id', teamIds)
+                        .eq('type', 'rank_purchase');
+                      if (businessTx) {
+                        const businessSum = businessTx.reduce((acc, curr) => acc + Math.abs(Number(curr.amount)), 0);
+                        setTeamBusiness(businessSum);
+                      }
+                    }
                   }
                 }
             }
@@ -591,6 +604,13 @@ export default function Dashboard() {
               <span className={styles.metricTitle}>Reward Income</span>
             </div>
             <h3 className={styles.metricValue}>${rewardSum.toFixed(2)}</h3>
+          </Card>
+
+          <Card className={styles.metricCard}>
+            <div className={styles.metricHeader}>
+              <span className={styles.metricTitle}>Team Business</span>
+            </div>
+            <h3 className={styles.metricValue}>${teamBusiness.toFixed(2)}</h3>
           </Card>
         </section>
 
