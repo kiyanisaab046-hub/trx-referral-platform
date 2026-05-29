@@ -141,7 +141,7 @@ export default function MyTeamPage() {
       <header className={styles.header}>
         <div className={styles.logoArea} onClick={() => router.push('/dashboard')} style={{ cursor: 'pointer' }}>
           <div className={styles.logoBadgeContainer}>
-            <span className={styles.logoBadge}>UIP</span>
+            <img src="https://anyimage.io/storage/uploads/35fd8ae24af987ad96a67ab882c3eb8b" alt="UIP Logo" style={{ width: '45px', height: '45px', objectFit: 'contain' }} />
           </div>
           <div className={styles.logoTitles}>
             <h2 className={styles.logoText}>My Level Income</h2>
