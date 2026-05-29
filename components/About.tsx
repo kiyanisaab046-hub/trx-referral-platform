@@ -123,7 +123,7 @@ export default function About() {
               <motion.div 
                 animate={{ rotateX: [0, 10, 0], rotateY: [0, -10, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute w-28 h-28 rounded-full flex items-center justify-center transform-gpu overflow-hidden"
+                className="absolute w-full h-full rounded-full flex items-center justify-center transform-gpu overflow-hidden"
               >
                 <img src="https://anyimage.io/storage/uploads/1e8989e032dd9f2e468d25cc9077a3b5" alt="UIP Logo" className="w-full h-full object-cover rounded-full" />
               </motion.div>
