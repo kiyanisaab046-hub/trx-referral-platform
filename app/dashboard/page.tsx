@@ -329,7 +329,7 @@ export default function Dashboard() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push('/signin');
+    window.location.href = '/signin';
   };
 
   const copyReferralLink = () => {

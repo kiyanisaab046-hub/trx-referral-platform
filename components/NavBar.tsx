@@ -35,7 +35,8 @@ export default function NavBar() {
     await supabase.auth.signOut();
     setDropdownOpen(false);
     setIsOpen(false);
-    router.push('/signin');
+    // Use hard redirect to clear all Next.js router cache and ensure full logout
+    window.location.href = '/signin';
   };
 
   // Staggered variants for mobile links (optimized to avoid full-screen translates with backdrop-blur)

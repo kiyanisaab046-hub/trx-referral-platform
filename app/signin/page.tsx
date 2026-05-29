@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '../../lib/supabase/client';
@@ -19,6 +19,13 @@ export default function SignIn() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  // If already logged in, go straight to dashboard
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) window.location.href = '/dashboard';
+    });
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -32,8 +39,8 @@ export default function SignIn() {
 
       if (signInError) throw signInError;
       
-      // Successfully authenticated
-      router.push('/dashboard');
+      // Hard redirect after login to avoid stale cached state
+      window.location.href = '/dashboard';
     } catch (err: any) {
       setError(err.message || 'Invalid email or password');
     } finally {
