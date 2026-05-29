@@ -445,7 +445,7 @@ export default function Dashboard() {
       <header className={styles.header}>
         <div className={styles.logoArea} onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
           <div className={styles.logoBadgeContainer}>
-            <img src="https://anyimage.io/storage/uploads/35fd8ae24af987ad96a67ab882c3eb8b" alt="UIP Logo" style={{ width: '45px', height: '45px', objectFit: 'contain' }} />
+            <span className={styles.logoBadge}>UIP</span>
           </div>
           <div className={styles.logoTitles}>
             <h2 className={styles.logoText}>Unique Income Plane</h2>
