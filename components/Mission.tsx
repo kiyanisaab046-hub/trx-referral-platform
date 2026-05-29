@@ -56,7 +56,7 @@ export default function Mission() {
 
         <div className="flex flex-col lg:flex-row items-center justify-center gap-16 max-w-5xl mx-auto">
           
-          {/* Left - Rotating Premium Glass Orb Visual */}
+          {/* Left - Rotating Logo Visual */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -64,19 +64,23 @@ export default function Mission() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="w-64 h-64 relative flex items-center justify-center flex-shrink-0"
           >
-            {/* Glowing core sphere */}
+            {/* Continuously Rotating Logo */}
             <motion.div 
-              animate={{ y: [-10, 10, -10], rotate: [0, 5, -5, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="relative w-44 h-44 rounded-full bg-gradient-to-tr from-primary to-highlight shadow-[0_0_60px_rgba(255,154,134,0.3)] flex items-center justify-center"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+              className="relative w-44 h-44 rounded-full shadow-[0_0_60px_rgba(255,154,134,0.3)] flex items-center justify-center"
             >
-              <div className="absolute inset-0 bg-black/10 rounded-full mix-blend-overlay" />
+              <img 
+                src="https://anyimage.io/storage/uploads/724cca788e43d720d95babf4924908c3" 
+                alt="UIP Circle Logo" 
+                className="w-full h-full object-cover rounded-full"
+              />
               
-              {/* Outer ring */}
+              {/* Outer rotating ring for extra dynamic effect */}
               <motion.div 
-                animate={{ rotate: 360 }}
-                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="absolute w-[140%] h-[140%] rounded-full border border-white/5 border-t-primary/50" 
+                animate={{ rotate: -360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                className="absolute w-[140%] h-[140%] rounded-full border border-white/5 border-t-primary/50 pointer-events-none" 
               />
             </motion.div>
           </motion.div>
