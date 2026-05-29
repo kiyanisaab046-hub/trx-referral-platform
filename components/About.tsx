@@ -125,7 +125,7 @@ export default function About() {
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                 className="absolute w-full h-full rounded-full flex items-center justify-center transform-gpu overflow-hidden"
               >
-                <img src="https://anyimage.io/storage/uploads/1e8989e032dd9f2e468d25cc9077a3b5" alt="UIP Logo" className="w-full h-full object-cover rounded-full" />
+                <img src="https://anyimage.io/storage/uploads/8fd6fe1bd2aca6af620fedda10d3ee9a" alt="UIP Logo" className="w-full h-full object-cover rounded-full" style={{ transform: 'scale(1.2)' }} />
               </motion.div>
 
             </motion.div>
