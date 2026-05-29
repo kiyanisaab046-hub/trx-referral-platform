@@ -259,16 +259,17 @@ export default function Dashboard() {
                     }));
                     setCommunityTree(tree);
 
-                    if (teamIds.length > 0) {
-                      const { data: businessTx } = await supabase
-                        .from('transactions')
-                        .select('amount')
-                        .in('user_id', teamIds)
-                        .eq('type', 'rank_purchase');
-                      if (businessTx) {
-                        const businessSum = businessTx.reduce((acc, curr) => acc + Math.abs(Number(curr.amount)), 0);
-                        setTeamBusiness(businessSum);
-                      }
+                    // Fetch Team Business (User's own purchases + all downline purchases)
+                    const allBusinessIds = [authUser.id, ...teamIds];
+                    const { data: businessTx } = await supabase
+                      .from('transactions')
+                      .select('amount')
+                      .in('user_id', allBusinessIds)
+                      .eq('type', 'rank_purchase');
+                      
+                    if (businessTx) {
+                      const businessSum = businessTx.reduce((acc, curr) => acc + Math.abs(Number(curr.amount)), 0);
+                      setTeamBusiness(businessSum);
                     }
                   }
                 }
