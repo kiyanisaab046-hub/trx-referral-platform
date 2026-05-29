@@ -559,7 +559,7 @@ export default function Dashboard() {
 
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
-              <span className={styles.metricTitle}>Level Income</span>
+              <span className={styles.metricTitle}>Team Income</span>
             </div>
             <h3 className={styles.metricValue}>${teamSum.toFixed(2)}</h3>
           </Card>
