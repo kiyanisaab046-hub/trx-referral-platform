@@ -261,12 +261,15 @@ export default function Dashboard() {
 
                     // Fetch Team Business (User's own purchases + all downline purchases)
                     const allBusinessIds = [authUser.id, ...teamIds];
-                    const { data: businessTx } = await supabase
+                    const { data: businessTx, error: businessError } = await supabase
                       .from('transactions')
                       .select('amount')
                       .in('user_id', allBusinessIds)
                       .eq('type', 'rank_purchase');
                       
+                    if (businessError) {
+                      console.error("Team Business Fetch Error:", businessError);
+                    }
                     if (businessTx) {
                       const businessSum = businessTx.reduce((acc, curr) => acc + Math.abs(Number(curr.amount)), 0);
                       setTeamBusiness(businessSum);
@@ -390,12 +393,17 @@ export default function Dashboard() {
         .upsert({ user_id: user.id, rank: rank.id });
       if (rankErr) throw rankErr;
 
-      await supabase.from('transactions').insert({
+      const { error: txErr } = await supabase.from('transactions').insert({
         user_id: user.id,
         amount: -rank.price,
         type: 'rank_purchase',
         description: `Achieved ${rank.name} Rank`,
       });
+      
+      if (txErr) {
+        console.error("Failed to log rank_purchase transaction:", txErr);
+        alert("Transaction Error: " + txErr.message);
+      }
 
       // --- PHASE 1 DISTRIBUTION LOGIC: Direct Income (20%) ---
       // We call the secure backend RPC to distribute the 20% commission to the sponsor.
