@@ -259,20 +259,14 @@ export default function Dashboard() {
                     }));
                     setCommunityTree(tree);
 
-                    // Fetch Team Business (User's own purchases + all downline purchases)
-                    const allBusinessIds = [authUser.id, ...teamIds];
-                    const { data: businessTx, error: businessError } = await supabase
-                      .from('transactions')
-                      .select('amount')
-                      .in('user_id', allBusinessIds)
-                      .eq('type', 'rank_purchase');
+                    // Fetch Team Business using secure server-side RPC (bypasses RLS)
+                    const { data: businessData, error: businessError } = await supabase
+                      .rpc('get_team_business', { root_user_id: authUser.id });
                       
                     if (businessError) {
                       console.error("Team Business Fetch Error:", businessError);
-                    }
-                    if (businessTx) {
-                      const businessSum = businessTx.reduce((acc, curr) => acc + Math.abs(Number(curr.amount)), 0);
-                      setTeamBusiness(businessSum);
+                    } else {
+                      setTeamBusiness(Number(businessData) || 0);
                     }
                   }
                 }
