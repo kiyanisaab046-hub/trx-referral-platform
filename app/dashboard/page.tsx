@@ -410,6 +410,18 @@ export default function Dashboard() {
       }
       // --- END PHASE 2 DISTRIBUTION ---
 
+      // --- PHASE 3 DISTRIBUTION LOGIC: Team Income (20%) ---
+      const { error: teamError } = await supabase.rpc('distribute_team_income', { 
+        upgrader_id: user.id, 
+        new_rank_id: rank.id,
+        total_upgrade_fee: rank.price 
+      });
+
+      if (teamError) {
+        console.error("Team Income Distribution Error:", teamError);
+      }
+      // --- END PHASE 3 DISTRIBUTION ---
+
       alert(`Congratulations! You are now a ${rank.name}!`);
       window.location.reload();
     } catch (err: any) {
