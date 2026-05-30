@@ -22,6 +22,8 @@ CREATE TABLE public.users (
     role user_role DEFAULT 'user'::user_role,
     referral_code TEXT UNIQUE NOT NULL,
     sponsor_id UUID REFERENCES public.users(id) ON DELETE SET NULL,
+    numeric_id TEXT UNIQUE,
+    activation_date TIMESTAMP WITH TIME ZONE,
     is_banned BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
@@ -154,12 +156,30 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Generates a unique 5-digit numeric ID for each user
+CREATE OR REPLACE FUNCTION generate_unique_numeric_id()
+RETURNS TEXT AS $$
+DECLARE
+    new_id TEXT;
+    exists_id BOOLEAN;
+BEGIN
+    LOOP
+        new_id := LPAD(FLOOR(RANDOM() * 90000 + 10000)::TEXT, 5, '0');
+        SELECT EXISTS(SELECT 1 FROM public.users WHERE numeric_id = new_id) INTO exists_id;
+        IF NOT exists_id THEN
+            RETURN new_id;
+        END IF;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Trigger Function: Executed on Auth Sign Up
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 DECLARE
     sponsor_uuid UUID := NULL;
     ref_code TEXT;
+    num_id TEXT;
 BEGIN
     -- Check if metadata contains a sponsor referral code and resolve the sponsor user ID
     IF NEW.raw_user_meta_data ? 'sponsor_code' AND (NEW.raw_user_meta_data->>'sponsor_code') <> '' THEN
@@ -171,8 +191,11 @@ BEGIN
     -- Generate a unique referral code for the new user
     ref_code := generate_unique_ref_code();
 
+    -- Generate a unique numeric ID for the new user
+    num_id := generate_unique_numeric_id();
+
     -- Insert profile details into public.users
-    INSERT INTO public.users (id, full_name, email, phone_number, role, referral_code, sponsor_id)
+    INSERT INTO public.users (id, full_name, email, phone_number, role, referral_code, sponsor_id, numeric_id)
     VALUES (
         NEW.id,
         COALESCE(NEW.raw_user_meta_data->>'full_name', 'Member'),
@@ -180,7 +203,8 @@ BEGIN
         NEW.raw_user_meta_data->>'phone_number',
         'user'::user_role,
         ref_code,
-        sponsor_uuid
+        sponsor_uuid,
+        num_id
     );
 
     -- Initialize user's wallet with $0.00

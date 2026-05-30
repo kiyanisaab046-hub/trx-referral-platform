@@ -15,6 +15,9 @@ interface UserProfile {
   email: string;
   referral_code: string;
   role: string;
+  numeric_id: string | null;
+  activation_date: string | null;
+  sponsor_id: string | null;
 }
 
 interface Wallet {
@@ -74,6 +77,7 @@ export default function Dashboard() {
   const [purchasedRank, setPurchasedRank] = useState(0);
   const [achievingRank, setAchievingRank] = useState<number | null>(null);
   const [showLowerRanks, setShowLowerRanks] = useState(false); // Controls visibility of lower ranks
+  const [sponsorNumericId, setSponsorNumericId] = useState<string | null>(null);
 
   // Split ranks into always-visible top ranks (up to current) and lower ranks
   const topRanks = ranks.filter(r => r.id <= purchasedRank);
@@ -109,7 +113,7 @@ export default function Dashboard() {
         try {
           const { data: profile, error: profileError } = await supabase
             .from('users')
-            .select('id, full_name, email, referral_code, role')
+            .select('id, full_name, email, referral_code, role, numeric_id, activation_date, sponsor_id')
             .eq('id', authUser.id)
             .single();
 
@@ -120,6 +124,17 @@ export default function Dashboard() {
           } else {
             setUser(profile);
             logs.profileStatus = `Success (Ref code: ${profile.referral_code})`;
+            // Fetch sponsor's numeric_id if sponsor exists
+            if (profile.sponsor_id) {
+              const { data: sponsorData } = await supabase
+                .from('users')
+                .select('numeric_id')
+                .eq('id', profile.sponsor_id)
+                .single();
+              if (sponsorData?.numeric_id) {
+                setSponsorNumericId(sponsorData.numeric_id);
+              }
+            }
           }
         } catch (e: any) {
           logs.profileStatus = `Exception: ${e.message || e}`;
@@ -495,6 +510,39 @@ export default function Dashboard() {
         <div className={styles.welcomeInfo}>
           <h1 className={styles.welcomeTitle}>Welcome, {user?.full_name}</h1>
           <p className={styles.welcomeSubtitle}>Your professional income dashboard</p>
+        </div>
+      </div>
+
+      {/* Profile Details Card */}
+      <div className={styles.profileDetailsCard}>
+        <h4 className={styles.profileDetailsTitle}>Profile Details</h4>
+        <div className={styles.profileField}>
+          <span className={styles.profileFieldLabel}>User ID:</span>
+          <div className={styles.profileFieldValue}>{user?.numeric_id || '—'}</div>
+        </div>
+        <div className={styles.profileField}>
+          <span className={styles.profileFieldLabel}>Rank:</span>
+          <div className={styles.profileFieldValue}>{rankInfo.rank > 0 ? rankInfo.name.toUpperCase() : 'NONE'}</div>
+        </div>
+        <div className={styles.profileField}>
+          <span className={styles.profileFieldLabel}>Activation Date:</span>
+          <div className={styles.profileFieldValue}>
+            {user?.activation_date
+              ? new Date(user.activation_date).toLocaleString('en-US', {
+                  month: 'numeric',
+                  day: 'numeric',
+                  year: 'numeric',
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  second: '2-digit',
+                  hour12: true,
+                })
+              : 'Not Activated'}
+          </div>
+        </div>
+        <div className={styles.profileField}>
+          <span className={styles.profileFieldLabel}>Referred By:</span>
+          <div className={styles.profileFieldValue}>{sponsorNumericId || 'None'}</div>
         </div>
       </div>
 

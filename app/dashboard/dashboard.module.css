@@ -788,6 +788,54 @@
   color: #444;
 }
 
+/* ============================================== */
+/* PROFILE DETAILS CARD                           */
+/* ============================================== */
+.profileDetailsCard {
+  margin: 0 2rem 1.5rem 2rem;
+  background: rgba(10, 15, 30, 0.7);
+  border: 1px solid rgba(0, 210, 255, 0.12);
+  border-radius: 16px;
+  padding: 1.5rem;
+  backdrop-filter: blur(12px);
+}
+
+.profileDetailsTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #00d2ff;
+  margin: 0 0 1.25rem 0;
+  letter-spacing: 0.03em;
+}
+
+.profileField {
+  margin-bottom: 1rem;
+}
+
+.profileField:last-child {
+  margin-bottom: 0;
+}
+
+.profileFieldLabel {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #d4a843;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.02em;
+}
+
+.profileFieldValue {
+  background: rgba(20, 28, 50, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #e0e0e0;
+  letter-spacing: 0.01em;
+}
+
 /* RESPONSIVE LAYOUT adjustments */
 @media (max-width: 768px) {
   .header {
@@ -806,5 +854,9 @@
   }
   .mainContent {
     padding: 1rem 1.5rem;
+  }
+  .profileDetailsCard {
+    margin: 0 1rem 1rem 1rem;
+    padding: 1.25rem;
   }
 }
