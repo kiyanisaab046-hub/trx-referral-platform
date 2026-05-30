@@ -878,3 +878,101 @@
     gap: 0.75rem;
   }
 }
+
+/* REWARDS SECTION */
+.rewardsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.rewardCard {
+  background: rgba(10, 10, 10, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.rewardCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.rewardCard h4 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rewardCriteria {
+  font-size: 0.85rem;
+  color: #888;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.rewardCriteria span {
+  color: #00d2ff;
+  font-weight: 600;
+}
+
+.claimActiveBtn {
+  margin-top: auto;
+  padding: 0.8rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #00d2ff, #0080ff);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+  transition: all 0.2s;
+}
+
+.claimActiveBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
+}
+
+.claimActiveBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.claimDisabledBtn {
+  margin-top: auto;
+  padding: 0.8rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: not-allowed;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.claimedBtn {
+  margin-top: auto;
+  padding: 0.8rem;
+  border-radius: 8px;
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  cursor: default;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}

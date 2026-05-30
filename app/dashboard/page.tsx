@@ -480,6 +480,68 @@ export default function Dashboard() {
     }
   };
 
+  // --- REWARD LOGIC ---
+  const hasClaimedMobile = transactions.some(tx => tx.description.includes('Mobile Bonus'));
+  const hasClaimedLaptop = transactions.some(tx => tx.description.includes('Laptop Bonus'));
+
+  const canClaimMobile = !hasClaimedMobile && purchasedRank >= 4 && myDirectMembers.length >= 3 && teamBusiness >= 5000;
+  const canClaimLaptop = !hasClaimedLaptop && purchasedRank >= 5 && myDirectMembers.length >= 5 && teamBusiness >= 15000;
+
+  const [claimingReward, setClaimingReward] = useState<'mobile' | 'laptop' | null>(null);
+
+  const handleClaimReward = async (tier: 'mobile' | 'laptop') => {
+    if (!user || !wallet) return;
+    
+    const reward = tier === 'mobile' 
+      ? { amount: 100, name: 'Mobile' } 
+      : { amount: 150, name: 'Laptop' };
+
+    setClaimingReward(tier);
+
+    try {
+      const { error: walletError } = await supabase
+        .from('wallets')
+        .update({ 
+          main_balance: wallet.main_balance + reward.amount,
+          income_balance: wallet.income_balance + reward.amount
+        })
+        .eq('user_id', user.id);
+
+      if (walletError) throw walletError;
+
+      const { error: txError } = await supabase.from('transactions').insert({
+        user_id: user.id,
+        amount: reward.amount,
+        type: 'commission_reward',
+        description: `Claimed ${reward.name} Bonus of $${reward.amount}`
+      });
+
+      if (txError) throw txError;
+
+      setWallet({ 
+        ...wallet, 
+        main_balance: wallet.main_balance + reward.amount,
+        income_balance: wallet.income_balance + reward.amount
+      });
+      setRewardSum(prev => prev + reward.amount);
+      setTransactions(prev => [{
+        id: Date.now().toString(),
+        amount: reward.amount,
+        type: 'commission_reward',
+        description: `Claimed ${reward.name} Bonus of $${reward.amount}`,
+        created_at: new Date().toISOString()
+      }, ...prev]);
+
+      alert(`🎉 Success! $${reward.amount} ${reward.name} Reward claimed and added to your wallet.`);
+    } catch (error: any) {
+      console.error("Reward Claim Error:", error);
+      alert(`Failed to claim reward: ${error.message}`);
+    } finally {
+      setClaimingReward(null);
+    }
+  };
+  // --- END REWARD LOGIC ---
+
   if (loading) {
     return (
       <div className={styles.loaderContainer}>
@@ -850,10 +912,65 @@ export default function Dashboard() {
               </div>
             </div>
 
+            </div>
 
+            {/* REWARDS SECTION */}
+            <div style={{ marginTop: '2rem' }}>
+              <h4 className={styles.subSectionTitle}>🏆 Special Rewards</h4>
+              <div className={styles.rewardsContainer}>
+                
+                {/* Tier 1: Mobile Reward Card */}
+                <div className={styles.rewardCard}>
+                  <h4>📱 Mobile Reward ($100)</h4>
+                  <p className={styles.rewardCriteria}>Criteria: Rank &ge; $24 | Directs: 3 | Team Business: $5,000</p>
+                  
+                  {hasClaimedMobile ? (
+                    <button disabled className={styles.claimedBtn}>
+                      ✓ Claimed
+                    </button>
+                  ) : canClaimMobile ? (
+                    <button 
+                      onClick={() => handleClaimReward('mobile')} 
+                      disabled={claimingReward === 'mobile'}
+                      className={styles.claimActiveBtn}
+                    >
+                      {claimingReward === 'mobile' ? 'Processing...' : 'Claim Reward'}
+                    </button>
+                  ) : (
+                    <button disabled className={styles.claimDisabledBtn}>
+                      Requirements Not Met
+                    </button>
+                  )}
+                </div>
 
+                {/* Tier 2: Laptop Reward Card */}
+                <div className={styles.rewardCard}>
+                  <h4>💻 Laptop Reward ($150)</h4>
+                  <p className={styles.rewardCriteria}>Criteria: Rank &ge; $48 | Directs: 5 | Team Business: $15,000</p>
+                  
+                  {hasClaimedLaptop ? (
+                    <button disabled className={styles.claimedBtn}>
+                      ✓ Claimed
+                    </button>
+                  ) : canClaimLaptop ? (
+                    <button 
+                      onClick={() => handleClaimReward('laptop')} 
+                      disabled={claimingReward === 'laptop'}
+                      className={styles.claimActiveBtn}
+                    >
+                      {claimingReward === 'laptop' ? 'Processing...' : 'Claim Reward'}
+                    </button>
+                  ) : (
+                    <button disabled className={styles.claimDisabledBtn}>
+                      Requirements Not Met
+                    </button>
+                  )}
+                </div>
+
+              </div>
+            </div>
+            {/* END REWARDS SECTION */}
           
-
         </section>
 
             {/* 6. Community Size Section */}
