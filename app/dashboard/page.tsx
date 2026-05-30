@@ -912,8 +912,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            </div>
-
             {/* REWARDS SECTION */}
             <div style={{ marginTop: '2rem' }}>
               <h4 className={styles.subSectionTitle}>🏆 Special Rewards</h4>
