@@ -543,10 +543,14 @@ export default function Dashboard() {
                 <span className={styles.drawerStatLabel}>Weekly Income</span>
                 <span className={styles.drawerStatValue}>${weeklySalarySum.toFixed(2)}</span>
               </div>
-              <div className={styles.drawerStatRow}>
-                <span className={styles.drawerStatLabel}>Reward Details</span>
+              <button 
+                className={styles.drawerStatRow} 
+                style={{ background: 'transparent', border: 'none', padding: 0, width: '100%', cursor: 'pointer' }}
+                onClick={() => { router.push('/dashboard/reward-details'); setMobileMenuOpen(false); }}
+              >
+                <span className={styles.drawerStatLabel} style={{ color: '#00d2ff', textDecoration: 'underline' }}>Reward Details ➔</span>
                 <span className={styles.drawerStatValue}>${rewardSum.toFixed(2)}</span>
-              </div>
+              </button>
             </div>
             <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/my-team'); setMobileMenuOpen(false); }}>
               👥 My Team
