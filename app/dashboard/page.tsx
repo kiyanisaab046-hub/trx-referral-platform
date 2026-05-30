@@ -500,30 +500,7 @@ export default function Dashboard() {
 
       <main className={styles.mainContent}>
         <section className={styles.statusRow}>
-          <Card className={styles.statusCard}>
-            <div className={styles.statusMeta}>
-              <span className={styles.statusLabel}>Status</span>
-              <div className={styles.statusValueRow}>
-                <span className={styles.statusIndicator}>●</span>
-                <span className={styles.statusTextVal}>Professional Pack Active</span>
-              </div>
-            </div>
-            <span className={styles.statusBadge}>Live</span>
-          </Card>
-          <Card className={styles.statusCard}>
-            <div className={styles.statusMeta}>
-              <span className={styles.statusLabel}>Current Rank</span>
-              <span className={styles.statusTextVal}>{rankInfo.rank > 0 ? `Rank ${rankInfo.rank}: ` : ''}{rankInfo.name}</span>
-            </div>
-            <span className={styles.statusBadge}>$3 Investment</span>
-          </Card>
-          <Card className={styles.statusCard}>
-            <div className={styles.statusMeta}>
-              <span className={styles.statusLabel}>Account Type</span>
-              <span className={styles.statusTextVal}>Active</span>
-            </div>
-            <span className={styles.statusBadge}>From Scratch</span>
-          </Card>
+
           <Card className={styles.statusCard}>
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>Level Income</span>
