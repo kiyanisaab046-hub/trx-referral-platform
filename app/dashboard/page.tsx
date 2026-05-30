@@ -119,8 +119,11 @@ export default function Dashboard() {
 
           if (profileError) {
             logs.profileStatus = `Error: ${profileError.message} (Code: ${profileError.code})`;
+            console.error("Profile fetch error:", profileError);
+            alert(`Profile Fetch Error: ${profileError.message}`);
           } else if (!profile) {
             logs.profileStatus = 'Error: Profile is null/empty';
+            alert('Error: Profile is empty.');
           } else {
             setUser(profile);
             logs.profileStatus = `Success (Ref code: ${profile.referral_code})`;
@@ -138,6 +141,7 @@ export default function Dashboard() {
           }
         } catch (e: any) {
           logs.profileStatus = `Exception: ${e.message || e}`;
+          alert(`Profile catch error: ${e.message}`);
         }
 
         try {
