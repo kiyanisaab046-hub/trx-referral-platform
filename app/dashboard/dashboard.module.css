@@ -850,17 +850,148 @@
   letter-spacing: 0.05em;
 }
 
+/* Desktop-only logout (hidden on mobile) */
+.logoutBtnDesktop {
+  background: transparent;
+  border: 1px solid #333;
+  color: #888;
+  padding: 0.5rem 1.25rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logoutBtnDesktop:hover {
+  border-color: #e74c3c;
+  color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.05);
+}
+
+/* Mobile Hamburger Button — hidden on desktop */
+.mobileHamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 210, 255, 0.25);
+  background: rgba(0, 210, 255, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 60;
+}
+
+.mobileHamburger:hover {
+  border-color: rgba(0, 210, 255, 0.5);
+}
+
+.hamburgerLine {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: #00d2ff;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.hamburgerLineTop {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburgerLineMid {
+  opacity: 0;
+}
+
+.hamburgerLineBot {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Mobile Drawer Overlay */
+.mobileDrawerOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  z-index: 55;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 90px;
+}
+
+.mobileDrawer {
+  background: rgba(10, 10, 20, 0.95);
+  border: 1px solid rgba(0, 210, 255, 0.15);
+  border-radius: 16px;
+  padding: 1rem;
+  width: 90%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.mobileDrawerItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.25rem;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.mobileDrawerItem:hover {
+  background: rgba(0, 210, 255, 0.08);
+  color: #00d2ff;
+}
+
+.mobileDrawerLogout {
+  color: #e74c3c;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 0.25rem;
+  padding-top: 1rem;
+}
+
+.mobileDrawerLogout:hover {
+  background: rgba(231, 76, 60, 0.08);
+  color: #ff6b6b;
+}
+
 /* RESPONSIVE LAYOUT adjustments */
 @media (max-width: 768px) {
   .header {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1.5rem;
-    text-align: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 1rem 1.25rem;
+    text-align: left;
   }
   .profileHeader {
-    width: 100%;
-    justify-content: center;
+    display: none;
+  }
+  .mobileHamburger {
+    display: flex;
+  }
+  .mobileDrawerOverlay {
+    display: flex;
+  }
+  .logoutBtnDesktop {
+    display: none;
   }
   .welcomeSubBar {
     padding: 1.5rem 1.5rem 0.5rem 1.5rem;

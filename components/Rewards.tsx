@@ -17,11 +17,11 @@ import { createClient } from "@/lib/supabase/client";
 const rewardsData = [
   { id: "01", rank: "Rank 4", rankNum: 4, name: "Achiever", selfId: "$24", direct: 3, biz: 5000, prize: "Smartphone", prizeValue: 100, icon: DevicePhoneMobileIcon, image: "/rewards/smartphone.png" },
   { id: "02", rank: "Rank 5", rankNum: 5, name: "Advancer", selfId: "$48", direct: 5, biz: 15000, prize: "Laptop", prizeValue: 150, icon: ComputerDesktopIcon, image: "/rewards/laptop.png" },
-  { id: "03", rank: "Rank 6", rankNum: 6, name: "Progressor", selfId: "$96", direct: 8, biz: 35000, prize: "Motorcycle", prizeValue: 300, icon: SparklesIcon, image: "/rewards/motorcycle.png" },
-  { id: "04", rank: "Rank 7", rankNum: 7, name: "Leader", selfId: "$192", direct: 10, biz: 150000, prize: "Luxury Vacation", prizeValue: 1000, icon: GlobeAltIcon, image: "/rewards/vacation.png" },
-  { id: "05", rank: "Rank 8", rankNum: 8, name: "Pioneer", selfId: "$384", direct: 12, biz: 500000, prize: "Hajj / Umrah Trip", prizeValue: 5000, icon: MapPinIcon, image: "/rewards/mecca.png" },
-  { id: "06", rank: "Rank 9", rankNum: 9, name: "Champion", selfId: "$768", direct: 15, biz: 700000, prize: "Luxury Car", prizeValue: 20000, icon: TicketIcon, image: "/rewards/car.png" },
-  { id: "07", rank: "Rank 10", rankNum: 10, name: "Legend", selfId: "$1,536", direct: 20, biz: 1000000, prize: "Luxury House", prizeValue: 50000, icon: HomeIcon, image: "/rewards/house.png" },
+  { id: "03", rank: "Rank 6", rankNum: 6, name: "Progressor", selfId: "$96", direct: 8, biz: 35000, prize: "Motorcycle", prizeValue: 500, icon: SparklesIcon, image: "/rewards/motorcycle.png" },
+  { id: "04", rank: "Rank 7", rankNum: 7, name: "Leader", selfId: "$192", direct: 10, biz: 150000, prize: "Luxury Vacation", prizeValue: 750, icon: GlobeAltIcon, image: "/rewards/vacation.png" },
+  { id: "05", rank: "Rank 8", rankNum: 8, name: "Pioneer", selfId: "$384", direct: 12, biz: 500000, prize: "Hajj / Umrah Trip", prizeValue: 1000, icon: MapPinIcon, image: "/rewards/mecca.png" },
+  { id: "06", rank: "Rank 9", rankNum: 9, name: "Champion", selfId: "$768", direct: 15, biz: 700000, prize: "Luxury Car", prizeValue: 7000, icon: TicketIcon, image: "/rewards/car.png" },
+  { id: "07", rank: "Rank 10", rankNum: 10, name: "Legend", selfId: "$1,536", direct: 20, biz: 1000000, prize: "Luxury House", prizeValue: 30000, icon: HomeIcon, image: "/rewards/house.png" },
 ];
 
 const containerVariants = {

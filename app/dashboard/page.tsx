@@ -78,6 +78,7 @@ export default function Dashboard() {
   const [achievingRank, setAchievingRank] = useState<number | null>(null);
   const [showLowerRanks, setShowLowerRanks] = useState(false); // Controls visibility of lower ranks
   const [sponsorNumericId, setSponsorNumericId] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Split ranks into always-visible top ranks (up to current) and lower ranks
   const topRanks = ranks.filter(r => r.id <= purchasedRank);
@@ -519,9 +520,36 @@ export default function Dashboard() {
           <button className={styles.homeBtn} onClick={() => router.push('/')}>
             🏠 Back to Website
           </button>
-          <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>
+          <button className={styles.logoutBtnDesktop} onClick={handleLogout}>Logout</button>
         </div>
+        {/* Mobile Hamburger Button */}
+        <button
+          className={styles.mobileHamburger}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle Menu"
+        >
+          <span className={`${styles.hamburgerLine} ${mobileMenuOpen ? styles.hamburgerLineTop : ''}`} />
+          <span className={`${styles.hamburgerLine} ${mobileMenuOpen ? styles.hamburgerLineMid : ''}`} />
+          <span className={`${styles.hamburgerLine} ${mobileMenuOpen ? styles.hamburgerLineBot : ''}`} />
+        </button>
       </header>
+
+      {/* Mobile Drawer Menu */}
+      {mobileMenuOpen && (
+        <div className={styles.mobileDrawerOverlay} onClick={() => setMobileMenuOpen(false)}>
+          <div className={styles.mobileDrawer} onClick={(e) => e.stopPropagation()}>
+            <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/my-team'); setMobileMenuOpen(false); }}>
+              👥 My Team
+            </button>
+            <button className={styles.mobileDrawerItem} onClick={() => { router.push('/'); setMobileMenuOpen(false); }}>
+              🏠 Back to Website
+            </button>
+            <button className={`${styles.mobileDrawerItem} ${styles.mobileDrawerLogout}`} onClick={() => { handleLogout(); setMobileMenuOpen(false); }}>
+              🚪 Logout
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className={styles.welcomeSubBar}>
         <div className={styles.welcomeInfo}>
