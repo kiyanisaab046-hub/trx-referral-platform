@@ -538,6 +538,16 @@ export default function Dashboard() {
       {mobileMenuOpen && (
         <div className={styles.mobileDrawerOverlay} onClick={() => setMobileMenuOpen(false)}>
           <div className={styles.mobileDrawer} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.drawerStatsContainer}>
+              <div className={styles.drawerStatRow}>
+                <span className={styles.drawerStatLabel}>Weekly Income</span>
+                <span className={styles.drawerStatValue}>${weeklySalarySum.toFixed(2)}</span>
+              </div>
+              <div className={styles.drawerStatRow}>
+                <span className={styles.drawerStatLabel}>Reward Details</span>
+                <span className={styles.drawerStatValue}>${rewardSum.toFixed(2)}</span>
+              </div>
+            </div>
             <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/my-team'); setMobileMenuOpen(false); }}>
               👥 My Team
             </button>

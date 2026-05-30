@@ -959,6 +959,34 @@
   color: #00d2ff;
 }
 
+.drawerStatsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background: rgba(0, 210, 255, 0.03);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 210, 255, 0.1);
+}
+
+.drawerStatRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.drawerStatLabel {
+  color: #a0a0a0;
+  font-weight: 500;
+}
+
+.drawerStatValue {
+  color: #00d2ff;
+  font-weight: 700;
+}
+
 .mobileDrawerLogout {
   color: #e74c3c;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
