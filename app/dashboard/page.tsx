@@ -386,7 +386,18 @@ export default function Dashboard() {
   const currentSliderIndex = mobileSliderIndex === -1 ? Math.max(0, rankInfo.rank - 1) : mobileSliderIndex;
 
   const handleAchieveRank = async (rank: typeof ranks[0]) => {
-    if (!user || !wallet || wallet.main_balance < rank.price) return;
+    if (!user) {
+      alert('Error: User profile not loaded. Please refresh the page.');
+      return;
+    }
+    if (!wallet) {
+      alert('Error: Wallet not loaded. Please refresh the page.');
+      return;
+    }
+    if (wallet.main_balance < rank.price) {
+      alert(`Insufficient balance! You need $${rank.price} but only have $${wallet.main_balance.toFixed(2)}. Please deposit funds first.`);
+      return;
+    }
     if (!confirm(`Are you ready to claim your position as ${rank.name}? This will deduct $${rank.price} from your wallet.`)) return;
 
     setAchievingRank(rank.id);
@@ -405,13 +416,13 @@ export default function Dashboard() {
       const { error: txErr } = await supabase.from('transactions').insert({
         user_id: user.id,
         amount: -rank.price,
-        type: 'rank_purchase',
-        description: `Achieved ${rank.name} Rank`,
+        type: 'withdrawal',
+        description: `Rank Purchase: Achieved ${rank.name} Rank ($${rank.price})`,
       });
       
       if (txErr) {
-        console.error("Failed to log rank_purchase transaction:", txErr);
-        alert("Transaction Error: " + txErr.message);
+        console.error("Failed to log rank transaction:", txErr);
+        // Don't block rank achievement for a logging error
       }
 
       // --- PHASE 1 DISTRIBUTION LOGIC: Direct Income (20%) ---
