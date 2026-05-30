@@ -113,7 +113,7 @@ export default function Dashboard() {
         try {
           const { data: profile, error: profileError } = await supabase
             .from('users')
-            .select('id, full_name, email, referral_code, role, numeric_id, activation_date, sponsor_id')
+            .select('*')
             .eq('id', authUser.id)
             .single();
 
@@ -128,7 +128,7 @@ export default function Dashboard() {
             if (profile.sponsor_id) {
               const { data: sponsorData } = await supabase
                 .from('users')
-                .select('numeric_id, referral_code')
+                .select('*')
                 .eq('id', profile.sponsor_id)
                 .single();
               if (sponsorData) {
