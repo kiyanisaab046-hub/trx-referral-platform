@@ -36,7 +36,7 @@ const cardVariants = {
   show:   { opacity: 1, y: 0,  scale: 1, transition: { duration: 0.4, type: "spring", stiffness: 150, damping: 18 } },
 } as const;
 
-export default function Rewards() {
+export default function Rewards({ isDashboard = false }: { isDashboard?: boolean }) {
   const supabase = createClient();
   const [user, setUser] = useState<any>(null);
   const [wallet, setWallet] = useState<any>(null);
@@ -231,8 +231,8 @@ export default function Rewards() {
                   </div>
                 </div>
 
-                {/* Logged In User Progress & Claim */}
-                {user && (() => {
+                {/* Logged In User Progress & Claim (Only shown on dashboard page) */}
+                {isDashboard && user && (() => {
                   const progress = Math.floor((
                     Math.min(100, (teamBusiness / r.biz) * 100) + 
                     Math.min(100, (directs / r.direct) * 100) + 

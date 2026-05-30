@@ -28,7 +28,7 @@ export default function RewardDetailsPage() {
       </header>
 
       <main style={{ paddingBottom: '4rem' }}>
-        <Rewards />
+        <Rewards isDashboard={true} />
       </main>
     </div>
   );
