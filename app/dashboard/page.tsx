@@ -924,6 +924,32 @@ export default function Dashboard() {
                   <h4>📱 Mobile Reward ($100)</h4>
                   <p className={styles.rewardCriteria}>Criteria: Rank &ge; $24 | Directs: 3 | Team Business: $5,000</p>
                   
+                  {/* Progress Bar for Mobile */}
+                  <div style={{ marginTop: '0.2rem', marginBottom: '0.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#00d2ff', marginBottom: '4px', fontWeight: 600 }}>
+                      <span>Progress</span>
+                      <span>
+                        {Math.floor((
+                          Math.min(100, (teamBusiness / 5000) * 100) + 
+                          Math.min(100, (myDirectMembers.length / 3) * 100) + 
+                          Math.min(100, (purchasedRank / 4) * 100)
+                        ) / 3)}%
+                      </span>
+                    </div>
+                    <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{ 
+                        width: `${(
+                          Math.min(100, (teamBusiness / 5000) * 100) + 
+                          Math.min(100, (myDirectMembers.length / 3) * 100) + 
+                          Math.min(100, (purchasedRank / 4) * 100)
+                        ) / 3}%`, 
+                        height: '100%', 
+                        background: 'linear-gradient(90deg, #00d2ff, #0080ff)', 
+                        transition: 'width 0.5s ease-out' 
+                      }} />
+                    </div>
+                  </div>
+
                   {hasClaimedMobile ? (
                     <button disabled className={styles.claimedBtn}>
                       ✓ Claimed
@@ -948,6 +974,32 @@ export default function Dashboard() {
                   <h4>💻 Laptop Reward ($150)</h4>
                   <p className={styles.rewardCriteria}>Criteria: Rank &ge; $48 | Directs: 5 | Team Business: $15,000</p>
                   
+                  {/* Progress Bar for Laptop */}
+                  <div style={{ marginTop: '0.2rem', marginBottom: '0.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#00d2ff', marginBottom: '4px', fontWeight: 600 }}>
+                      <span>Progress</span>
+                      <span>
+                        {Math.floor((
+                          Math.min(100, (teamBusiness / 15000) * 100) + 
+                          Math.min(100, (myDirectMembers.length / 5) * 100) + 
+                          Math.min(100, (purchasedRank / 5) * 100)
+                        ) / 3)}%
+                      </span>
+                    </div>
+                    <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{ 
+                        width: `${(
+                          Math.min(100, (teamBusiness / 15000) * 100) + 
+                          Math.min(100, (myDirectMembers.length / 5) * 100) + 
+                          Math.min(100, (purchasedRank / 5) * 100)
+                        ) / 3}%`, 
+                        height: '100%', 
+                        background: 'linear-gradient(90deg, #00d2ff, #0080ff)', 
+                        transition: 'width 0.5s ease-out' 
+                      }} />
+                    </div>
+                  </div>
+
                   {hasClaimedLaptop ? (
                     <button disabled className={styles.claimedBtn}>
                       ✓ Claimed
