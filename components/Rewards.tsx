@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
   DevicePhoneMobileIcon,
@@ -12,14 +12,17 @@ import {
   HomeIcon
 } from "@heroicons/react/24/outline";
 
+import { supabase } from "@/lib/supabase";
+// remove local createClient call, use imported supabase instance
+
 const rewardsData = [
-  { id: "01", rank: "Rank 4", name: "Achiever", selfId: "$24", direct: "3", biz: "$5,000", prize: "Smartphone", icon: DevicePhoneMobileIcon, image: "/rewards/smartphone.png" },
-  { id: "02", rank: "Rank 5", name: "Advancer", selfId: "$48", direct: "5", biz: "$15,000", prize: "Laptop", icon: ComputerDesktopIcon, image: "/rewards/laptop.png" },
-  { id: "03", rank: "Rank 6", name: "Progressor", selfId: "$96", direct: "8", biz: "$35,000", prize: "Motorcycle", icon: SparklesIcon, image: "/rewards/motorcycle.png" },
-  { id: "04", rank: "Rank 7", name: "Leader", selfId: "$192", direct: "10", biz: "$150,000", prize: "Luxury Vacation", icon: GlobeAltIcon, image: "/rewards/vacation.png" },
-  { id: "05", rank: "Rank 8", name: "Pioneer", selfId: "$384", direct: "12", biz: "$500,000", prize: "Hajj / Umrah Trip", icon: MapPinIcon, image: "/rewards/mecca.png" },
-  { id: "06", rank: "Rank 9", name: "Champion", selfId: "$768", direct: "15", biz: "$700,000", prize: "Luxury Car", icon: TicketIcon, image: "/rewards/car.png" },
-  { id: "07", rank: "Rank 10", name: "Legend", selfId: "$1,536", direct: "20", biz: "$1,000,000", prize: "Luxury House", icon: HomeIcon, image: "/rewards/house.png" },
+  { id: "01", rank: "Rank 4", rankNum: 4, name: "Achiever", selfId: "$24", direct: 3, biz: 5000, prize: "Smartphone", prizeValue: 100, icon: DevicePhoneMobileIcon, image: "/rewards/smartphone.png" },
+  { id: "02", rank: "Rank 5", rankNum: 5, name: "Advancer", selfId: "$48", direct: 5, biz: 15000, prize: "Laptop", prizeValue: 150, icon: ComputerDesktopIcon, image: "/rewards/laptop.png" },
+  { id: "03", rank: "Rank 6", rankNum: 6, name: "Progressor", selfId: "$96", direct: 8, biz: 35000, prize: "Motorcycle", prizeValue: 300, icon: SparklesIcon, image: "/rewards/motorcycle.png" },
+  { id: "04", rank: "Rank 7", rankNum: 7, name: "Leader", selfId: "$192", direct: 10, biz: 150000, prize: "Luxury Vacation", prizeValue: 1000, icon: GlobeAltIcon, image: "/rewards/vacation.png" },
+  { id: "05", rank: "Rank 8", rankNum: 8, name: "Pioneer", selfId: "$384", direct: 12, biz: 500000, prize: "Hajj / Umrah Trip", prizeValue: 5000, icon: MapPinIcon, image: "/rewards/mecca.png" },
+  { id: "06", rank: "Rank 9", rankNum: 9, name: "Champion", selfId: "$768", direct: 15, biz: 700000, prize: "Luxury Car", prizeValue: 20000, icon: TicketIcon, image: "/rewards/car.png" },
+  { id: "07", rank: "Rank 10", rankNum: 10, name: "Legend", selfId: "$1,536", direct: 20, biz: 1000000, prize: "Luxury House", prizeValue: 50000, icon: HomeIcon, image: "/rewards/house.png" },
 ];
 
 const containerVariants = {
@@ -35,6 +38,70 @@ const cardVariants = {
 } as const;
 
 export default function Rewards() {
+
+  const [user, setUser] = useState<any>(null);
+  const [wallet, setWallet] = useState<any>(null);
+  const [teamBusiness, setTeamBusiness] = useState(0);
+  const [purchasedRank, setPurchasedRank] = useState(0);
+  const [directs, setDirects] = useState(0);
+  const [claimedRewards, setClaimedRewards] = useState<string[]>([]);
+  const [claimingId, setClaimingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) return;
+      setUser(authUser);
+
+      const { data: walletData } = await supabase.from('wallets').select('*').eq('user_id', authUser.id).single();
+      if (walletData) setWallet(walletData);
+
+      const { data: ranks } = await supabase.from('user_ranks').select('rank').eq('user_id', authUser.id);
+      if (ranks && ranks.length > 0) setPurchasedRank(Math.max(...ranks.map(r => r.rank)));
+
+      const { data: dir } = await supabase.from('referrals').select('id').eq('sponsor_id', authUser.id);
+      if (dir) setDirects(dir.length);
+
+      const { data: tb } = await supabase.rpc('get_team_business', { root_user_id: authUser.id });
+      setTeamBusiness(tb || 0);
+
+      const { data: txs } = await supabase.from('transactions')
+        .select('description')
+        .eq('user_id', authUser.id)
+        .eq('type', 'commission_reward');
+      if (txs) setClaimedRewards(txs.map(t => t.description));
+    };
+    fetchStats();
+  }, []);
+
+  const handleClaimReward = async (reward: typeof rewardsData[0]) => {
+    if (!user || !wallet) return;
+    setClaimingId(reward.id);
+    try {
+      const { error: wErr } = await supabase.from('wallets').update({
+        main_balance: wallet.main_balance + reward.prizeValue,
+        income_balance: wallet.income_balance + reward.prizeValue
+      }).eq('user_id', user.id);
+      if (wErr) throw wErr;
+
+      const desc = `Claimed ${reward.prize} Bonus of $${reward.prizeValue}`;
+      const { error: txErr } = await supabase.from('transactions').insert({
+        user_id: user.id,
+        amount: reward.prizeValue,
+        type: 'commission_reward',
+        description: desc
+      });
+      if (txErr) throw txErr;
+
+      setClaimedRewards([...claimedRewards, desc]);
+      setWallet({ ...wallet, main_balance: wallet.main_balance + reward.prizeValue, income_balance: wallet.income_balance + reward.prizeValue });
+      alert(`🎉 Success! $${reward.prizeValue} ${reward.prize} Reward claimed and added to your wallet.`);
+    } catch (error: any) {
+      alert(`Failed to claim: ${error.message}`);
+    } finally {
+      setClaimingId(null);
+    }
+  };
   return (
     <section 
       className="relative py-20 bg-transparent" 
@@ -164,6 +231,50 @@ export default function Rewards() {
                     {r.prize}
                   </div>
                 </div>
+
+                {/* Logged In User Progress & Claim */}
+                {user && (() => {
+                  const progress = Math.floor((
+                    Math.min(100, (teamBusiness / r.biz) * 100) + 
+                    Math.min(100, (directs / r.direct) * 100) + 
+                    Math.min(100, (purchasedRank / r.rankNum) * 100)
+                  ) / 3);
+                  const hasClaimed = claimedRewards.some(desc => desc.includes(r.prize));
+                  const canClaim = progress >= 100 && !hasClaimed;
+
+                  return (
+                    <div className="mt-4">
+                      {/* Progress Bar */}
+                      <div className="mb-3">
+                        <div className="flex justify-between text-[10px] text-primary/80 font-bold uppercase tracking-wider mb-1">
+                          <span>Progress</span>
+                          <span>{progress}%</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-1000 ease-out"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Claim Button */}
+                      {hasClaimed ? (
+                        <button disabled className="w-full py-2 rounded-lg bg-[#2ecc71]/10 text-[#2ecc71] border border-[#2ecc71]/20 font-bold text-xs uppercase tracking-widest cursor-default flex items-center justify-center gap-2">
+                          ✓ Claimed
+                        </button>
+                      ) : canClaim ? (
+                        <button 
+                          onClick={() => handleClaimReward(r)}
+                          disabled={claimingId === r.id}
+                          className="w-full py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-white font-bold text-xs uppercase tracking-widest hover:shadow-[0_0_20px_rgba(255,154,134,0.3)] transition-all transform hover:-translate-y-0.5"
+                        >
+                          {claimingId === r.id ? 'Processing...' : 'Claim Reward'}
+                        </button>
+                      ) : null}
+                    </div>
+                  );
+                })()}
 
                 {/* Bottom line sweep */}
                 <div className="absolute bottom-0 left-0 h-[1px] w-0 group-hover:w-full bg-gradient-to-r from-primary via-secondary to-transparent transition-all duration-700 ease-out" />
