@@ -12,8 +12,7 @@ import {
   HomeIcon
 } from "@heroicons/react/24/outline";
 
-import { supabase } from "@/lib/supabase";
-// remove local createClient call, use imported supabase instance
+import { createClient } from "@/lib/supabase/client";
 
 const rewardsData = [
   { id: "01", rank: "Rank 4", rankNum: 4, name: "Achiever", selfId: "$24", direct: 3, biz: 5000, prize: "Smartphone", prizeValue: 100, icon: DevicePhoneMobileIcon, image: "/rewards/smartphone.png" },
@@ -38,7 +37,7 @@ const cardVariants = {
 } as const;
 
 export default function Rewards() {
-
+  const supabase = createClient();
   const [user, setUser] = useState<any>(null);
   const [wallet, setWallet] = useState<any>(null);
   const [teamBusiness, setTeamBusiness] = useState(0);
