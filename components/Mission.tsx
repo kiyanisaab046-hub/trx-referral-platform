@@ -71,7 +71,7 @@ export default function Mission() {
               className="relative w-44 h-44 rounded-full shadow-[0_0_60px_rgba(255,154,134,0.3)] flex items-center justify-center"
             >
               <img 
-                src="https://imagetourl.cloud/3t5hyi9u.png" 
+                src="https://i.postimg.cc/5NTDmXbn/JGwen-I-modified.png" 
                 alt="UIP Circle Logo" 
                 className="w-full h-full object-cover rounded-full"
               />
