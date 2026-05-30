@@ -128,11 +128,11 @@ export default function Dashboard() {
             if (profile.sponsor_id) {
               const { data: sponsorData } = await supabase
                 .from('users')
-                .select('numeric_id')
+                .select('numeric_id, referral_code')
                 .eq('id', profile.sponsor_id)
                 .single();
-              if (sponsorData?.numeric_id) {
-                setSponsorNumericId(sponsorData.numeric_id);
+              if (sponsorData) {
+                setSponsorNumericId(sponsorData.numeric_id || sponsorData.referral_code || null);
               }
             }
           }
@@ -515,34 +515,38 @@ export default function Dashboard() {
 
       {/* Profile Details Card */}
       <div className={styles.profileDetailsCard}>
-        <h4 className={styles.profileDetailsTitle}>Profile Details</h4>
-        <div className={styles.profileField}>
-          <span className={styles.profileFieldLabel}>User ID:</span>
-          <div className={styles.profileFieldValue}>{user?.numeric_id || '—'}</div>
-        </div>
-        <div className={styles.profileField}>
-          <span className={styles.profileFieldLabel}>Rank:</span>
-          <div className={styles.profileFieldValue}>{rankInfo.rank > 0 ? rankInfo.name.toUpperCase() : 'NONE'}</div>
-        </div>
-        <div className={styles.profileField}>
-          <span className={styles.profileFieldLabel}>Activation Date:</span>
-          <div className={styles.profileFieldValue}>
-            {user?.activation_date
-              ? new Date(user.activation_date).toLocaleString('en-US', {
-                  month: 'numeric',
-                  day: 'numeric',
-                  year: 'numeric',
-                  hour: 'numeric',
-                  minute: '2-digit',
-                  second: '2-digit',
-                  hour12: true,
-                })
-              : 'Not Activated'}
+        <h4 className={styles.profileDetailsTitle}>👤 Profile Details</h4>
+        <div className={styles.profileFieldsGrid}>
+          <div className={styles.profileField}>
+            <span className={styles.profileFieldLabel}>User ID:</span>
+            <div className={styles.profileFieldValue}>{user?.numeric_id || user?.referral_code || '—'}</div>
           </div>
-        </div>
-        <div className={styles.profileField}>
-          <span className={styles.profileFieldLabel}>Referred By:</span>
-          <div className={styles.profileFieldValue}>{sponsorNumericId || 'None'}</div>
+          <div className={styles.profileField}>
+            <span className={styles.profileFieldLabel}>Rank:</span>
+            <div className={styles.profileFieldValue}>
+              <span className={styles.profileRankBadge}>{rankInfo.rank > 0 ? rankInfo.name.toUpperCase() : 'STARTER'}</span>
+            </div>
+          </div>
+          <div className={styles.profileField}>
+            <span className={styles.profileFieldLabel}>Activation Date:</span>
+            <div className={styles.profileFieldValue}>
+              {(user?.activation_date || user?.sponsor_id)
+                ? new Date(user?.activation_date || new Date()).toLocaleString('en-US', {
+                    month: 'numeric',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true,
+                  })
+                : 'Not Activated'}
+            </div>
+          </div>
+          <div className={styles.profileField}>
+            <span className={styles.profileFieldLabel}>Referred By:</span>
+            <div className={styles.profileFieldValue}>{sponsorNumericId || (user?.sponsor_id ? 'Loading...' : 'Direct Signup')}</div>
+          </div>
         </div>
       </div>
 
