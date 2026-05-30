@@ -580,17 +580,20 @@ export default function Dashboard() {
           </Card>
 
           <Card className={styles.metricCard}>
-            <div className={styles.metricHeader}>
-              <span className={styles.metricTitle}>Reward Income</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div className={styles.metricHeader}>
+                  <span className={styles.metricTitle}>Reward Income</span>
+                </div>
+                <h3 className={styles.metricValue}>${rewardSum.toFixed(2)}</h3>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div className={styles.metricHeader}>
+                  <span className={styles.metricTitle}>TB</span>
+                </div>
+                <h3 className={styles.metricValue}>${teamBusiness.toFixed(2)}</h3>
+              </div>
             </div>
-            <h3 className={styles.metricValue}>${rewardSum.toFixed(2)}</h3>
-          </Card>
-
-          <Card className={styles.metricCard}>
-            <div className={styles.metricHeader}>
-              <span className={styles.metricTitle}>Team Business</span>
-            </div>
-            <h3 className={styles.metricValue}>${teamBusiness.toFixed(2)}</h3>
           </Card>
         </section>
 
