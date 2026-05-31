@@ -953,7 +953,6 @@ export default function Dashboard() {
         </section>
 
 
-      </main>
       {selectedMember && (
         <MemberModal
           memberId={selectedMember.id}
