@@ -213,8 +213,8 @@ export default function CommunityInfoPage() {
                   onClick={() => setActiveTab(lvl)}
                   style={{
                     padding: '1rem 1.5rem',
-                    background: activeTab === lvl ? '#f1c40f' : 'transparent',
-                    color: activeTab === lvl ? '#000' : '#8892b0',
+                    background: activeTab === lvl ? 'linear-gradient(135deg, #00d2ff, #0080ff)' : 'transparent',
+                    color: activeTab === lvl ? '#fff' : '#8892b0',
                     border: 'none',
                     cursor: 'pointer',
                     fontWeight: 800,
@@ -234,13 +234,13 @@ export default function CommunityInfoPage() {
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>
                 <thead>
-                  <tr style={{ background: '#f1c40f', color: '#000', fontWeight: 'bold' }}>
-                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>S.No</th>
-                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>User ID</th>
-                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>Sponsor ID</th>
-                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>Activation Date</th>
-                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>Current Level</th>
-                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>Direct Team</th>
+                  <tr style={{ background: 'rgba(0,210,255,0.1)', color: '#00d2ff', fontWeight: 'bold' }}>
+                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>S.No</th>
+                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Thesis ID</th>
+                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Sponsor ID</th>
+                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Activation Date</th>
+                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Rank</th>
+                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Direct Team</th>
                   </tr>
                 </thead>
                 <tbody>
