@@ -201,77 +201,115 @@ export default function MyTeamPage() {
             <p>{error}</p>
           </div>
         ) : (
-          <div style={{ background: 'rgba(10,15,30,0.6)', borderRadius: '12px', border: '1px solid rgba(0,210,255,0.15)', overflow: 'hidden', boxShadow: '0 4px 30px rgba(0,0,0,0.5)' }}>
-            
-            {/* Horizontal Tabs */}
-            <div style={{ display: 'flex', overflowX: 'auto', background: 'rgba(0,0,0,0.4)', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(lvl => (
-                <button
-                  key={lvl}
-                  onClick={() => setActiveTab(lvl)}
-                  style={{
-                    padding: '1rem 1.5rem',
-                    background: activeTab === lvl ? 'linear-gradient(135deg, #00d2ff, #0080ff)' : 'transparent',
-                    color: activeTab === lvl ? '#fff' : '#8892b0',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontWeight: 800,
-                    fontSize: '1rem',
-                    flexShrink: 0,
-                    minWidth: '60px',
-                    textAlign: 'center',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  {lvl}
-                </button>
-              ))}
-            </div>
+          <>
+            {(() => {
+              const allMembers = Object.values(levelData).flat();
+              return (
+                <>
+                  <div className={styles.desktopOnly}>
+                    <div style={{ background: 'rgba(10,15,30,0.6)', borderRadius: '12px', border: '1px solid rgba(0,210,255,0.15)', overflow: 'hidden', boxShadow: '0 4px 30px rgba(0,0,0,0.5)' }}>
+                      
+                      {/* Horizontal Tabs */}
+                      <div style={{ display: 'flex', overflowX: 'auto', background: 'rgba(0,0,0,0.4)', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(lvl => (
+                          <button
+                            key={lvl}
+                            onClick={() => setActiveTab(lvl)}
+                            style={{
+                              padding: '1rem 1.5rem',
+                              background: activeTab === lvl ? 'linear-gradient(135deg, #00d2ff, #0080ff)' : 'transparent',
+                              color: activeTab === lvl ? '#fff' : '#8892b0',
+                              border: 'none',
+                              cursor: 'pointer',
+                              fontWeight: 800,
+                              fontSize: '1rem',
+                              flexShrink: 0,
+                              minWidth: '60px',
+                              textAlign: 'center',
+                              transition: 'all 0.2s ease',
+                            }}
+                          >
+                            {lvl}
+                          </button>
+                        ))}
+                      </div>
 
-            {/* Table */}
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>
-                <thead>
-                  <tr style={{ background: 'rgba(0,210,255,0.1)', color: '#00d2ff', fontWeight: 'bold' }}>
-                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>S.No</th>
-                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>User ID</th>
-                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Sponsor ID</th>
-                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Activation Date</th>
-                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Current Level</th>
-                    <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Direct Team</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(levelData[activeTab] || []).length > 0 ? (
-                    levelData[activeTab].map((member, index) => (
-                      <tr key={member.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', color: '#e2e8f0', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
-                        <td style={{ padding: '1rem' }}>{index + 1}</td>
-                        <td style={{ padding: '1rem', fontFamily: 'monospace' }} title={member.id}>{shortenId(member.id)}</td>
-                        <td style={{ padding: '1rem', fontFamily: 'monospace' }} title={member.sponsorId}>{shortenId(member.sponsorId)}</td>
-                        <td style={{ padding: '1rem' }}>
-                          {member.activationDate 
-                            ? new Date(member.activationDate).toLocaleDateString()
-                            : '-'}
-                        </td>
-                        <td style={{ padding: '1rem', color: '#00d2ff', fontWeight: 'bold' }}>{member.currentLevel}</td>
-                        <td style={{ padding: '1rem', color: '#2ecc71', fontWeight: 'bold' }}>{member.directTeam}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: '#8892b0' }}>
-                        No members found at Level {activeTab}. Maximum capacity is {Math.pow(2, activeTab)}.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                      {/* Table */}
+                      <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>
+                          <thead>
+                            <tr style={{ background: 'rgba(0,210,255,0.1)', color: '#00d2ff', fontWeight: 'bold' }}>
+                              <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>S.No</th>
+                              <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>User ID</th>
+                              <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Sponsor ID</th>
+                              <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Activation Date</th>
+                              <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Current Level</th>
+                              <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Direct Team</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {(levelData[activeTab] || []).length > 0 ? (
+                              levelData[activeTab].map((member, index) => (
+                                <tr key={member.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', color: '#e2e8f0', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                                  <td style={{ padding: '1rem' }}>{index + 1}</td>
+                                  <td style={{ padding: '1rem', fontFamily: 'monospace' }} title={member.id}>{shortenId(member.id)}</td>
+                                  <td style={{ padding: '1rem', fontFamily: 'monospace' }} title={member.sponsorId}>{shortenId(member.sponsorId)}</td>
+                                  <td style={{ padding: '1rem' }}>
+                                    {member.activationDate 
+                                      ? new Date(member.activationDate).toLocaleDateString()
+                                      : '-'}
+                                  </td>
+                                  <td style={{ padding: '1rem', color: '#00d2ff', fontWeight: 'bold' }}>{member.currentLevel}</td>
+                                  <td style={{ padding: '1rem', color: '#2ecc71', fontWeight: 'bold' }}>{member.directTeam}</td>
+                                </tr>
+                              ))
+                            ) : (
+                              <tr>
+                                <td colSpan={6} style={{ padding: '2rem', textAlign: 'center', color: '#8892b0' }}>
+                                  No members found at Level {activeTab}. Maximum capacity is {Math.pow(2, activeTab)}.
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
 
-            <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.3)', textAlign: 'right', fontSize: '0.8rem', color: '#8892b0', borderTop: '1px solid rgba(0,210,255,0.1)' }}>
-              Level {activeTab} Capacity: {(levelData[activeTab] || []).length} / {Math.pow(2, activeTab)} members
-            </div>
-          </div>
+                      <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.3)', textAlign: 'right', fontSize: '0.8rem', color: '#8892b0', borderTop: '1px solid rgba(0,210,255,0.1)' }}>
+                        Level {activeTab} Capacity: {(levelData[activeTab] || []).length} / {Math.pow(2, activeTab)} members
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mobile View: Flat List */}
+                  <div className={styles.mobileOnly}>
+                    <div style={{ padding: '1rem', color: '#00d2ff', fontWeight: 'bold', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>
+                      All Team Members ({allMembers.length})
+                    </div>
+                    <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      {allMembers.length > 0 ? (
+                        allMembers.map((member, i) => (
+                          <div key={member.id} style={{ background: 'rgba(0,0,0,0.2)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                               <span style={{ fontWeight: 'bold', color: '#00d2ff' }}>{i + 1}. {member.name || 'Anonymous'}</span>
+                               <span style={{ fontSize: '0.8rem', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: '4px' }}>Level {member.currentLevel}</span>
+                            </div>
+                            <div style={{ fontSize: '0.85rem', color: '#a0aec0', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                              <span><strong style={{color: '#fff'}}>User ID:</strong> <span style={{fontFamily: 'monospace'}}>{shortenId(member.id)}</span></span>
+                              <span><strong style={{color: '#fff'}}>Sponsor:</strong> <span style={{fontFamily: 'monospace'}}>{shortenId(member.sponsorId)}</span></span>
+                              <span><strong style={{color: '#fff'}}>Direct Team:</strong> <span style={{color: '#2ecc71'}}>{member.directTeam}</span></span>
+                              <span><strong style={{color: '#fff'}}>Activation:</strong> {member.activationDate ? new Date(member.activationDate).toLocaleDateString() : '-'}</span>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div style={{ textAlign: 'center', color: '#8892b0' }}>No members found.</div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              );
+            })}
+          </>
         )}
       </main>
     </div>

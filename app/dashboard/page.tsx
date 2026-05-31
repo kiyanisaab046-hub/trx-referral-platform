@@ -3,8 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../lib/supabase/client';
 import { Card } from '../../components/Card';
-import BusinessSummaryBox from '../../components/BusinessSummaryBox';
-import TeamList from '../../components/TeamList';
 
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
@@ -709,19 +707,6 @@ export default function Dashboard() {
           </Card>
         {/* Business Summary Box */}
         </section>
-        <BusinessSummaryBox
-          totalBusiness={teamBusiness}
-          direct={directSum}
-          level={levelSum}
-          team={teamSum}
-          salary={salarySum}
-          reward={rewardSum}
-        />
-        {/* Mobile Team List */}
-        <div className={styles.mobileVisible}>
-          <TeamList members={communityTree.map(m=>({id:m.id, name:m.name, level:m.level}))} />
-        </div>
-
 
 
         <section className={styles.doubleGrid}>

@@ -363,6 +363,19 @@
     width: 100%;
     max-width: 250px;
   }
+  .desktopOnly {
+    display: none !important;
+  }
+  .mobileOnly {
+    display: block !important;
+  }
+}
+
+.desktopOnly {
+  display: block;
+}
+.mobileOnly {
+  display: none;
 }
 
 .rankProgressHeaderRow {
