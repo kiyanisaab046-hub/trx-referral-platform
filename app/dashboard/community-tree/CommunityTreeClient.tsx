@@ -17,6 +17,7 @@ export default function CommunityTreeClient() {
   interface Member { id: string; name: string; parent_id?: string; wallet?: string; }
   const [members, setMembers] = useState<Member[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [treeData, setTreeData] = useState<TreeNode | null>(null);
   const [error, setError] = useState<string | null>(null);
