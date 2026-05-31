@@ -708,6 +708,7 @@ export default function Dashboard() {
             </div>
           </Card>
         {/* Business Summary Box */}
+        </section>
         <BusinessSummaryBox
           totalBusiness={teamBusiness}
           direct={directSum}
