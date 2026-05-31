@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LoadingSpinner } from '../../../components/LoadingSpinner';
+import { createClient } from '../../../lib/supabase/client';
 import styles from './WeeklySalary.module.css';
 
 type Achiever = {
@@ -28,6 +29,8 @@ export default function WeeklySalaryPage() {
   const [activeRankView, setActiveRankView] = useState<number | null>(null);
   const [achieversData, setAchieversData] = useState<Record<number, Achiever[]>>({});
   const [loadingAchievers, setLoadingAchievers] = useState<Record<number, boolean>>({});
+  const [userRank, setUserRank] = useState<number | null>(null);
+  const [loadingRank, setLoadingRank] = useState(true);
 
   useEffect(() => {
     async function fetchGlobalBusiness() {
@@ -44,6 +47,26 @@ export default function WeeklySalaryPage() {
       }
     }
     fetchGlobalBusiness();
+
+    // Fetch the current user's rank
+    async function fetchUserRank() {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { setLoadingRank(false); return; }
+        const { data: rankData } = await supabase
+          .from('user_ranks')
+          .select('rank')
+          .eq('user_id', user.id)
+          .single();
+        if (rankData) setUserRank(rankData.rank);
+      } catch (err) {
+        console.error('Error fetching user rank:', err);
+      } finally {
+        setLoadingRank(false);
+      }
+    }
+    fetchUserRank();
   }, []);
 
   const toggleAchievers = async (rankId: number) => {
@@ -105,6 +128,46 @@ export default function WeeklySalaryPage() {
             )}
             <p className={styles.poolSubtitle}>Aggregated Lifetime Platform Revenue</p>
           </div>
+        </section>
+
+        {/* Your Current Rank Badge */}
+        <section className={styles.yourRankSection}>
+          {loadingRank ? (
+            <div className={styles.yourRankLoading}>
+              <LoadingSpinner size="small" />
+              <span>Checking your rank&hellip;</span>
+            </div>
+          ) : userRank && userRank >= 5 && userRank <= 10 ? (
+            <div
+              className={styles.yourRankBadge}
+              style={{
+                borderColor: SALARY_RANKS.find(r => r.id === userRank)?.color || '#00d2ff',
+                boxShadow: `0 0 25px ${SALARY_RANKS.find(r => r.id === userRank)?.color || '#00d2ff'}33`,
+              }}
+            >
+              <div className={styles.yourRankGlow} style={{ background: `radial-gradient(circle, ${SALARY_RANKS.find(r => r.id === userRank)?.color || '#00d2ff'}22 0%, transparent 70%)` }} />
+              <div className={styles.yourRankContent}>
+                <span className={styles.yourRankLabel}>Your Current Rank</span>
+                <div className={styles.yourRankNumber} style={{ color: SALARY_RANKS.find(r => r.id === userRank)?.color }}>
+                  {userRank}
+                </div>
+                <div className={styles.yourRankName} style={{ color: SALARY_RANKS.find(r => r.id === userRank)?.color }}>
+                  {SALARY_RANKS.find(r => r.id === userRank)?.name}
+                </div>
+                <span className={styles.yourRankSub}>You qualify for weekly salary rewards!</span>
+              </div>
+            </div>
+          ) : (
+            <div className={styles.yourRankBadge} style={{ borderColor: 'rgba(255,255,255,0.15)' }}>
+              <div className={styles.yourRankContent}>
+                <span className={styles.yourRankLabel}>Your Current Rank</span>
+                <div className={styles.yourRankName} style={{ color: '#8892b0', fontSize: '1.2rem', marginTop: '0.5rem' }}>
+                  {userRank ? `Rank ${userRank}` : 'No Rank Yet'}
+                </div>
+                <span className={styles.yourRankSub}>Reach Rank 5 (ADVANCER) to start earning weekly salary!</span>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Ranks List */}

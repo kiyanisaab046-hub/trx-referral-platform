@@ -423,7 +423,7 @@ export default function Dashboard() {
       const { error: txErr } = await supabase.from('transactions').insert({
         user_id: user.id,
         amount: -rank.price,
-        type: 'withdrawal',
+        type: 'rank_purchase',
         description: `Rank Purchase: Achieved ${rank.name} Rank ($${rank.price})`,
       });
       
