@@ -155,7 +155,7 @@ export default function CommunityTreePage() {
           </div>
         ) : treeData && treeData.children.length > 0 ? (
           <div style={{ background: 'rgba(255,255,255,0.02)', padding: '2rem', borderRadius: '16px', overflowX: 'auto' }}>
-            <NetworkTree data={treeData} onNodeClick={handleNodeClick} />
+            <NetworkTree data={treeData} onNodeClick={handleNodeClick} maxLevel={10} />
           </div>
         ) : (
           <div style={{ textAlign: 'center', color: '#888', padding: '4rem 2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px' }}>

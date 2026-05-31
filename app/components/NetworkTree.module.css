@@ -1,0 +1,160 @@
+.treeContainer {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  padding: 2rem 1rem;
+}
+
+.tree, .tree ul, .tree li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tree ul {
+  padding-top: 20px; 
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.tree li {
+  text-align: center;
+  position: relative;
+  padding: 20px 10px 0 10px;
+}
+
+/* Connectors */
+.tree li::before, .tree li::after {
+  content: '';
+  position: absolute; 
+  top: 0; 
+  right: 50%;
+  border-top: 2px solid rgba(0, 210, 255, 0.3);
+  width: 50%; 
+  height: 20px;
+  z-index: 1;
+}
+
+.tree li::after {
+  right: auto; 
+  left: 50%;
+  border-left: 2px solid rgba(0, 210, 255, 0.3);
+}
+
+/* Remove connectors for only child */
+.tree li:only-child::after, .tree li:only-child::before {
+  display: none;
+}
+
+.tree li:only-child { 
+  padding-top: 0;
+}
+
+/* Remove left connector from first child and right connector from last child */
+.tree li:first-child::before, .tree li:last-child::after {
+  border: 0 none;
+}
+
+/* Adding back vertical connector to last nodes */
+.tree li:last-child::before {
+  border-right: 2px solid rgba(0, 210, 255, 0.3);
+  border-radius: 0 6px 0 0;
+}
+
+.tree li:first-child::after {
+  border-radius: 6px 0 0 0;
+}
+
+/* Downward connectors from parents */
+.tree ul::before {
+  content: '';
+  position: absolute; 
+  top: 0; 
+  left: calc(50% - 1px);
+  border-left: 2px solid rgba(0, 210, 255, 0.3);
+  width: 0; 
+  height: 20px;
+  z-index: 1;
+}
+
+/* Node Styling */
+.nodeCard {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  min-width: 80px;
+  position: relative;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.nodeCard:hover {
+  transform: translateY(-3px);
+}
+
+.nodeCard:hover .avatar {
+  filter: drop-shadow(0 0 12px rgba(0, 210, 255, 0.9));
+  color: #fff;
+  transform: scale(1.15);
+}
+
+.nodeCard.leader {
+  /* No background for leader */
+}
+
+.nodeCard.direct {
+  /* No background for directs */
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #00d2ff;
+  color: #000;
+  font-size: 1.25rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 6px rgba(0, 210, 255, 0.4));
+}
+
+.leader .avatar {
+  background: #00d2ff;
+  filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.6));
+}
+
+.direct .avatar {
+  background: #9b59b6;
+  filter: drop-shadow(0 0 8px rgba(155, 89, 182, 0.5));
+}
+
+.nodeName {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #eee;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.leader .nodeName {
+  color: #00d2ff;
+  font-weight: 700;
+}
+
+.nodeLevel {
+  font-size: 0.65rem;
+  color: #888;
+  margin-top: 2px;
+}

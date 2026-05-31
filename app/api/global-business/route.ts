@@ -33,11 +33,7 @@ export async function GET() {
       }
 
       data.forEach((tx) => {
-        if (
-          tx.type === 'deposit' ||
-          tx.type === 'rank_purchase' ||
-          (tx.type === 'withdrawal' && tx.description && tx.description.includes('Rank Purchase'))
-        ) {
+        if (tx.type === 'rank_purchase') {
           totalBusiness += Math.abs(Number(tx.amount) || 0);
         }
       });

@@ -620,7 +620,7 @@ export default function Dashboard() {
             {myDirectMembers.length === 0 ? (
               <p style={{ margin: 0, fontSize: '0.85rem', color: '#888' }}>No direct members yet.</p>
             ) : (
-              <button onClick={() => router.push('/dashboard/my-team')} style={{marginTop:'0.4rem',fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em'}}>View Levels</button>
+              <button onClick={() => router.push('/dashboard/community-tree')} style={{marginTop:'0.4rem',fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em'}}>View Levels</button>
             )}
           </Card>
 
@@ -646,7 +646,7 @@ export default function Dashboard() {
             </div>
           </Card>
 
-          <Card className={styles.statusCard}>
+          <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>Weekly Income Distribution</span>
               <span className={styles.statusTextVal}>${weeklySalarySum.toFixed(2)}</span>
@@ -654,7 +654,7 @@ export default function Dashboard() {
             <button onClick={() => router.push('/dashboard/weekly-salary')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>Detail</button>
           </Card>
 
-          <Card className={styles.statusCard}>
+          <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>Reward Details</span>
               <span className={styles.statusTextVal}>${rewardSum.toFixed(2)}</span>
@@ -707,24 +707,21 @@ export default function Dashboard() {
           </Card>
 
           <Card className={styles.metricCard}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <div className={styles.metricHeader}>
-                  <span className={styles.metricTitle}>Reward Income</span>
-                </div>
-                <h3 className={styles.metricValue}>${rewardSum.toFixed(2)}</h3>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <div className={styles.metricHeader}>
-                  <span className={styles.metricTitle}>TB</span>
-                </div>
-                <h3 className={styles.metricValue}>${teamBusiness.toFixed(2)}</h3>
-              </div>
+            <div className={styles.metricHeader}>
+              <span className={styles.metricTitle}>Reward Income</span>
             </div>
+            <h3 className={styles.metricValue}>${rewardSum.toFixed(2)}</h3>
           </Card>
 
+          <Card className={styles.metricCard}>
+            <div className={styles.metricHeader}>
+              <span className={styles.metricTitle}>TB</span>
+            </div>
+            <h3 className={styles.metricValue}>${teamBusiness.toFixed(2)}</h3>
+          </Card>
+        </section>
 
-
+        <section className={styles.doubleGrid}>
           <Card className={styles.panelCard}>
             {/* Rank Progress Header with toggle for lower ranks */}
             <div className={styles.rankProgressHeaderRow}>
@@ -824,7 +821,8 @@ export default function Dashboard() {
             )}
           </Card>
 
-          <Card className={styles.panelCard}>
+          <div>
+            <Card className={styles.panelCard} style={{ marginBottom: '1.5rem' }}>
             <h4 className={styles.panelTitle}>Wallet Balance</h4>
             <div className={styles.walletBox}>
               <h3 className={styles.mainBalanceDisplay}>${wallet?.main_balance.toFixed(2) || '0.00'}</h3>
@@ -909,9 +907,7 @@ export default function Dashboard() {
                 </button>
               </div>
             </div>
-
-
-          
+            </div>
         </section>
 
             {/* 6. Community Size Section */}
