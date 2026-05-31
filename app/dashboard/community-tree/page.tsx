@@ -8,15 +8,16 @@ import UserDetailsModal from '../../components/UserDetailsModal';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import styles from '../dashboard.module.css';
 
-// Modal handling
-const [modalOpen, setModalOpen] = useState(false);
-const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-const handleNodeClick = (id: string) => {
-  setSelectedUserId(id);
-  setModalOpen(true);
-};
+// Modal handling moved inside component
 
 export default function CommunityTreePage() {
+  // Modal handling
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const handleNodeClick = (id: string) => {
+    setSelectedUserId(id);
+    setModalOpen(true);
+  };
   const router = useRouter();
   const supabase = createClient();
   
