@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../lib/supabase/client';
 import { Card } from '../../components/Card';
-import BusinessSummaryBox from '../../components/BusinessSummaryBox';
+
 
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
@@ -645,6 +645,22 @@ export default function Dashboard() {
               <button onClick={() => router.push('/dashboard/community-info')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #9b59b6, #8e44ad)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View All</button>
             </div>
           </Card>
+
+          <Card className={styles.statusCard}>
+            <div className={styles.statusMeta}>
+              <span className={styles.statusLabel}>Weekly Income Distribution</span>
+              <span className={styles.statusTextVal}>${weeklySalarySum.toFixed(2)}</span>
+            </div>
+            <button onClick={() => router.push('/dashboard/weekly-salary')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>Detail</button>
+          </Card>
+
+          <Card className={styles.statusCard}>
+            <div className={styles.statusMeta}>
+              <span className={styles.statusLabel}>Reward Details</span>
+              <span className={styles.statusTextVal}>${rewardSum.toFixed(2)}</span>
+            </div>
+            <button onClick={() => router.push('/dashboard/reward-details')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #9b59b6, #8e44ad)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>Detail</button>
+          </Card>
         </section>
 
         <section className={styles.metricsGrid}>
@@ -706,21 +722,9 @@ export default function Dashboard() {
               </div>
             </div>
           </Card>
-        {/* Business Summary Box */}
-          <BusinessSummaryBox totalBusiness={teamBusiness + directSum + levelSum + salarySum + rewardSum} direct={directSum} level={levelSum} team={teamSum} salary={weeklySalarySum} reward={rewardSum} />
-        {/* Existing metric cards ... */}
 
 
-        <section className={styles.metricsGrid}>
-          {/* Existing metric cards */}
-        </section>
-        <section className={styles.rewardBox}>
-          <div className={styles.rewardHeader}>
-            <h3 className={styles.rewardTitle}>Weekly Income Distribution</h3>
-            <button className={styles.rewardDetailBtn} onClick={() => router.push('/dashboard/weekly-salary')}>Detail</button>
-          </div>
-          <p className={styles.rewardValue}>${weeklySalarySum.toFixed(2)}</p>
-        </section>
+
           <Card className={styles.panelCard}>
             {/* Rank Progress Header with toggle for lower ranks */}
             <div className={styles.rankProgressHeaderRow}>
