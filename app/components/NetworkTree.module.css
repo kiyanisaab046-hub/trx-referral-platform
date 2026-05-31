@@ -30,7 +30,7 @@
   position: absolute; 
   top: 0; 
   right: 50%;
-  border-top: 2px solid rgba(0, 210, 255, 0.3);
+  border-top: 2px solid rgba(255, 255, 255, 0.15);
   width: 50%; 
   height: 20px;
   z-index: 1;
@@ -39,7 +39,7 @@
 .tree li::after {
   right: auto; 
   left: 50%;
-  border-left: 2px solid rgba(0, 210, 255, 0.3);
+  border-left: 2px solid rgba(255, 255, 255, 0.15);
 }
 
 /* Remove connectors for only child */
@@ -58,7 +58,7 @@
 
 /* Adding back vertical connector to last nodes */
 .tree li:last-child::before {
-  border-right: 2px solid rgba(0, 210, 255, 0.3);
+  border-right: 2px solid rgba(255, 255, 255, 0.15);
   border-radius: 0 6px 0 0;
 }
 
@@ -72,7 +72,7 @@
   position: absolute; 
   top: 0; 
   left: calc(50% - 1px);
-  border-left: 2px solid rgba(0, 210, 255, 0.3);
+  border-left: 2px solid rgba(255, 255, 255, 0.15);
   width: 0; 
   height: 20px;
   z-index: 1;
@@ -113,48 +113,77 @@
 }
 
 .avatar {
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #00d2ff;
-  color: #000;
-  font-size: 1.25rem;
-  font-weight: 900;
-  margin-bottom: 0.5rem;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: -15px; /* Pull the info box up a bit */
+  position: relative;
+  z-index: 2;
   transition: all 0.3s ease;
-  filter: drop-shadow(0 0 6px rgba(0, 210, 255, 0.4));
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
 }
 
 .leader .avatar {
   background: #00d2ff;
-  filter: drop-shadow(0 0 10px rgba(0, 210, 255, 0.6));
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.8);
 }
 
 .direct .avatar {
-  background: #9b59b6;
-  filter: drop-shadow(0 0 8px rgba(155, 89, 182, 0.5));
+  background: #00d2ff;
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+}
+
+.infoBox {
+  background: #1e222d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 20px 10px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 70px;
 }
 
 .nodeName {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #eee;
-  max-width: 120px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  max-width: 100px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .leader .nodeName {
-  color: #00d2ff;
-  font-weight: 700;
+  color: #f1f5f9;
 }
 
-.nodeLevel {
-  font-size: 0.65rem;
-  color: #888;
-  margin-top: 2px;
+.badgeDir {
+  font-size: 0.55rem;
+  font-weight: 800;
+  color: #2ecc71;
+  background: rgba(46, 204, 113, 0.15);
+  border: 1px solid rgba(46, 204, 113, 0.3);
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+
+.badgeInd {
+  font-size: 0.55rem;
+  font-weight: 800;
+  color: #f39c12;
+  background: rgba(243, 156, 18, 0.15);
+  border: 1px solid rgba(243, 156, 18, 0.3);
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 1px;
 }

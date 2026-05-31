@@ -30,16 +30,16 @@ const OrgNode: React.FC<{ node: TreeNode; depth: number; maxLevel: number; onNod
         onClick={() => onNodeClick && onNodeClick(node.id)}
       >
         <div className={styles.avatar}>
-          {depth === 0 ? '👑' : node.name.charAt(0).toUpperCase()}
+          {node.name.substring(0, 2).toUpperCase()}
         </div>
-        <span className={styles.nodeName}>
-          {node.name}
-        </span>
-        {depth > 0 && (
-          <span className={styles.nodeLevel}>
-            Level {depth}
+        <div className={styles.infoBox}>
+          <span className={styles.nodeName}>
+            {node.name.toLowerCase()}
           </span>
-        )}
+          <span className={depth === 0 || node.isDirect ? styles.badgeDir : styles.badgeInd}>
+            {depth === 0 ? 'ME' : (node.isDirect ? 'DIR' : 'IND')}
+          </span>
+        </div>
       </div>
       
       {showChildren && (
