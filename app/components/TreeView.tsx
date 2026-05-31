@@ -35,8 +35,11 @@ const buildTree = (members: Member[]): TreeNode[] => {
     if (m.parent_id && map.has(m.parent_id)) {
       const parent = map.get(m.parent_id)!;
       node.level = (parent.level ?? 0) + 1;
+      node.isDirect = parent.level === 0;
       parent.children.push(node);
     } else {
+      node.level = 0;
+      node.isDirect = true;
       roots.push(node);
     }
   });

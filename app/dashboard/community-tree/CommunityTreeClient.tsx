@@ -16,7 +16,7 @@ export default function CommunityTreeClient() {
   // New: member list for the Tree view
   interface Member { id: string; name: string; parent_id?: string; wallet?: string; }
   const [members, setMembers] = useState<Member[]>([]);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [treeData, setTreeData] = useState<TreeNode | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -51,9 +51,20 @@ export default function CommunityTreeClient() {
         // Fetch all members for the Tree view
         const { data: memberRows, error: memberError } = await supabase
           .from('referrals')
-          .select('id, name, parent_id, wallet');
+          .select('id, name, referrer_id, wallet');
         if (memberError) console.error('Member fetch error', memberError);
-        else setMembers(memberRows as any);
+        else {
+          // Map referrer_id to parent_id expected by TreeView
+          const mapped = (memberRows as any).map((m:any)=>({
+            id: m.id,
+            name: m.name,
+            parent_id: m.referrer_id,
+            wallet: m.wallet
+          }));
+          setMembers(mapped);
+        }
+        // Save current user id for reference (root)
+        setCurrentUserId(currentUserProfile?.id ?? null);
         setTreeData(rootNode);
         setTreeData(rootNode);
       } catch (e: any) {
@@ -88,8 +99,14 @@ export default function CommunityTreeClient() {
     );
   }
 
+  const directCount = members.filter(m => m.parent_id === currentUserId).length;
+  const indirectCount = members.filter(m => m.parent_id && m.parent_id !== currentUserId).length;
   return (
     <div className={styles.container}>
+      <div className={styles.summaryBar} style={{marginBottom: '1rem'}}>
+        <span style={{color:'#fff'}}>Direct: {directCount}</span>
+        <span style={{marginLeft:'1rem',color:'#fff'}}>Indirect: {indirectCount}</span>
+      </div>
       {treeData && <NetworkTree data={treeData} onNodeClick={handleNodeClick} />}
         {members.length > 0 && <TreeView members={members} />}
       {modalOpen && selectedUserId && (
