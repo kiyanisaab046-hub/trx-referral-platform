@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../lib/supabase/client';
 import { Card } from '../../components/Card';
+import BusinessSummaryBox from '../../components/BusinessSummaryBox';
 
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
@@ -539,8 +540,8 @@ export default function Dashboard() {
       {mobileMenuOpen && (
         <div className={styles.mobileDrawerOverlay} onClick={() => setMobileMenuOpen(false)}>
           <div className={styles.mobileDrawer} onClick={(e) => e.stopPropagation()}>
-            <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/weekly-income'); setMobileMenuOpen(false); }}>
-              📅 Weekly Income
+            <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/weekly-salary'); setMobileMenuOpen(false); }}>
+              📅 Weekly Salary
             </button>
             <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/reward-details'); setMobileMenuOpen(false); }}>
               🎁 Reward Details
@@ -706,10 +707,20 @@ export default function Dashboard() {
             </div>
           </Card>
         {/* Business Summary Box */}
+          <BusinessSummaryBox totalBusiness={teamBusiness + directSum + levelSum + salarySum + rewardSum} direct={directSum} level={levelSum} team={teamSum} salary={weeklySalarySum} reward={rewardSum} />
+        {/* Existing metric cards ... */}
+
+
+        <section className={styles.metricsGrid}>
+          {/* Existing metric cards */}
         </section>
-
-
-        <section className={styles.doubleGrid}>
+        <section className={styles.rewardBox}>
+          <div className={styles.rewardHeader}>
+            <h3 className={styles.rewardTitle}>Weekly Income Distribution</h3>
+            <button className={styles.rewardDetailBtn} onClick={() => router.push('/dashboard/weekly-salary')}>Detail</button>
+          </div>
+          <p className={styles.rewardValue}>${weeklySalarySum.toFixed(2)}</p>
+        </section>
           <Card className={styles.panelCard}>
             {/* Rank Progress Header with toggle for lower ranks */}
             <div className={styles.rankProgressHeaderRow}>
