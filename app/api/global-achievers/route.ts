@@ -11,8 +11,13 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Rank parameter is required' }, { status: 400 });
     }
 
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Supabase URL or key is missing');
+    }
+    const supabase = createClient(supabaseUrl, supabaseKey);
     const rankId = parseInt(rankIdStr, 10);
-
     // Fetch user_ranks
     const { data: ranksData, error: ranksError } = await supabase
       .from('user_ranks')
