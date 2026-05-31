@@ -145,13 +145,16 @@ export default function CommunityTreePage() {
           </div>
         ) : treeData && treeData.children.length > 0 ? (
           <div style={{ background: 'rgba(255,255,255,0.02)', padding: '2rem', borderRadius: '16px', overflowX: 'auto' }}>
-            <NetworkTree data={treeData} />
+            <NetworkTree data={treeData} onNodeClick={handleNodeClick} />
           </div>
         ) : (
           <div style={{ textAlign: 'center', color: '#888', padding: '4rem 2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px' }}>
             <h2>No Level Members Yet</h2>
             <p>Share your referral link to start building your level income network!</p>
           </div>
+        )}
+        {modalOpen && selectedUserId && (
+          <UserDetailsModal userId={selectedUserId} onClose={() => setModalOpen(false)} />
         )}
       </main>
     </div>
