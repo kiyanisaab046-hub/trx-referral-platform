@@ -13,8 +13,11 @@ type Props = {
   onNodeClick?: (id: string) => void;
 };
 
-// Simple recursive tree rendering. Each node is a button that triggers onNodeClick.
-export const NetworkTree: React.FC<Props> = ({ data, onNodeClick }) => {
+/**
+ * Recursive binary‑tree UI. Each node is rendered as a button.
+ * Clicking a node triggers `onNodeClick` with the user id.
+ */
+const NetworkTree: React.FC<Props> = ({ data, onNodeClick }) => {
   const renderNode = (node: TreeNode) => (
     <div key={node.id} style={{ marginLeft: node.level * 16, marginTop: 8 }}>
       <button
@@ -40,4 +43,7 @@ export const NetworkTree: React.FC<Props> = ({ data, onNodeClick }) => {
   return <div>{renderNode(data)}</div>;
 };
 
+export default NetworkTree;
+export { NetworkTree };
 export type { TreeNode };
+export type NetworkTreeProps = Props;
