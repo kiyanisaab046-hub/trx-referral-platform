@@ -1,11 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-
-// Initialize client with Service Role Key to bypass RLS
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+// Supabase client will be initialized inside GET handler to avoid missing env vars at build time
 
 export async function GET(request: Request) {
   try {
