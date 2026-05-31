@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import NetworkTree, { TreeNode } from '@/components/NetworkTree';
-import UserDetailsModal from '@/components/UserDetailsModal';
-import { LoadingSpinner } from '@/components/LoadingSpinner';
+import NetworkTree, { TreeNode } from '../../components/NetworkTree';
+import UserDetailsModal from '../../components/UserDetailsModal';
+import { LoadingSpinner } from '../../components/LoadingSpinner';
 import styles from '../dashboard.module.css';
 
 // This is a client component handling data fetching, state, and UI interactions.
