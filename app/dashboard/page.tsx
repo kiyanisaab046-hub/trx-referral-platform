@@ -544,6 +544,9 @@ export default function Dashboard() {
             <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/reward-details'); setMobileMenuOpen(false); }}>
               🎁 Reward Details
             </button>
+            <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/community-info'); setMobileMenuOpen(false); }}>
+              🌐 Community Info
+            </button>
             <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/my-team'); setMobileMenuOpen(false); }}>
               👥 My Team
             </button>
