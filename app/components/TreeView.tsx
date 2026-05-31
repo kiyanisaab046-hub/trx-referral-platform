@@ -46,9 +46,9 @@ const buildTree = (members: Member[]): TreeNode[] => {
 const TreeView: React.FC<TreeViewProps> = ({ members }) => {
   const treeData = useMemo(() => buildTree(members), [members]);
 
-  const handleNodeClick = (node: TreeNode) => {
+  const handleNodeClick = (id: string) => {
     // Placeholder for future modal/details.
-    console.log('Tree node clicked:', node);
+    console.log('Tree node clicked id:', id);
   };
 
   return (
