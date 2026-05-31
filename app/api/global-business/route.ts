@@ -1,15 +1,17 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-// Initialize client with Service Role Key to bypass RLS
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function GET() {
-  try {
-    let totalBusiness = 0;
+   try {
+     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+     if (!supabaseUrl || !supabaseKey) {
+       throw new Error('Supabase URL or key is missing');
+     }
+     const supabase = createClient(supabaseUrl, supabaseKey);
+     let totalBusiness = 0;
     let hasMore = true;
     let offset = 0;
     const limit = 1000;
