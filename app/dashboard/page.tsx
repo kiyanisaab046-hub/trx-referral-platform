@@ -953,14 +953,9 @@ export default function Dashboard() {
         </section>
 
 
-      {selectedMember && (
-        <MemberModal
-          memberId={selectedMember.id}
-          memberName={selectedMember.name}
-          onClose={() => setSelectedMember(null)}
-        />
-      )}
+      {selectedMember && <MemberModal memberId={selectedMember.id} memberName={selectedMember.name} onClose={() => setSelectedMember(null)} />}
 
+    </main>
     </div>
   );
 }
