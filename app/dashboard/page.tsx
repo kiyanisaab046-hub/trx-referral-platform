@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../lib/supabase/client';
 import { Card } from '../../components/Card';
+import BusinessSummaryBox from '../../components/BusinessSummaryBox';
+import TeamList from '../../components/TeamList';
+
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import styles from './dashboard.module.css';
@@ -704,7 +707,21 @@ export default function Dashboard() {
               </div>
             </div>
           </Card>
-        </section>
+        {/* Business Summary Box */}
+        <BusinessSummaryBox
+          totalBusiness={teamBusiness}
+          direct={directSum}
+          level={levelSum}
+          team={teamSum}
+          salary={salarySum}
+          reward={rewardSum}
+        />
+        {/* Mobile Team List */}
+        <div className={styles.mobileVisible}>
+          <TeamList members={communityTree.map(m=>({id:m.id, name:m.name, level:m.level}))} />
+        </div>
+
+
 
         <section className={styles.doubleGrid}>
           <Card className={styles.panelCard}>
@@ -944,6 +961,7 @@ export default function Dashboard() {
           onClose={() => setSelectedMember(null)}
         />
       )}
+
     </div>
   );
 }
