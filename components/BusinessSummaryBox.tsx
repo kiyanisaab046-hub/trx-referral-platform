@@ -10,7 +10,7 @@ type Props = {
   reward: number;
 };
 
-export default BusinessSummaryBox;
+const BusinessSummaryBox = ({ totalBusiness, direct, level, team, salary, reward }: Props) => {
   const items = [
     { label: 'Total Business', value: `$${totalBusiness.toFixed(2)}` },
     { label: 'Direct Income', value: `$${direct.toFixed(2)}` },
@@ -31,3 +31,5 @@ export default BusinessSummaryBox;
     </div>
   );
 };
+
+export default BusinessSummaryBox;
