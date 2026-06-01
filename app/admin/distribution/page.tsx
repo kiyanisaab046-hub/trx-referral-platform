@@ -15,6 +15,8 @@ export default function DistributionPage() {
   const [directCommissions, setDirectCommissions] = useState<any[]>([]);
   const [maintenanceRecords, setMaintenanceRecords] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [distributingSalary, setDistributingSalary] = useState(false);
+  const [salaryResult, setSalaryResult] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,6 +64,36 @@ export default function DistributionPage() {
       <p style={{ color: '#666' }}>This distribution module is currently under construction.</p>
     </div>
   );
+
+  const handleDistributeSalary = async () => {
+    if (!confirm('Are you sure you want to distribute the weekly salary? This will calculate and snapshot the shares for all eligible Rank 5-10 users.')) return;
+    
+    setDistributingSalary(true);
+    setSalaryResult(null);
+    setError(null);
+    
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
+
+      const res = await fetch('/api/admin/distribute-weekly', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Distribution failed');
+      
+      setSalaryResult(data);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setDistributingSalary(false);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -195,7 +227,54 @@ export default function DistributionPage() {
           {/* Under Construction Tabs */}
           {activeTab === 'level' && renderUnderConstruction('Level Income')}
           {activeTab === 'team' && renderUnderConstruction('Team Income')}
-          {activeTab === 'salary' && renderUnderConstruction('Weekly Salary')}
+          
+          {/* Weekly Salary Tab */}
+          {activeTab === 'salary' && (
+            <div>
+              <h3 style={{ marginBottom: '1.5rem', color: '#fff' }}>Weekly Salary Distribution</h3>
+              <p style={{ color: '#aaa', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+                Distribute 15% of the new global business since the last distribution to all Rank 5 to Rank 10 achievers equally within their tiers.
+              </p>
+              
+              <div style={{ background: 'rgba(0, 210, 255, 0.05)', padding: '2rem', borderRadius: '12px', border: '1px solid rgba(0, 210, 255, 0.2)', textAlign: 'center' }}>
+                {salaryResult ? (
+                  <div style={{ color: '#2ecc71' }}>
+                    <h4 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>✅ Distribution Successful!</h4>
+                    <p>Processed Global Business: <strong>${salaryResult.totalBusiness.toLocaleString()}</strong></p>
+                    <p>Total Qualifiers Rewarded: <strong>{salaryResult.rewardsCount}</strong></p>
+                    <button 
+                      onClick={() => setSalaryResult(null)}
+                      style={{ marginTop: '1rem', padding: '0.5rem 1.5rem', background: 'transparent', border: '1px solid #2ecc71', color: '#2ecc71', borderRadius: '6px', cursor: 'pointer' }}
+                    >
+                      Process Another
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <p style={{ color: '#fff', marginBottom: '1.5rem' }}>Click below to execute the weekly salary distribution engine.</p>
+                    <button 
+                      onClick={handleDistributeSalary}
+                      disabled={distributingSalary}
+                      style={{
+                        padding: '1rem 2rem',
+                        background: distributingSalary ? '#666' : 'linear-gradient(135deg, #00d2ff, #0080ff)',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '8px',
+                        fontSize: '1.1rem',
+                        fontWeight: 'bold',
+                        cursor: distributingSalary ? 'not-allowed' : 'pointer',
+                        boxShadow: distributingSalary ? 'none' : '0 4px 15px rgba(0, 210, 255, 0.4)'
+                      }}
+                    >
+                      {distributingSalary ? 'Processing Distribution...' : 'Distribute Weekly Rewards'}
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
           {activeTab === 'reward' && renderUnderConstruction('Reward Income')}
 
         </div>

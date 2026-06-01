@@ -31,6 +31,8 @@ export default function WeeklySalaryPage() {
   const [loadingAchievers, setLoadingAchievers] = useState<Record<number, boolean>>({});
   const [userRank, setUserRank] = useState<number | null>(null);
   const [loadingRank, setLoadingRank] = useState(true);
+  const [pendingReward, setPendingReward] = useState<any | null>(null);
+  const [claiming, setClaiming] = useState(false);
 
   useEffect(() => {
     async function fetchGlobalBusiness() {
@@ -60,6 +62,17 @@ export default function WeeklySalaryPage() {
           .eq('user_id', user.id)
           .single();
         if (rankData) setUserRank(rankData.rank);
+
+        // Also fetch pending weekly rewards
+        const { data: rewardData } = await supabase
+          .from('pending_weekly_rewards')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('status', 'pending')
+          .single();
+        
+        if (rewardData) setPendingReward(rewardData);
+
       } catch (err) {
         console.error('Error fetching user rank:', err);
       } finally {
@@ -91,6 +104,36 @@ export default function WeeklySalaryPage() {
       } finally {
         setLoadingAchievers(prev => ({ ...prev, [rankId]: false }));
       }
+    }
+  };
+
+  const handleClaimReward = async () => {
+    if (!pendingReward) return;
+    setClaiming(true);
+    try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const res = await fetch('/api/claim-weekly-reward', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({ rewardId: pendingReward.id })
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to claim reward');
+      
+      alert(`Successfully claimed $${data.amount}!`);
+      // Update local state to hide claim button
+      setPendingReward(null);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message);
+    } finally {
+      setClaiming(false);
     }
   };
 
@@ -154,7 +197,31 @@ export default function WeeklySalaryPage() {
                 <div className={styles.yourRankName} style={{ color: SALARY_RANKS.find(r => r.id === userRank)?.color }}>
                   {SALARY_RANKS.find(r => r.id === userRank)?.name}
                 </div>
-                <span className={styles.yourRankSub}>You qualify for weekly salary rewards!</span>
+                
+                {pendingReward ? (
+                  <div style={{ marginTop: '1rem', background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                    <div style={{ color: '#fff', marginBottom: '0.5rem' }}>Pending Weekly Salary: <span style={{ color: '#2ecc71', fontWeight: 'bold' }}>${Number(pendingReward.amount).toFixed(2)}</span></div>
+                    <button 
+                      onClick={handleClaimReward}
+                      disabled={claiming}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        background: 'linear-gradient(135deg, #2ecc71, #27ae60)',
+                        border: 'none',
+                        borderRadius: '6px',
+                        color: '#fff',
+                        fontWeight: 'bold',
+                        cursor: claiming ? 'not-allowed' : 'pointer',
+                        width: '100%',
+                        opacity: claiming ? 0.7 : 1
+                      }}
+                    >
+                      {claiming ? 'Processing...' : 'Claim Reward Now'}
+                    </button>
+                  </div>
+                ) : (
+                  <span className={styles.yourRankSub}>You qualify for weekly salary rewards! Check back when admin distributes the pool.</span>
+                )}
               </div>
             </div>
           ) : (
