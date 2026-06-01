@@ -242,6 +242,7 @@ export default function DistributionPage() {
                     <h4 style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>✅ Distribution Successful!</h4>
                     <p>Processed Global Business: <strong>${salaryResult.totalBusiness.toLocaleString()}</strong></p>
                     <p>Total Qualifiers Rewarded: <strong>{salaryResult.rewardsCount}</strong></p>
+                    <p>Admin Profit (from capped 2x limits): <strong>${salaryResult.adminProfit?.toLocaleString() || 0}</strong></p>
                     <button 
                       onClick={() => setSalaryResult(null)}
                       style={{ marginTop: '1rem', padding: '0.5rem 1.5rem', background: 'transparent', border: '1px solid #2ecc71', color: '#2ecc71', borderRadius: '6px', cursor: 'pointer' }}

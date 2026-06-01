@@ -23,30 +23,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { rewardId } = await req.json();
-    if (!rewardId) {
-      return NextResponse.json({ error: 'Missing reward ID' }, { status: 400 });
-    }
-
-    // Verify the reward belongs to the user and is pending
-    const { data: reward, error: rewardError } = await supabase
+    // Fetch all pending rewards for user
+    const { data: rewards, error: rewardError } = await supabase
       .from('pending_weekly_rewards')
       .select('*')
-      .eq('id', rewardId)
       .eq('user_id', user.id)
-      .eq('status', 'pending')
-      .single();
+      .eq('status', 'pending');
 
-    if (rewardError || !reward) {
-      return NextResponse.json({ error: 'Reward not found or already claimed' }, { status: 400 });
+    if (rewardError) throw rewardError;
+
+    if (!rewards || rewards.length === 0) {
+      return NextResponse.json({ error: 'No pending rewards found' }, { status: 400 });
     }
 
-    // Use a Supabase RPC if available, or sequential updates
-    // Update Reward Status
+    // Calculate total amount
+    const totalAmount = rewards.reduce((sum, r) => sum + Number(r.amount), 0);
+    const rewardIds = rewards.map(r => r.id);
+
+    // Update Reward Statuses
     const { error: updateRewardError } = await supabase
       .from('pending_weekly_rewards')
       .update({ status: 'claimed', claimed_at: new Date().toISOString() })
-      .eq('id', rewardId)
+      .in('id', rewardIds)
       .eq('status', 'pending'); // optimistic locking
 
     if (updateRewardError) {
@@ -66,28 +64,30 @@ export async function POST(req: Request) {
     const { error: updateWalletError } = await supabase
       .from('wallets')
       .update({
-        main_balance: wallet.main_balance + reward.amount,
-        income_balance: wallet.income_balance + reward.amount
+        main_balance: wallet.main_balance + totalAmount,
+        income_balance: wallet.income_balance + totalAmount
       })
       .eq('user_id', user.id);
 
     if (updateWalletError) throw updateWalletError;
 
     // Insert Transaction Ledger
+    // We log one transaction combining all claimed ranks
+    const ranksClaimed = Array.from(new Set(rewards.map(r => r.rank))).join(', ');
     const { error: txError } = await supabase
       .from('transactions')
       .insert({
         user_id: user.id,
-        amount: reward.amount,
+        amount: totalAmount,
         type: 'commission_salary',
-        description: `Claimed Weekly Salary (Rank ${reward.rank})`
+        description: `Claimed Weekly Salary (Ranks ${ranksClaimed})`
       });
 
     if (txError) {
       console.error('Failed to log transaction, but balance updated', txError);
     }
 
-    return NextResponse.json({ success: true, amount: reward.amount });
+    return NextResponse.json({ success: true, amount: totalAmount });
 
   } catch (error: any) {
     console.error('Claim weekly reward error:', error);

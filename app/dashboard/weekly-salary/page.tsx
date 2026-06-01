@@ -29,9 +29,8 @@ export default function WeeklySalaryPage() {
   const [activeRankView, setActiveRankView] = useState<number | null>(null);
   const [achieversData, setAchieversData] = useState<Record<number, Achiever[]>>({});
   const [loadingAchievers, setLoadingAchievers] = useState<Record<number, boolean>>({});
-  const [userRank, setUserRank] = useState<number | null>(null);
-  const [loadingRank, setLoadingRank] = useState(true);
-  const [pendingReward, setPendingReward] = useState<any | null>(null);
+  const [rankStatusData, setRankStatusData] = useState<any>(null);
+  const [totalPending, setTotalPending] = useState(0);
   const [claiming, setClaiming] = useState(false);
 
   useEffect(() => {
@@ -50,28 +49,26 @@ export default function WeeklySalaryPage() {
     }
     fetchGlobalBusiness();
 
-    // Fetch the current user's rank
-    async function fetchUserRank() {
+    async function fetchRankStatus() {
       try {
         const supabase = createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) { setLoadingRank(false); return; }
-        const { data: rankData } = await supabase
-          .from('user_ranks')
-          .select('rank')
-          .eq('user_id', user.id)
-          .single();
-        if (rankData) setUserRank(rankData.rank);
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) { setLoadingRank(false); return; }
 
-        // Also fetch pending weekly rewards
-        const { data: rewardData } = await supabase
-          .from('pending_weekly_rewards')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('status', 'pending')
-          .single();
+        const res = await fetch('/api/weekly-salary-status', {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        });
+        if (!res.ok) throw new Error('Failed to fetch rank status');
         
-        if (rewardData) setPendingReward(rewardData);
+        const data = await res.json();
+        setRankStatusData(data);
+        setUserRank(data.maxRank);
+
+        let sumPending = 0;
+        Object.values(data.rankStatus).forEach((r: any) => {
+          sumPending += r.pendingAmount;
+        });
+        setTotalPending(sumPending);
 
       } catch (err) {
         console.error('Error fetching user rank:', err);
@@ -79,7 +76,7 @@ export default function WeeklySalaryPage() {
         setLoadingRank(false);
       }
     }
-    fetchUserRank();
+    fetchRankStatus();
   }, []);
 
   const toggleAchievers = async (rankId: number) => {
@@ -108,7 +105,7 @@ export default function WeeklySalaryPage() {
   };
 
   const handleClaimReward = async () => {
-    if (!pendingReward) return;
+    if (totalPending <= 0) return;
     setClaiming(true);
     try {
       const supabase = createClient();
@@ -120,15 +117,23 @@ export default function WeeklySalaryPage() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session?.access_token}`
         },
-        body: JSON.stringify({ rewardId: pendingReward.id })
+        body: JSON.stringify({})
       });
       
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to claim reward');
       
       alert(`Successfully claimed $${data.amount}!`);
-      // Update local state to hide claim button
-      setPendingReward(null);
+      setTotalPending(0);
+      
+      // Update local rankStatusData
+      if (rankStatusData) {
+        const updatedStatus = { ...rankStatusData.rankStatus };
+        Object.keys(updatedStatus).forEach(k => {
+          updatedStatus[k as any].pendingAmount = 0;
+        });
+        setRankStatusData({ ...rankStatusData, rankStatus: updatedStatus });
+      }
     } catch (err: any) {
       console.error(err);
       alert(err.message);
@@ -197,10 +202,12 @@ export default function WeeklySalaryPage() {
                 <div className={styles.yourRankName} style={{ color: SALARY_RANKS.find(r => r.id === userRank)?.color }}>
                   {SALARY_RANKS.find(r => r.id === userRank)?.name}
                 </div>
-                
-                {pendingReward ? (
+                {totalPending > 0 ? (
                   <div style={{ marginTop: '1rem', background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                    <div style={{ color: '#fff', marginBottom: '0.5rem' }}>Pending Weekly Salary: <span style={{ color: '#2ecc71', fontWeight: 'bold' }}>${Number(pendingReward.amount).toFixed(2)}</span></div>
+                    <div style={{ color: '#fff', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
+                      <span>Total Pending Salary:</span>
+                      <span style={{ color: '#2ecc71', fontWeight: 'bold' }}>${Number(totalPending).toFixed(2)}</span>
+                    </div>
                     <button 
                       onClick={handleClaimReward}
                       disabled={claiming}
@@ -216,7 +223,7 @@ export default function WeeklySalaryPage() {
                         opacity: claiming ? 0.7 : 1
                       }}
                     >
-                      {claiming ? 'Processing...' : 'Claim Reward Now'}
+                      {claiming ? 'Processing...' : 'Claim All Rewards Now'}
                     </button>
                   </div>
                 ) : (
@@ -242,14 +249,38 @@ export default function WeeklySalaryPage() {
           <h2 className={styles.sectionTitle}>Weekly Salary Qualifiers</h2>
           
           <div className={styles.rankList}>
-            {SALARY_RANKS.map((rank) => (
+            {SALARY_RANKS.map((rank) => {
+              const statusData = rankStatusData?.rankStatus[rank.id];
+              
+              return (
               <div key={rank.id} className={`${styles.rankCard} ${activeRankView === rank.id ? styles.activeCard : ''}`}>
                 <div className={styles.rankHeader}>
                   <div className={styles.rankInfo}>
                     <div className={styles.rankIcon} style={{ borderColor: rank.color, color: rank.color }}>
                       {rank.id}
                     </div>
-                    <span className={styles.rankName} style={{ color: rank.color }}>{rank.name}</span>
+                    <div>
+                      <span className={styles.rankName} style={{ color: rank.color }}>{rank.name}</span>
+                      
+                      {statusData && statusData.status !== 'locked' && (
+                        <div style={{ fontSize: '0.75rem', marginTop: '4px', color: '#8892b0' }}>
+                          Status: <span style={{ 
+                            color: statusData.status === 'completed' ? '#2ecc71' : '#00d2ff',
+                            fontWeight: 'bold'
+                          }}>
+                            {statusData.status === 'completed' ? 'Completed 2x Limit' : 'Active'}
+                          </span>
+                          <span style={{ marginLeft: '8px' }}>
+                            (${statusData.totalEarned.toFixed(2)} / ${statusData.maxCap.toFixed(2)})
+                          </span>
+                        </div>
+                      )}
+                      {statusData && statusData.pendingAmount > 0 && (
+                        <div style={{ fontSize: '0.75rem', marginTop: '2px', color: '#f39c12', fontWeight: 'bold' }}>
+                          + ${statusData.pendingAmount.toFixed(2)} Pending
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <button 
                     className={styles.viewBtn} 
@@ -293,7 +324,7 @@ export default function WeeklySalaryPage() {
                   </div>
                 )}
               </div>
-            ))}
+            )})}
           </div>
         </section>
       </main>
