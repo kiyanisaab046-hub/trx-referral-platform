@@ -24,6 +24,7 @@ export default function CommunityTreePage() {
   const [loading, setLoading] = useState(true);
   const [treeData, setTreeData] = useState<TreeNode | null>(null);
   const [levelStats, setLevelStats] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchTree = async () => {

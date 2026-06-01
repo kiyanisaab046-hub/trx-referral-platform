@@ -540,7 +540,7 @@ export default function Dashboard() {
       {mobileMenuOpen && (
         <div className={styles.mobileDrawerOverlay} onClick={() => setMobileMenuOpen(false)}>
           <div className={styles.mobileDrawer} onClick={(e) => e.stopPropagation()}>
-            <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/weekly-salary'); setMobileMenuOpen(false); }}>
+            <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/under-construction'); setMobileMenuOpen(false); }}>
               📅 Weekly Income
             </button>
             <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/reward-details'); setMobileMenuOpen(false); }}>
@@ -548,7 +548,7 @@ export default function Dashboard() {
             </button>
             <button
               className={styles.mobileDrawerItem}
-              onClick={() => { router.push('/dashboard/community-tree'); setMobileMenuOpen(false); }}
+              onClick={() => { router.push('/dashboard/under-construction'); setMobileMenuOpen(false); }}
             >
               Tree
             </button>
@@ -620,7 +620,7 @@ export default function Dashboard() {
             {myDirectMembers.length === 0 ? (
               <p style={{ margin: 0, fontSize: '0.85rem', color: '#888' }}>No direct members yet.</p>
             ) : (
-              <button onClick={() => router.push('/dashboard/community-tree')} style={{marginTop:'0.4rem',fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em'}}>View Levels</button>
+              <button onClick={() => router.push('/dashboard/under-construction')} style={{marginTop:'0.4rem',fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em'}}>View Levels</button>
             )}
           </Card>
 
@@ -631,7 +631,7 @@ export default function Dashboard() {
             </div>
             <div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}>
               <span className={styles.statusBadge}>All</span>
-              <button onClick={() => router.push('/dashboard/community-tree')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View Levels</button>
+              <button onClick={() => router.push('/dashboard/under-construction')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View Levels</button>
             </div>
           </Card>
 
@@ -651,7 +651,7 @@ export default function Dashboard() {
               <span className={styles.statusLabel}>Weekly Income Distribution</span>
               <span className={styles.statusTextVal}>${weeklySalarySum.toFixed(2)}</span>
             </div>
-            <button onClick={() => router.push('/dashboard/weekly-salary')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>Detail</button>
+            <button onClick={() => router.push('/dashboard/under-construction')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>Detail</button>
           </Card>
 
           <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
