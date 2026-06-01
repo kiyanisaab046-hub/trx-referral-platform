@@ -80,7 +80,7 @@ export async function POST(req: Request) {
         user_id: user.id,
         amount: totalAmount,
         type: 'commission_salary',
-        description: `Claimed Weekly Salary (Ranks ${ranksClaimed})`
+        description: `Claimed Weekly Income (Ranks ${ranksClaimed})`
       });
 
     if (txError) {

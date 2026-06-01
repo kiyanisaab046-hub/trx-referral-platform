@@ -541,7 +541,7 @@ export default function Dashboard() {
         <div className={styles.mobileDrawerOverlay} onClick={() => setMobileMenuOpen(false)}>
           <div className={styles.mobileDrawer} onClick={(e) => e.stopPropagation()}>
             <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/weekly-salary'); setMobileMenuOpen(false); }}>
-              📅 Weekly Salary
+              📅 Weekly Income
             </button>
             <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/reward-details'); setMobileMenuOpen(false); }}>
               🎁 Reward Details

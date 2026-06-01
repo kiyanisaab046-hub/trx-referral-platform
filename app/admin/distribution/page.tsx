@@ -53,7 +53,7 @@ export default function DistributionPage() {
     { id: 'direct', label: 'Direct Income (20%)' },
     { id: 'level', label: 'Level Income' },
     { id: 'team', label: 'Team Income' },
-    { id: 'salary', label: 'Weekly Salary' },
+    { id: 'salary', label: 'Weekly Income' },
     { id: 'reward', label: 'Reward Income' },
     { id: 'maintenance', label: 'Maintenance (5%)' },
   ];
@@ -66,7 +66,7 @@ export default function DistributionPage() {
   );
 
   const handleDistributeSalary = async () => {
-    if (!confirm('Are you sure you want to distribute the weekly salary? This will calculate and snapshot the shares for all eligible Rank 5-10 users.')) return;
+    if (!confirm('Are you sure you want to distribute the weekly income? This will calculate and snapshot the shares for all eligible Rank 5-10 users.')) return;
     
     setDistributingSalary(true);
     setSalaryResult(null);
@@ -228,10 +228,10 @@ export default function DistributionPage() {
           {activeTab === 'level' && renderUnderConstruction('Level Income')}
           {activeTab === 'team' && renderUnderConstruction('Team Income')}
           
-          {/* Weekly Salary Tab */}
+          {/* Weekly Income Tab */}
           {activeTab === 'salary' && (
             <div>
-              <h3 style={{ marginBottom: '1.5rem', color: '#fff' }}>Weekly Salary Distribution</h3>
+              <h3 style={{ marginBottom: '1.5rem', color: '#fff' }}>Weekly Income Distribution</h3>
               <p style={{ color: '#aaa', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
                 Distribute 15% of the new global business since the last distribution to all Rank 5 to Rank 10 achievers equally within their tiers.
               </p>

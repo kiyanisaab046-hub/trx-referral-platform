@@ -29,6 +29,8 @@ export default function WeeklySalaryPage() {
   const [activeRankView, setActiveRankView] = useState<number | null>(null);
   const [achieversData, setAchieversData] = useState<Record<number, Achiever[]>>({});
   const [loadingAchievers, setLoadingAchievers] = useState<Record<number, boolean>>({});
+  const [userRank, setUserRank] = useState<number | null>(null);
+  const [loadingRank, setLoadingRank] = useState(true);
   const [rankStatusData, setRankStatusData] = useState<any>(null);
   const [totalPending, setTotalPending] = useState(0);
   const [claiming, setClaiming] = useState(false);
@@ -150,7 +152,7 @@ export default function WeeklySalaryPage() {
             <span className={styles.logoBadge}>UIP</span>
           </div>
           <div className={styles.logoTitles}>
-            <h2 className={styles.logoText}>Weekly Salary</h2>
+            <h2 className={styles.logoText}>Weekly Income</h2>
             <span className={styles.logoSlogan}>Global Pool & Achievers</span>
           </div>
         </div>
@@ -227,7 +229,7 @@ export default function WeeklySalaryPage() {
                     </button>
                   </div>
                 ) : (
-                  <span className={styles.yourRankSub}>You qualify for weekly salary rewards! Check back when admin distributes the pool.</span>
+                  <span className={styles.yourRankSub}>You qualify for weekly income rewards! Check back when admin distributes the pool.</span>
                 )}
               </div>
             </div>
@@ -238,7 +240,7 @@ export default function WeeklySalaryPage() {
                 <div className={styles.yourRankName} style={{ color: '#8892b0', fontSize: '1.2rem', marginTop: '0.5rem' }}>
                   {userRank ? `Rank ${userRank}` : 'No Rank Yet'}
                 </div>
-                <span className={styles.yourRankSub}>Reach Rank 5 (ADVANCER) to start earning weekly salary!</span>
+                <span className={styles.yourRankSub}>Reach Rank 5 (ADVANCER) to start earning weekly income!</span>
               </div>
             </div>
           )}
@@ -246,7 +248,7 @@ export default function WeeklySalaryPage() {
 
         {/* Ranks List */}
         <section className={styles.ranksSection}>
-          <h2 className={styles.sectionTitle}>Weekly Salary Qualifiers</h2>
+          <h2 className={styles.sectionTitle}>Weekly Income Qualifiers</h2>
           
           <div className={styles.rankList}>
             {SALARY_RANKS.map((rank) => {
