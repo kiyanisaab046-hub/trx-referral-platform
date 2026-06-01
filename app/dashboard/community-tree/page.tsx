@@ -23,7 +23,7 @@ export default function CommunityTreePage() {
   
   const [loading, setLoading] = useState(true);
   const [treeData, setTreeData] = useState<TreeNode | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [levelStats, setLevelStats] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchTree = async () => {
@@ -113,6 +113,16 @@ export default function CommunityTreePage() {
         computeLevels(rootNode, 0);
 
         setTreeData(rootNode);
+        // Compute per‑level stats for the mobile summary cards
+        const statsArray = Array.from({ length: 10 }, () => ({ people: 0, cumulative: 0 }));
+        const traverse = (node: TreeNode, depth: number) => {
+          if (depth >= 10) return;
+          statsArray[depth].people += 1;
+          statsArray[depth].cumulative = statsArray.slice(0, depth + 1).reduce((sum, s) => sum + s.people, 0);
+          node.children.forEach(child => traverse(child, depth + 1));
+        };
+        traverse(rootNode, 0);
+        setLevelStats(statsArray);
       } catch (err: any) {
         console.error('Error fetching tree:', err);
         setError(err.message || 'Failed to load level income network');
@@ -156,6 +166,44 @@ export default function CommunityTreePage() {
         ) : treeData && treeData.children.length > 0 ? (
           <div style={{ background: 'rgba(255,255,255,0.02)', padding: '2rem', borderRadius: '16px', overflowX: 'auto' }}>
             <NetworkTree data={treeData} onNodeClick={handleNodeClick} maxLevel={10} />
+          {/* Mobile‑only analytic cards */}
+          <div className="mt-4 block md:hidden">
+            <div className="grid grid-cols-1 gap-2">
+              {/* LEVEL INCOME TREE table */}
+              <div className="bg-gray-800 p-4 rounded">
+                <h3 className="text-white mb-2">LEVEL INCOME TREE</h3>
+                <table className="w-full text-sm text-left text-gray-300">
+                  <thead>
+                    <tr>
+                      <th className="pr-2">Level</th>
+                      <th className="pr-2">People</th>
+                      <th className="pr-2">Cumulative</th>
+                      <th>Earning</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {levelStats.map((s, i) => (
+                      <tr key={i} className="border-t border-gray-700">
+                        <td className="pr-2">{i + 1}</td>
+                        <td className="pr-2">{s.people}</td>
+                        <td className="pr-2">{s.cumulative}</td>
+                        <td>{"$0"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {/* LEVEL WISE INCOME SUMMARY list */}
+              <div className="bg-gray-800 p-4 rounded">
+                <h3 className="text-white mb-2">LEVEL WISE INCOME SUMMARY</h3>
+                <ul className="space-y-1 text-gray-300 text-sm">
+                  {levelStats.map((_, i) => (
+                    <li key={i}>Level {i + 1}: $0</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
           </div>
         ) : (
           <div style={{ textAlign: 'center', color: '#888', padding: '4rem 2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px' }}>
