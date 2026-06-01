@@ -631,7 +631,7 @@ export default function Dashboard() {
             </div>
             <div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}>
               <span className={styles.statusBadge}>All</span>
-              <button onClick={() => router.push('/dashboard/under-construction')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View Levels</button>
+              <button onClick={() => router.push('/dashboard/my-team-tree')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View Tree</button>
             </div>
           </Card>
 
