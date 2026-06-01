@@ -16,10 +16,23 @@ export async function GET() {
     let offset = 0;
     const limit = 1000;
 
+    // Get last distribution date
+    const { data: lastDistributions } = await supabase
+      .from('weekly_distributions')
+      .select('distributed_at')
+      .order('distributed_at', { ascending: false })
+      .limit(1);
+
+    const lastDistDate = lastDistributions && lastDistributions.length > 0 
+      ? lastDistributions[0].distributed_at 
+      : '1970-01-01T00:00:00Z';
+
     while (hasMore) {
       const { data, error } = await supabase
         .from('transactions')
         .select('amount, type, description')
+        .eq('type', 'rank_purchase')
+        .gt('created_at', lastDistDate)
         .range(offset, offset + limit - 1);
 
       if (error) {
@@ -33,9 +46,7 @@ export async function GET() {
       }
 
       data.forEach((tx) => {
-        if (tx.type === 'rank_purchase') {
-          totalBusiness += Math.abs(Number(tx.amount) || 0);
-        }
+        totalBusiness += Math.abs(Number(tx.amount) || 0);
       });
 
       if (data.length < limit) {
