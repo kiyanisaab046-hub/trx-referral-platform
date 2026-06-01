@@ -548,7 +548,7 @@ export default function Dashboard() {
             </button>
             <button
               className={styles.mobileDrawerItem}
-              onClick={() => { router.push('/dashboard/under-construction'); setMobileMenuOpen(false); }}
+              onClick={() => { router.push('/dashboard/matrix-tree'); setMobileMenuOpen(false); }}
             >
               Tree
             </button>
