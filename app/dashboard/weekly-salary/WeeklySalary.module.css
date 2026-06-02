@@ -28,20 +28,20 @@
 }
 
 .logoBadgeContainer {
-  background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
-  padding: 2px;
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logoBadge {
-  display: block;
-  background: #050a15;
-  color: #00d2ff;
-  font-weight: 800;
-  font-size: 1.2rem;
-  padding: 8px 12px;
-  border-radius: 6px;
-  letter-spacing: 1px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary), var(--color-highlight), var(--color-accent));
+  color: #000;
+  font-size: 0.85rem;
+  font-weight: 900;
+  padding: 0.35rem 0.85rem;
+  border-radius: 50px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
 }
 
 .logoTitles {

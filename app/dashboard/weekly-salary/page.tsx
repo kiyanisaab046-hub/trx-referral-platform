@@ -34,6 +34,7 @@ export default function WeeklySalaryPage() {
   const [rankStatusData, setRankStatusData] = useState<any>(null);
   const [totalPending, setTotalPending] = useState(0);
   const [claiming, setClaiming] = useState(false);
+  const [claimingRank, setClaimingRank] = useState<number | null>(null);
 
   useEffect(() => {
     async function fetchGlobalBusiness() {
@@ -106,6 +107,56 @@ export default function WeeklySalaryPage() {
     }
   };
 
+  // Claim rewards for a specific rank
+  const handleClaimByRank = async (rankLevel: number) => {
+    const statusData = rankStatusData?.rankStatus[rankLevel];
+    if (!statusData || statusData.pendingAmount <= 0) return;
+    setClaimingRank(rankLevel);
+    try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const res = await fetch('/api/claim-weekly-reward', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
+        body: JSON.stringify({ rank: rankLevel })
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to claim reward');
+      
+      const rankName = SALARY_RANKS.find(r => r.id === rankLevel)?.name || `Rank ${rankLevel}`;
+      alert(`Successfully claimed $${data.amount} from ${rankName}!`);
+      
+      // Update local state for this rank only
+      if (rankStatusData) {
+        const updatedStatus = { ...rankStatusData.rankStatus };
+        const prev = updatedStatus[rankLevel];
+        updatedStatus[rankLevel] = {
+          ...prev,
+          totalEarned: prev.totalEarned + prev.pendingAmount,
+          pendingAmount: 0,
+          status: (prev.totalEarned + prev.pendingAmount) >= prev.maxCap ? 'completed' : prev.status
+        };
+        setRankStatusData({ ...rankStatusData, rankStatus: updatedStatus });
+        
+        // Recalculate totalPending
+        let newTotal = 0;
+        Object.values(updatedStatus).forEach((r: any) => { newTotal += r.pendingAmount; });
+        setTotalPending(newTotal);
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message);
+    } finally {
+      setClaimingRank(null);
+    }
+  };
+
+  // Legacy claim-all (kept for convenience)
   const handleClaimReward = async () => {
     if (totalPending <= 0) return;
     setClaiming(true);
@@ -128,11 +179,16 @@ export default function WeeklySalaryPage() {
       alert(`Successfully claimed $${data.amount}!`);
       setTotalPending(0);
       
-      // Update local rankStatusData
       if (rankStatusData) {
         const updatedStatus = { ...rankStatusData.rankStatus };
         Object.keys(updatedStatus).forEach(k => {
-          updatedStatus[k as any].pendingAmount = 0;
+          const prev = updatedStatus[k as any];
+          updatedStatus[k as any] = {
+            ...prev,
+            totalEarned: prev.totalEarned + prev.pendingAmount,
+            pendingAmount: 0,
+            status: (prev.totalEarned + prev.pendingAmount) >= prev.maxCap ? 'completed' : prev.status
+          };
         });
         setRankStatusData({ ...rankStatusData, rankStatus: updatedStatus });
       }
@@ -149,7 +205,7 @@ export default function WeeklySalaryPage() {
       <header className={styles.header}>
         <div className={styles.logoArea} onClick={() => router.push('/dashboard')}>
           <div className={styles.logoBadgeContainer}>
-            <span className={styles.logoBadge}>UIP</span>
+            <img src="https://i.postimg.cc/hGhQX5YR/ZMhoi-O-modified.png" alt="Logo" className={styles.logoBadge} style={{ padding: 0, background: 'none', objectFit: 'cover', width: '40px', height: '40px', borderRadius: '50%', border: 'none' }} />
           </div>
           <div className={styles.logoTitles}>
             <h2 className={styles.logoText}>Weekly Income</h2>
@@ -205,28 +261,89 @@ export default function WeeklySalaryPage() {
                   {SALARY_RANKS.find(r => r.id === userRank)?.name}
                 </div>
                 {totalPending > 0 ? (
-                  <div style={{ marginTop: '1rem', background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                    <div style={{ color: '#fff', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Total Pending Salary:</span>
-                      <span style={{ color: '#2ecc71', fontWeight: 'bold' }}>${Number(totalPending).toFixed(2)}</span>
+                  <div style={{ marginTop: '1rem' }}>
+                    {/* Per-Rank Breakdown */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '0.75rem' }}>
+                      {SALARY_RANKS.filter(r => {
+                        const sd = rankStatusData?.rankStatus[r.id];
+                        return sd && sd.pendingAmount > 0;
+                      }).map(r => {
+                        const sd = rankStatusData?.rankStatus[r.id];
+                        const isClaimingThis = claimingRank === r.id;
+                        return (
+                          <div key={r.id} style={{
+                            background: 'rgba(0,0,0,0.35)',
+                            padding: '0.75rem 1rem',
+                            borderRadius: '10px',
+                            border: `1px solid ${r.color}33`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '0.5rem'
+                          }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flex: 1, minWidth: 0 }}>
+                              <div style={{
+                                width: '28px', height: '28px', borderRadius: '50%',
+                                border: `2px solid ${r.color}`,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: '0.7rem', fontWeight: 900, color: r.color, flexShrink: 0
+                              }}>{r.id}</div>
+                              <div style={{ minWidth: 0 }}>
+                                <div style={{ fontSize: '0.75rem', color: r.color, fontWeight: 700 }}>{r.name}</div>
+                                <div style={{ fontSize: '0.85rem', color: '#2ecc71', fontWeight: 'bold' }}>
+                                  ${sd.pendingAmount.toFixed(2)}
+                                </div>
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleClaimByRank(r.id)}
+                              disabled={isClaimingThis || claiming}
+                              style={{
+                                padding: '0.4rem 0.8rem',
+                                background: isClaimingThis ? 'rgba(46,204,113,0.3)' : `linear-gradient(135deg, ${r.color}, ${r.color}cc)`,
+                                border: 'none',
+                                borderRadius: '6px',
+                                color: '#fff',
+                                fontWeight: 700,
+                                fontSize: '0.7rem',
+                                cursor: (isClaimingThis || claiming) ? 'not-allowed' : 'pointer',
+                                opacity: (isClaimingThis || claiming) ? 0.6 : 1,
+                                whiteSpace: 'nowrap',
+                                letterSpacing: '0.02em'
+                              }}
+                            >
+                              {isClaimingThis ? 'Claiming...' : 'Claim'}
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
-                    <button 
-                      onClick={handleClaimReward}
-                      disabled={claiming}
-                      style={{
-                        padding: '0.5rem 1rem',
-                        background: 'linear-gradient(135deg, #2ecc71, #27ae60)',
-                        border: 'none',
-                        borderRadius: '6px',
-                        color: '#fff',
-                        fontWeight: 'bold',
-                        cursor: claiming ? 'not-allowed' : 'pointer',
-                        width: '100%',
-                        opacity: claiming ? 0.7 : 1
-                      }}
-                    >
-                      {claiming ? 'Processing...' : 'Claim All Rewards Now'}
-                    </button>
+
+                    {/* Total Summary + Claim All */}
+                    <div style={{ background: 'rgba(0,0,0,0.3)', padding: '0.75rem 1rem', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                      <div style={{ color: '#fff', marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                        <span>Total Pending:</span>
+                        <span style={{ color: '#2ecc71', fontWeight: 'bold' }}>${Number(totalPending).toFixed(2)}</span>
+                      </div>
+                      <button 
+                        onClick={handleClaimReward}
+                        disabled={claiming}
+                        style={{
+                          padding: '0.45rem 1rem',
+                          background: 'linear-gradient(135deg, #2ecc71, #27ae60)',
+                          border: 'none',
+                          borderRadius: '6px',
+                          color: '#fff',
+                          fontWeight: 'bold',
+                          fontSize: '0.75rem',
+                          cursor: claiming ? 'not-allowed' : 'pointer',
+                          width: '100%',
+                          opacity: claiming ? 0.7 : 1
+                        }}
+                      >
+                        {claiming ? 'Processing...' : 'Claim All Ranks At Once'}
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <span className={styles.yourRankSub}>You qualify for weekly income rewards! Check back when admin distributes the pool.</span>

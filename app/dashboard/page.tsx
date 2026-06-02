@@ -405,6 +405,14 @@ export default function Dashboard() {
       alert(`Insufficient balance! You need $${rank.price} but only have $${wallet.main_balance.toFixed(2)}. Please deposit funds first.`);
       return;
     }
+    
+    // Prevent skipping ranks
+    const effectiveRank = Math.max(getRankInfo(stats.referralsCount, purchasedRank).rank, purchasedRank);
+    if (rank.id > effectiveRank + 1) {
+      alert(`You must achieve the previous ranks first. You can only purchase up to Rank ${effectiveRank + 1} next.`);
+      return;
+    }
+
     if (!confirm(`Are you ready to claim your position as ${rank.name}? This will deduct $${rank.price} from your wallet.`)) return;
 
     setAchievingRank(rank.id);
@@ -511,7 +519,7 @@ export default function Dashboard() {
       <header className={styles.header}>
         <div className={styles.logoArea} onClick={() => router.push('/')} style={{ cursor: 'pointer' }}>
           <div className={styles.logoBadgeContainer}>
-            <span className={styles.logoBadge}>UIP</span>
+            <img src="https://i.postimg.cc/hGhQX5YR/ZMhoi-O-modified.png" alt="Logo" className={styles.logoBadge} style={{ padding: 0, background: 'none', objectFit: 'cover', width: '40px', height: '40px', borderRadius: '50%' }} />
           </div>
           <div className={styles.logoTitles}>
             <h2 className={styles.logoText}>Unique Income Plane</h2>
@@ -540,7 +548,7 @@ export default function Dashboard() {
       {mobileMenuOpen && (
         <div className={styles.mobileDrawerOverlay} onClick={() => setMobileMenuOpen(false)}>
           <div className={styles.mobileDrawer} onClick={(e) => e.stopPropagation()}>
-            <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/under-construction'); setMobileMenuOpen(false); }}>
+            <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/weekly-salary'); setMobileMenuOpen(false); }}>
               📅 Weekly Income
             </button>
             <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/reward-details'); setMobileMenuOpen(false); }}>
@@ -550,10 +558,13 @@ export default function Dashboard() {
               className={styles.mobileDrawerItem}
               onClick={() => { router.push('/dashboard/matrix-tree'); setMobileMenuOpen(false); }}
             >
-              Tree
+              🌳 Tree
             </button>
             <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/my-team'); setMobileMenuOpen(false); }}>
               👥 My Team
+            </button>
+            <button className={styles.mobileDrawerItem} onClick={() => { router.push('/dashboard/community'); setMobileMenuOpen(false); }}>
+              ℹ️ Community
             </button>
             <button className={styles.mobileDrawerItem} onClick={() => { router.push('/'); setMobileMenuOpen(false); }}>
               🏠 Back to Website
@@ -635,14 +646,14 @@ export default function Dashboard() {
             </div>
           </Card>
 
-          <Card className={styles.statusCard}>
+          <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>Community</span>
               <span className={styles.statusTextVal}>{communityTree.length} total</span>
             </div>
             <div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}>
               <span className={styles.statusBadge}>All Members</span>
-              <button onClick={() => router.push('/dashboard/community-info')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #9b59b6, #8e44ad)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View All</button>
+              <button onClick={() => router.push('/dashboard/community')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #9b59b6, #8e44ad)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View All</button>
             </div>
           </Card>
 
@@ -784,7 +795,7 @@ export default function Dashboard() {
               <div style={{ marginTop: '2rem' }}>
                 <h4 className={styles.subSectionTitle}>Achieve New Ranks</h4>
                 <div style={{ display: 'grid', gap: '0.75rem' }}>
-                  {ranks.map((rank) => (
+                  {ranks.filter(rank => rank.id <= rankInfo.rank + 1).map((rank) => (
                     <div key={rank.id} style={{
                       display: 'flex',
                       alignItems: 'center',

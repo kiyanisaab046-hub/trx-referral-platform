@@ -175,7 +175,8 @@ export default function MobileMatrixTreePage() {
 
         const { data: allRefs, error: refsError } = await supabase
           .from('referrals')
-          .select('sponsor_id, referred_id');
+          .select('sponsor_id, referred_id, joined_at')
+          .order('joined_at', { ascending: true });
 
         if (refsError) throw refsError;
 
@@ -210,44 +211,76 @@ export default function MobileMatrixTreePage() {
   const matrixArray = useMemo(() => {
     if (!authUserId || allReferrals.length === 0) return [];
 
-    // 1. Gather all descendants
-    const descendants = new Set<string>();
-    const queue = [authUserId];
-    while(queue.length > 0) {
-      const cur = queue.shift()!;
-      const children = allReferrals.filter(r => r.sponsor_id === cur).map(r => r.referred_id);
-      children.forEach(c => {
-        if (!descendants.has(c)) {
-          descendants.add(c);
-          queue.push(c);
-        }
-      });
-    }
-
-    const allDownlineIds = Array.from(descendants);
+    const indexMap = new Map<string, number>();
+    indexMap.set(authUserId, 0);
     
-    // Sort: Directs first, then indirects
-    const directs = allDownlineIds.filter(id => allReferrals.find(r => r.referred_id === id)?.sponsor_id === authUserId);
-    const indirects = allDownlineIds.filter(id => allReferrals.find(r => r.referred_id === id)?.sponsor_id !== authUserId);
-    
-    // Ordered pool of users to place into the matrix
-    const pool = [authUserId, ...directs, ...indirects];
-    
-    // Map them into node objects
-    return pool.map((id, index) => {
-      // Calculate depth level in a complete binary tree based on array index
-      const level = Math.floor(Math.log2(index + 1));
-      const isDirect = index !== 0 && allReferrals.find(r => r.referred_id === id)?.sponsor_id === authUserId;
-      
-      return {
-        id,
-        name: userMap[id]?.name || 'User',
-        numeric_id: userMap[id]?.numericId || 'N/A',
-        isDirect,
-        level
-      } as MatrixNode;
+    const matrixMap = new Map<number, MatrixNode>();
+    matrixMap.set(0, {
+      id: authUserId,
+      name: userMap[authUserId]?.name || 'User',
+      numeric_id: userMap[authUserId]?.numericId || 'N/A',
+      isDirect: false,
+      level: 0
     });
-
+    
+    // Iterate over chronologically sorted referrals
+    // If the sponsor is within the local matrix, place the user under them
+    for (const ref of allReferrals) {
+      if (indexMap.has(ref.sponsor_id)) {
+        const sponsorIndex = indexMap.get(ref.sponsor_id)!;
+        
+        let assignedIndex = -1;
+        const queue = [sponsorIndex];
+        
+        // BFS to find the first strict vacant spot under this specific sponsor's leg
+        while (queue.length > 0) {
+          const curr = queue.shift()!;
+          const left = 2 * curr + 1;
+          const right = 2 * curr + 2;
+          
+          if (!matrixMap.has(left)) {
+            assignedIndex = left;
+            break;
+          } else {
+            queue.push(left);
+          }
+          
+          if (!matrixMap.has(right)) {
+            assignedIndex = right;
+            break;
+          } else {
+            queue.push(right);
+          }
+        }
+        
+        if (assignedIndex !== -1) {
+          const level = Math.floor(Math.log2(assignedIndex + 1));
+          if (level <= 10) {
+            indexMap.set(ref.referred_id, assignedIndex);
+            matrixMap.set(assignedIndex, {
+              id: ref.referred_id,
+              name: userMap[ref.referred_id]?.name || 'User',
+              numeric_id: userMap[ref.referred_id]?.numericId || 'N/A',
+              isDirect: ref.sponsor_id === authUserId,
+              level
+            });
+          }
+        }
+      }
+    }
+    
+    // Convert Map back to array with nulls for empty slots to maintain strict geometry
+    let maxIndex = -1;
+    for (const idx of matrixMap.keys()) {
+      if (idx > maxIndex) maxIndex = idx;
+    }
+    
+    const finalArray: (MatrixNode | null)[] = [];
+    for (let i = 0; i <= maxIndex; i++) {
+      finalArray.push(matrixMap.get(i) || null);
+    }
+    
+    return finalArray;
   }, [allReferrals, userMap, authUserId]);
 
   // Recursive function to render array index as a binary tree
@@ -255,6 +288,7 @@ export default function MobileMatrixTreePage() {
     if (index >= matrixArray.length) return null;
     
     const node = matrixArray[index];
+    if (!node) return null;
     const leftChildIndex = 2 * index + 1;
     const rightChildIndex = 2 * index + 2;
 
@@ -272,7 +306,7 @@ export default function MobileMatrixTreePage() {
     }
 
     return (
-      <li key={node.id} onClick={() => handleNodeSelect(node.id)} className="cursor-pointer">
+      <li key={node.id} onClick={(e) => { e.stopPropagation(); handleNodeSelect(node.id); }} className="cursor-pointer">
         <div className="flex flex-col items-center relative z-10 w-24 mx-auto group">
           <div className={circleClasses}>
             <span className="text-xl font-bold text-white uppercase">
@@ -379,7 +413,7 @@ export default function MobileMatrixTreePage() {
       <header className={styles.header}>
         <div className={styles.logoArea} onClick={() => router.push('/dashboard')} style={{ cursor: 'pointer' }}>
           <div className={styles.logoBadgeContainer}>
-            <span className={styles.logoBadge}>UIP</span>
+            <img src="https://i.postimg.cc/hGhQX5YR/ZMhoi-O-modified.png" alt="Logo" className={styles.logoBadge} style={{ padding: 0, background: 'none', objectFit: 'cover', width: '40px', height: '40px', borderRadius: '50%' }} />
           </div>
           <div className={styles.logoTitles}>
             <h2 className={styles.logoText}>Matrix Tree</h2>

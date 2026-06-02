@@ -23,12 +23,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Fetch all pending rewards for user
-    const { data: rewards, error: rewardError } = await supabase
+    // Parse optional rank filter from body
+    const body = await req.json().catch(() => ({}));
+    const rankFilter: number | undefined = body.rank;
+
+    // Build query to fetch pending rewards for user
+    let query = supabase
       .from('pending_weekly_rewards')
       .select('*')
       .eq('user_id', user.id)
       .eq('status', 'pending');
+
+    // If a specific rank is requested, filter by that rank only
+    if (rankFilter && typeof rankFilter === 'number') {
+      query = query.eq('rank', rankFilter);
+    }
+
+    const { data: rewards, error: rewardError } = await query;
 
     if (rewardError) throw rewardError;
 
@@ -71,23 +82,26 @@ export async function POST(req: Request) {
 
     if (updateWalletError) throw updateWalletError;
 
-    // Insert Transaction Ledger
-    // We log one transaction combining all claimed ranks
+    // Insert Transaction Ledger — log which rank(s) were claimed
     const ranksClaimed = Array.from(new Set(rewards.map(r => r.rank))).join(', ');
+    const description = rankFilter
+      ? `Claimed Weekly Income (Rank ${rankFilter})`
+      : `Claimed Weekly Income (Ranks ${ranksClaimed})`;
+
     const { error: txError } = await supabase
       .from('transactions')
       .insert({
         user_id: user.id,
         amount: totalAmount,
         type: 'commission_salary',
-        description: `Claimed Weekly Income (Ranks ${ranksClaimed})`
+        description
       });
 
     if (txError) {
       console.error('Failed to log transaction, but balance updated', txError);
     }
 
-    return NextResponse.json({ success: true, amount: totalAmount });
+    return NextResponse.json({ success: true, amount: totalAmount, rank: rankFilter || null });
 
   } catch (error: any) {
     console.error('Claim weekly reward error:', error);

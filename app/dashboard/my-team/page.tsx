@@ -182,7 +182,7 @@ export default function MyTeamPage() {
       <header className={styles.header}>
         <div className={styles.logoArea} onClick={() => router.push('/dashboard')} style={{ cursor: 'pointer' }}>
           <div className={styles.logoBadgeContainer}>
-            <span className={styles.logoBadge}>UIP</span>
+            <img src="https://i.postimg.cc/hGhQX5YR/ZMhoi-O-modified.png" alt="Logo" className={styles.logoBadge} style={{ padding: 0, background: 'none', objectFit: 'cover', width: '40px', height: '40px', borderRadius: '50%' }} />
           </div>
           <div className={styles.logoTitles}>
             <h2 className={styles.logoText}>My Team</h2>
