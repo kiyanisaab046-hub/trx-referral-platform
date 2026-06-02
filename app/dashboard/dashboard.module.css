@@ -162,19 +162,39 @@
 
 .statusCard {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  padding: 1.25rem 1.5rem;
+  align-items: flex-start;
+  padding: 1.5rem 1.75rem;
   background: transparent;
   border: 1px solid #1a1a1a;
   border-radius: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .statusMeta {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.5rem;
 }
+
+/* Buttons inside status cards */
+.statusCard button {
+  margin-top: 0.45rem;
+  font-size: 0.78rem;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #00d2ff, #0080ff);
+  border: none;
+  border-radius: 6px;
+  color: #000;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.statusCard button:hover {
+  opacity: 0.9;
+}
+
 
 .statusLabel {
   font-size: 0.75rem;
@@ -226,11 +246,12 @@
 }
 
 .metricCard {
-  padding: 1.5rem;
+  padding: 2rem;
   background: transparent;
   border: 1px solid #1a1a1a;
   border-radius: 12px;
   transition: all 0.3s ease;
+  margin-bottom: 0.75rem;
 }
 
 .metricCard:hover {

@@ -66,8 +66,7 @@ BEGIN
 
     -- Track recursive referrals if sponsor exists
     IF sponsor_uuid IS NOT NULL THEN
-        INSERT INTO public.referrals (sponsor_id, referred_id, level)
-        VALUES (sponsor_uuid, NEW.id, 1);
+        PERFORM public.place_user_binary(sponsor_uuid, NEW.id);
     END IF;
 
     RETURN NEW;

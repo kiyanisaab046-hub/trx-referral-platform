@@ -22,6 +22,8 @@ CREATE TABLE public.users (
     role user_role DEFAULT 'user'::user_role,
     referral_code TEXT UNIQUE NOT NULL,
     sponsor_id UUID REFERENCES public.users(id) ON DELETE SET NULL,
+    left_child_id UUID REFERENCES public.users(id) ON DELETE SET NULL,
+    right_child_id UUID REFERENCES public.users(id) ON DELETE SET NULL,
     numeric_id TEXT UNIQUE,
     activation_date TIMESTAMP WITH TIME ZONE,
     is_banned BOOLEAN DEFAULT FALSE,
