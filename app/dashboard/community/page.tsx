@@ -79,8 +79,8 @@ export default function CommunityPage() {
         const matrixIds = Array.from(matrixMap.values()).map(m => m.id).filter(id => id !== authUser.id);
         
         if (matrixIds.length === 0) {
-          const emptyLevels: Record<number, { left: CommunityMember[], right: CommunityMember[] }> = {};
-          for (let i = 1; i <= 10; i++) emptyLevels[i] = { left: [], right: [] };
+          const emptyLevels: Record<number, (CommunityMember | null)[]> = {};
+          for (let i = 1; i <= 10; i++) emptyLevels[i] = new Array(Math.pow(2, i)).fill(null);
           setLevelData(emptyLevels);
           setLoading(false);
           return;
