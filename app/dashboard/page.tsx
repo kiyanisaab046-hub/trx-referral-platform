@@ -407,9 +407,10 @@ export default function Dashboard() {
     }
     
     // Prevent skipping ranks
-    const effectiveRank = Math.max(getRankInfo(stats.referralsCount, purchasedRank).rank, purchasedRank);
-    if (rank.id > effectiveRank + 1) {
-      alert(`You must achieve the previous ranks first. You can only purchase up to Rank ${effectiveRank + 1} next.`);
+    // Enforce step‑by‑step rank purchases based solely on the user's current purchased rank.
+    const nextAllowedRank = purchasedRank + 1;
+    if (rank.id > nextAllowedRank) {
+      alert(`You must purchase ranks sequentially. The next rank you can acquire is Rank ${nextAllowedRank}.`);
       return;
     }
 
