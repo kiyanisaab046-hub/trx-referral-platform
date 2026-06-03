@@ -68,7 +68,7 @@ export default function MobileMatrixTreePage() {
 
       // Map rank number to name
       const rankNames: Record<number, string> = {
-        1: 'Starter', 2: 'Builder', 3: 'Grower', 4: 'Achiever',
+        0: 'Unranked', 1: 'Starter', 2: 'Builder', 3: 'Grower', 4: 'Achiever',
         5: 'Advancer', 6: 'Progressor', 7: 'Leader', 8: 'Pioneer',
         9: 'Champion', 10: 'Legend'
       };

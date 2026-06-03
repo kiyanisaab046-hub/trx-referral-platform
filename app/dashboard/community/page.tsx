@@ -241,12 +241,12 @@ export default function CommunityPage() {
                              member.rank === 2 ? 'BUILDER' :
                              member.rank === 3 ? 'GROWER' :
                              member.rank === 4 ? 'ACHIEVER' :
-                             member.rank === 5 ? 'DIRECTOR' :
-                             member.rank === 6 ? 'MASTER' :
-                             member.rank === 7 ? 'CHAMPION' :
-                             member.rank === 8 ? 'LEGEND' :
-                             member.rank === 9 ? 'AMBASSADOR' :
-                             member.rank === 10 ? 'CROWN' : `RANK ${member.rank}`}
+                             member.rank === 5 ? 'ADVANCER' :
+                             member.rank === 6 ? 'PROGRESSOR' :
+                             member.rank === 7 ? 'LEADER' :
+                             member.rank === 8 ? 'PIONEER' :
+                             member.rank === 9 ? 'CHAMPION' :
+                             member.rank === 10 ? 'LEGEND' : `RANK ${member.rank}`}
                           </span>
                         </div>
                         <div style={{ fontSize: '0.8rem', color: '#aaa', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
