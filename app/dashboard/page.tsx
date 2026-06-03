@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../lib/supabase/client';
 import { Card } from '../../components/Card';
@@ -63,14 +63,37 @@ export default function Dashboard() {
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
-  const [directSum, setDirectSum] = useState(0);
-  const [levelSum, setLevelSum] = useState(0);
-  const [teamSum, setTeamSum] = useState(0);
-  const [salarySum, setSalarySum] = useState(0);
-  const [rewardSum, setRewardSum] = useState(0);
-  const [teamBusiness, setTeamBusiness] = useState(0);
-  const [weeklySalarySum, setWeeklySalarySum] = useState(0);
-  const [dailyIncome, setDailyIncome] = useState(0);
+  // Track current day for daily income reset
+  const [currentDay, setCurrentDay] = useState(() => new Date().toISOString().split('T')[0]);
+
+  // Update currentDay at midnight (or every minute)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newDay = new Date().toISOString().split('T')[0];
+      setCurrentDay((prev) => (prev !== newDay ? newDay : prev));
+    }, 60 * 1000); // check every minute
+    return () => clearInterval(interval);
+  }, []);
+
+const directSum = useMemo(() => transactions.filter(t => t.type === 'commission_direct').reduce((acc, cur) => acc + Number(cur.amount), 0), [transactions]);
+const levelSum = useMemo(() => transactions.filter(t => t.type === 'commission_level').reduce((acc, cur) => acc + Number(cur.amount), 0), [transactions]);
+const teamSum = useMemo(() => transactions.filter(t => t.type === 'commission_team').reduce((acc, cur) => acc + Number(cur.amount), 0), [transactions]);
+const salarySum = useMemo(() => transactions.filter(t => t.type === 'commission_salary').reduce((acc, cur) => acc + Number(cur.amount), 0), [transactions]);
+const rewardSum = useMemo(() => transactions.filter(t => t.type === 'commission_reward').reduce((acc, cur) => acc + Number(cur.amount), 0), [transactions]);
+const [teamBusiness, setTeamBusiness] = useState(0);
+const weeklySalarySum = useMemo(() => {
+  const now = new Date();
+  const weekAgo = new Date();
+  weekAgo.setDate(now.getDate() - 6);
+  const weekStart = weekAgo.toISOString().split('T')[0];
+  return transactions.filter(t => t.type === 'commission_salary' && t.created_at >= weekStart).reduce((acc, cur) => acc + Number(cur.amount), 0);
+}, [transactions]);
+const dailyIncome = useMemo(() => {
+  const today = new Date().toISOString().split('T')[0];
+  const directToday = transactions.filter(t => t.type === 'commission_direct' && t.created_at.startsWith(today)).reduce((a, c) => a + Number(c.amount), 0);
+  const lvlToday = transactions.filter(t => t.type === 'commission_level' && t.created_at.startsWith(today)).reduce((a, c) => a + Number(c.amount), 0);
+  return directToday + lvlToday;
+}, [transactions]);
   const [communityTree, setCommunityTree] = useState<Array<{id:string; name:string; level:number}>>([]);
   const [myDirectMembers, setMyDirectMembers] = useState<Array<{id:string; name:string}>>([]);
   const [showCommunityTree, setShowCommunityTree] = useState(false);
@@ -83,6 +106,7 @@ export default function Dashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Split ranks into always-visible top ranks (up to current) and lower ranks
+const [authUserId, setAuthUserId] = useState<string | null>(null);
   const topRanks = ranks.filter(r => r.id <= purchasedRank);
 
   const [debugInfo, setDebugInfo] = useState<{
@@ -96,6 +120,7 @@ export default function Dashboard() {
     errorMsg?: string;
   }>({});
 
+  // Fetch data on mount
   useEffect(() => {
     const fetchDashboardData = async () => {
       const logs: typeof debugInfo = {
@@ -111,6 +136,7 @@ export default function Dashboard() {
         }
 
         logs.authUserId = authUser.id;
+    setAuthUserId(authUser.id);
         logs.authUserEmail = authUser.email;
 
         try {
@@ -214,15 +240,7 @@ export default function Dashboard() {
             logs.transactionsStatus = `Error: ${txError.message} (Code: ${txError.code})`;
           } else {
             if (txData) {
-              setTransactions(txData);
-                const today = new Date().toISOString().split('T')[0];
-                const directToday = txData
-                  .filter(t => t.type === 'commission_direct' && t.created_at.startsWith(today))
-                  .reduce((acc, curr) => acc + Number(curr.amount), 0);
-                const lvlToday = txData
-                  .filter(t => t.type === 'commission_level' && t.created_at.startsWith(today))
-                  .reduce((acc, curr) => acc + Number(curr.amount), 0);
-                setDailyIncome(directToday + lvlToday);
+              // Redundant daily income calculation removed; dailyIncome is derived via useMemo
 
                 // Fetch direct members for current user
                 const { data: directRefs } = await supabase
@@ -318,11 +336,7 @@ export default function Dashboard() {
                     .filter(t => t.type === 'commission_reward')
                     .reduce((acc, curr) => acc + Number(curr.amount), 0);
                   
-                  setDirectSum(dSum);
-                  setLevelSum(lSum);
-                  setTeamSum(tSum);
-                  setSalarySum(sSum);
-                  setRewardSum(rSum);
+                  // Salary and Reward sums are derived via useMemo; no state updates needed
                   
                   const now = new Date();
                   const weekAgo = new Date();
@@ -331,7 +345,7 @@ export default function Dashboard() {
                   const weekSalary = aggregateTxData
                     .filter(t => t.type === 'commission_salary' && t.created_at >= weekStart)
                     .reduce((acc, cur) => acc + Number(cur.amount), 0);
-                  setWeeklySalarySum(weekSalary);
+                  // weeklySalarySum now derived via useMemo
                 }
         } catch (e: any) {
           logs.transactionsStatus = `Exception: ${e.message || e}`;
@@ -349,18 +363,36 @@ export default function Dashboard() {
     fetchDashboardData();
   }, [router, supabase]);
 
+  // Real-time subscription for new transactions
+  useEffect(() => {
+    if (!authUserId) return;
+    const channel = supabase
+      .channel('public:transactions')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'transactions', filter: `user_id=eq.${authUserId}` },
+        (payload) => {
+          setTransactions((prev) => [payload.new as Transaction, ...prev] as Transaction[]);
+          // Refresh team business if needed
+          supabase
+            .rpc('get_team_business', { root_user_id: authUserId })
+            .then((res) => {
+              if (!res.error) setTeamBusiness(Number(res.data) || 0);
+            });
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [authUserId, supabase]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     window.location.href = '/signin';
   };
 
-  const copyReferralLink = () => {
-    if (!user) return;
-    const link = `${window.location.origin}/signup?ref=${user.referral_code}`;
-    navigator.clipboard.writeText(link);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+
 
   const getRankInfo = (referrals: number, currentPurchased: number) => {
     if (currentPurchased === 0) return { rank: 0, name: 'Unranked', nextRank: 'Starter', target: 0, progress: 0 };
@@ -906,19 +938,28 @@ export default function Dashboard() {
               <WalletModal type="withdraw" open={showWithdrawModal} onClose={() => setShowWithdrawModal(false)} />
             )}
 
-            <div className={styles.referralLinkContainer}>
-              <span className={styles.referralLabel}>Your unique link:</span>
-              <div className={styles.referralInputRow}>
-                <input
-                  type="text"
-                  readOnly
-                  value={user ? `${window.location.origin}/signup?ref=${user.referral_code}` : ''}
-                  className={styles.referralInput} />
-                <button className={styles.referralCopyBtn} onClick={copyReferralLink}>
-                  {copied ? 'Copied!' : 'Copy Link'}
-                </button>
+            {purchasedRank > 0 ? (
+              <div className={styles.referralLinkContainer}>
+                <span className={styles.referralLabel}>Your unique link:</span>
+                <div className={styles.referralInputRow}>
+                  <input
+                    type="text"
+                    readOnly
+                    value={user ? `${window.location.origin}/signup?ref=${user.referral_code}` : ''}
+                    className={styles.referralInput} />
+                  <button className={styles.referralCopyBtn} onClick={copyReferralLink}>
+                    {copied ? 'Copied!' : 'Copy Link'}
+                  </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className={styles.referralLinkContainer} style={{ padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
+                <span className={styles.referralLabel}>Referral Link Unavailable</span>
+                <p style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#888' }}>
+                  Upgrade your account by purchasing the first rank to activate your referral link and start building your team.
+                </p>
+              </div>
+            )}
             </div>
         </section>
 
