@@ -664,7 +664,7 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
           <div className={styles.profileField}>
             <span className={styles.profileFieldLabel}>Rank:</span>
             <div className={styles.profileFieldValue}>
-              <span className={styles.profileRankBadge}>{rankInfo.rank > 0 ? rankInfo.name.toUpperCase() : 'STARTER'}</span>
+              <span className={styles.profileRankBadge}>{rankInfo.name.toUpperCase()}</span>
             </div>
           </div>
           <div className={styles.profileField}>
