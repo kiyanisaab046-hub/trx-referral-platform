@@ -33,6 +33,7 @@ export default function WeeklySalaryPage() {
   const [loadingRank, setLoadingRank] = useState(true);
   const [rankStatusData, setRankStatusData] = useState<any>(null);
   const [totalPending, setTotalPending] = useState(0);
+  const [directsCount, setDirectsCount] = useState<number>(0);
   const [claiming, setClaiming] = useState(false);
   const [claimingRank, setClaimingRank] = useState<number | null>(null);
 
@@ -66,6 +67,7 @@ export default function WeeklySalaryPage() {
         const data = await res.json();
         setRankStatusData(data);
         setUserRank(data.maxRank);
+        setDirectsCount(data.directsCount || 0);
 
         let sumPending = 0;
         Object.values(data.rankStatus).forEach((r: any) => {
@@ -262,6 +264,23 @@ export default function WeeklySalaryPage() {
                 </div>
                 {totalPending > 0 ? (
                   <div style={{ marginTop: '1rem' }}>
+                    
+                    {directsCount < 2 && (
+                      <div style={{
+                        background: 'rgba(231, 76, 60, 0.15)',
+                        border: '1px solid rgba(231, 76, 60, 0.5)',
+                        padding: '0.75rem',
+                        borderRadius: '8px',
+                        marginBottom: '1rem',
+                        color: '#ff6b6b',
+                        fontSize: '0.85rem',
+                        textAlign: 'center',
+                        fontWeight: 600
+                      }}>
+                        ⚠️ You have {directsCount} direct members. You must have at least 2 direct members to claim weekly income!
+                      </div>
+                    )}
+
                     {/* Per-Rank Breakdown */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '0.75rem' }}>
                       {SALARY_RANKS.filter(r => {
@@ -297,7 +316,7 @@ export default function WeeklySalaryPage() {
                             </div>
                             <button
                               onClick={() => handleClaimByRank(r.id)}
-                              disabled={isClaimingThis || claiming}
+                              disabled={isClaimingThis || claiming || directsCount < 2}
                               style={{
                                 padding: '0.4rem 0.8rem',
                                 background: isClaimingThis ? 'rgba(46,204,113,0.3)' : `linear-gradient(135deg, ${r.color}, ${r.color}cc)`,
@@ -306,8 +325,8 @@ export default function WeeklySalaryPage() {
                                 color: '#fff',
                                 fontWeight: 700,
                                 fontSize: '0.7rem',
-                                cursor: (isClaimingThis || claiming) ? 'not-allowed' : 'pointer',
-                                opacity: (isClaimingThis || claiming) ? 0.6 : 1,
+                                cursor: (isClaimingThis || claiming || directsCount < 2) ? 'not-allowed' : 'pointer',
+                                opacity: (isClaimingThis || claiming || directsCount < 2) ? 0.4 : 1,
                                 whiteSpace: 'nowrap',
                                 letterSpacing: '0.02em'
                               }}
@@ -327,7 +346,7 @@ export default function WeeklySalaryPage() {
                       </div>
                       <button 
                         onClick={handleClaimReward}
-                        disabled={claiming}
+                        disabled={claiming || directsCount < 2}
                         style={{
                           padding: '0.45rem 1rem',
                           background: 'linear-gradient(135deg, #2ecc71, #27ae60)',
@@ -336,9 +355,9 @@ export default function WeeklySalaryPage() {
                           color: '#fff',
                           fontWeight: 'bold',
                           fontSize: '0.75rem',
-                          cursor: claiming ? 'not-allowed' : 'pointer',
+                          cursor: (claiming || directsCount < 2) ? 'not-allowed' : 'pointer',
                           width: '100%',
-                          opacity: claiming ? 0.7 : 1
+                          opacity: (claiming || directsCount < 2) ? 0.4 : 1
                         }}
                       >
                         {claiming ? 'Processing...' : 'Claim All Ranks At Once'}

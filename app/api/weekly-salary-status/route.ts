@@ -45,6 +45,12 @@ export async function GET(req: Request) {
       if (r.rank > maxRank) maxRank = r.rank;
     });
 
+    // 1.5 Get User's Direct Referrals Count
+    const { count: directsCount } = await supabase
+      .from('referrals')
+      .select('*', { count: 'exact', head: true })
+      .eq('sponsor_id', user.id);
+
     // 2. Get All Rewards to calculate total earned and pending amounts
     const { data: rewards } = await supabase
       .from('pending_weekly_rewards')
@@ -89,7 +95,7 @@ export async function GET(req: Request) {
       };
     }
 
-    return NextResponse.json({ maxRank, rankStatus });
+    return NextResponse.json({ maxRank, rankStatus, directsCount: directsCount || 0 });
 
   } catch (error: any) {
     console.error('Status error:', error);

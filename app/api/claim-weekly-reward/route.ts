@@ -27,6 +27,16 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}));
     const rankFilter: number | undefined = body.rank;
 
+    // SECURITY CHECK: 2 Directs Rule
+    const { count: directsCount } = await supabase
+      .from('referrals')
+      .select('*', { count: 'exact', head: true })
+      .eq('sponsor_id', user.id);
+
+    if ((directsCount || 0) < 2) {
+      return NextResponse.json({ error: 'You must have at least 2 direct members to claim weekly income.' }, { status: 403 });
+    }
+
     // Build query to fetch pending rewards for user
     let query = supabase
       .from('pending_weekly_rewards')
