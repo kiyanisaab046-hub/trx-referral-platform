@@ -13,6 +13,7 @@ interface CommunityMember {
   activationDate?: string;
   currentLevel: number;
   directTeam: number;
+  rank: number;
 }
 
 export default function CommunityPage() {
@@ -139,8 +140,9 @@ export default function CommunityPage() {
                 name: userMap[node.id] || 'Unknown User',
                 sponsorId: node.sponsor_id,
                 activationDate: userRankInfo[node.id]?.earliestDate || undefined,
-                currentLevel: userRankInfo[node.id]?.maxRank || 0,
-                directTeam: directCounts[node.id] || 0
+                currentLevel: i,
+                directTeam: directCounts[node.id] || 0,
+                rank: userRankInfo[node.id]?.maxRank || 0
               };
             }
           }
@@ -233,7 +235,7 @@ export default function CommunityPage() {
                       <div key={member.id} style={{ background: 'rgba(0,210,255,0.05)', border: '1px solid rgba(0,210,255,0.2)', borderRadius: '8px', padding: '1rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                           <span style={{ fontWeight: 'bold', color: '#fff' }}>{index + 1}. {member.name}</span>
-                          <span style={{ fontSize: '0.8rem', color: '#00d2ff', fontWeight: 'bold' }}>Rank {member.currentLevel}</span>
+                          <span style={{ fontSize: '0.8rem', color: '#00d2ff', fontWeight: 'bold' }}>Rank {member.rank}</span>
                         </div>
                         <div style={{ fontSize: '0.8rem', color: '#aaa', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
                           <span><strong style={{color:'#8892b0'}}>ID:</strong> {shortenId(member.id)}</span>

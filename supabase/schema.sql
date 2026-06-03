@@ -243,6 +243,11 @@ ALTER TABLE public.commissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 
+
+-- 7. USER_RANKS POLICIES
+CREATE POLICY "Users can read all ranks" ON public.user_ranks 
+    FOR SELECT USING (true);
+
 -- 1. USERS POLICIES
 CREATE POLICY "Users can read own profiles" ON public.users 
     FOR SELECT USING (auth.uid() = id);

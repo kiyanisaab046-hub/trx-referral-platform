@@ -61,8 +61,9 @@ BEGIN
     );
 
     -- Initialize user's wallet with $0.00
-    INSERT INTO public.wallets (user_id)
-    VALUES (NEW.id);
+    -- Insert default rank entry for the new user
+    INSERT INTO public.user_ranks (user_id, rank, created_at)
+    VALUES (NEW.id, 0, NOW());
 
     -- Track recursive referrals if sponsor exists
     IF sponsor_uuid IS NOT NULL THEN

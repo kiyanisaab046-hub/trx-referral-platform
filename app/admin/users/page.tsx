@@ -54,7 +54,7 @@ export default function AdminUsers() {
   const handleUpgradeSubmit = async () => {
     if (!upgradeUserId) return;
     setUpgradeLoading(true);
-    await supabase.from('user_ranks').upsert({ user_id: upgradeUserId, rank: upgradeData.rank });
+    await supabase.from('user_ranks').upsert({ user_id: upgradeUserId, rank: upgradeData.rank }, { onConflict: 'user_id' });
     await supabase.from('wallets').update({ main_balance: upgradeData.balance }).eq('user_id', upgradeUserId);
     setUpgradeUserId(null);
     setUpgradeLoading(false);

@@ -75,6 +75,18 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, []);
 
+  // Function to copy referral link to clipboard
+  const copyReferralLink = () => {
+    if (!user) return;
+    const link = `${window.location.origin}/signup?ref=${user.referral_code}`;
+    navigator.clipboard.writeText(link).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch((err) => {
+      console.error('Failed to copy referral link:', err);
+    });
+  };
+
 const directSum = useMemo(() => transactions.filter(t => t.type === 'commission_direct').reduce((acc, cur) => acc + Number(cur.amount), 0), [transactions]);
 const levelSum = useMemo(() => transactions.filter(t => t.type === 'commission_level').reduce((acc, cur) => acc + Number(cur.amount), 0), [transactions]);
 const teamSum = useMemo(() => transactions.filter(t => t.type === 'commission_team').reduce((acc, cur) => acc + Number(cur.amount), 0), [transactions]);
@@ -239,6 +251,31 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
           if (txError) {
             logs.transactionsStatus = `Error: ${txError.message} (Code: ${txError.code})`;
           } else {
+            let combinedTx = txData ? [...txData] as Transaction[] : [];
+            
+            // Fetch withdrawals
+            const { data: withdrawalsData } = await supabase
+              .from('withdrawals')
+              .select('id, amount, status, created_at')
+              .eq('user_id', authUser.id)
+              .order('created_at', { ascending: false })
+              .limit(10);
+              
+            if (withdrawalsData) {
+              const mappedWithdrawals: Transaction[] = withdrawalsData.map(w => ({
+                id: w.id,
+                amount: -Number(w.amount),
+                type: 'withdrawal',
+                description: `Withdrawal (${w.status})`,
+                created_at: w.created_at
+              }));
+              combinedTx = [...combinedTx, ...mappedWithdrawals];
+            }
+            
+            // Sort by created_at desc and take top 10
+            combinedTx.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            setTransactions(combinedTx.slice(0, 10));
+
             if (txData) {
               // Redundant daily income calculation removed; dailyIncome is derived via useMemo
 
