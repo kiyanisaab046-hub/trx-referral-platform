@@ -235,7 +235,19 @@ export default function CommunityPage() {
                       <div key={member.id} style={{ background: 'rgba(0,210,255,0.05)', border: '1px solid rgba(0,210,255,0.2)', borderRadius: '8px', padding: '1rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                           <span style={{ fontWeight: 'bold', color: '#fff' }}>{index + 1}. {member.name}</span>
-                          <span style={{ fontSize: '0.8rem', color: '#00d2ff', fontWeight: 'bold' }}>Rank {member.rank}</span>
+                          <span style={{ fontSize: '0.8rem', color: '#00d2ff', fontWeight: 'bold' }}>
+                            {member.rank === 0 ? 'UNRANKED' :
+                             member.rank === 1 ? 'STARTER' :
+                             member.rank === 2 ? 'BUILDER' :
+                             member.rank === 3 ? 'GROWER' :
+                             member.rank === 4 ? 'ACHIEVER' :
+                             member.rank === 5 ? 'DIRECTOR' :
+                             member.rank === 6 ? 'MASTER' :
+                             member.rank === 7 ? 'CHAMPION' :
+                             member.rank === 8 ? 'LEGEND' :
+                             member.rank === 9 ? 'AMBASSADOR' :
+                             member.rank === 10 ? 'CROWN' : `RANK ${member.rank}`}
+                          </span>
                         </div>
                         <div style={{ fontSize: '0.8rem', color: '#aaa', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
                           <span><strong style={{color:'#8892b0'}}>ID:</strong> {shortenId(member.id)}</span>
