@@ -32,7 +32,7 @@ export default function AdminUsers() {
 
   const [createUserModal, setCreateUserModal] = useState(false);
   const [newUser, setNewUser] = useState({ name: "", email: "", role: "anon", referral_code: "" });
-  const inputStyle = { width: "100%", padding: "0.75rem 1rem", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.3)", color: "#fff", boxSizing: "border-box" };
+  const inputStyle: React.CSSProperties = { width: "100%", padding: "0.75rem 1rem", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(0,0,0,0.3)", color: "#fff", boxSizing: "border-box" };
   const cancelBtnStyle = { flex: 1, padding: "0.75rem", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.1)", background: "transparent", color: "rgba(255,255,255,0.6)", cursor: "pointer" };
   const saveBtnStyle = { flex: 1, padding: "0.75rem", borderRadius: "10px", border: "none", background: "linear-gradient(135deg, #FF7E67, #FFC371)", color: "#000", fontWeight: 800, cursor: "pointer" };
 

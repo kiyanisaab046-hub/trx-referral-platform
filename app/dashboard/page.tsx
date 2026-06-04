@@ -245,8 +245,7 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
             .from('transactions')
             .select('id, amount, type, description, created_at')
             .eq('user_id', authUser.id)
-            .order('created_at', { ascending: false })
-            .limit(10);
+            .order('created_at', { ascending: false });
 
           if (txError) {
             logs.transactionsStatus = `Error: ${txError.message} (Code: ${txError.code})`;
@@ -274,7 +273,7 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
             
             // Sort by created_at desc and take top 10
             combinedTx.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-            setTransactions(combinedTx.slice(0, 10));
+            setTransactions(combinedTx);
 
             if (txData) {
               // Redundant daily income calculation removed; dailyIncome is derived via useMemo
@@ -458,7 +457,7 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
       }
     : baseRankInfo;
   
-  const totalEarnings = (wallet?.income_balance || 0) + (wallet?.withdrawal_balance || 0);
+  const totalEarnings = directSum + levelSum + teamSum + salarySum + rewardSum;
   const currentSliderIndex = mobileSliderIndex === -1 ? Math.max(0, rankInfo.rank - 1) : mobileSliderIndex;
 
   const handleAchieveRank = async (rank: typeof ranks[0]) => {
