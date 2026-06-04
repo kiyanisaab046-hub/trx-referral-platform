@@ -18,7 +18,7 @@ type User = {
 };
 
 export default function AdminUsers() {
-  const { data: users = [], isLoading: loading } = useSupabaseQuery<User>('users', {}, { order: ['created_at', 'desc'] });
+  const { data: users = [], isLoading: loading } = useSupabaseQuery<User>('users', { role: 'authenticated' }, { order: ['created_at', 'desc'] });
   const [searchTerm, setSearchTerm] = useState("");
   const [actionMenuUserId, setActionMenuUserId] = useState<string | null>(null);
   const [upgradeUserId, setUpgradeUserId] = useState<string | null>(null);

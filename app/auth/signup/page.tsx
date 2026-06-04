@@ -85,7 +85,13 @@ useEffect(() => {
     setSuccess(true);
     setTimeout(() => router.push('/auth/signin'), 3000);
   } catch (err: any) {
-    setError(err.message || 'Registration failed');
+    // Show full error so we can diagnose the exact database problem
+    const detail = err.message || '';
+    const code   = err.code   ? ` [${err.code}]`   : '';
+    const hint   = err.hint   ? ` — Hint: ${err.hint}`   : '';
+    const dets   = err.details ? ` — Detail: ${err.details}` : '';
+    setError(`${detail}${code}${hint}${dets}` || 'Registration failed');
+    console.error('🔴 Sign-up error full object →', JSON.stringify(err, null, 2));
   } finally {
     setLoading(false);
   }
