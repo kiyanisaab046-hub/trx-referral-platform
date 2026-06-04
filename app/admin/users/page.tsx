@@ -106,8 +106,12 @@ export default function AdminUsers() {
     await supabase.from('wallets').delete().in('user_id', oldIds);
     await supabase.from('user_ranks').delete().in('user_id', oldIds);
     // Add other related tables if exist, e.g., referrals, transactions
-    await supabase.from('referrals').delete().in('user_id', oldIds).catch(() => {});
-    await supabase.from('transactions').delete().in('user_id', oldIds).catch(() => {});
+    try {
+      await supabase.from('referrals').delete().in('user_id', oldIds);
+    } catch (e) {}
+    try {
+      await supabase.from('transactions').delete().in('user_id', oldIds);
+    } catch (e) {}
     // Delete users
     const { error: delErr } = await supabase.from('users').delete().in('id', oldIds);
     if (delErr) {
