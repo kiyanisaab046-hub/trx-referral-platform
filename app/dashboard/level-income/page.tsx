@@ -321,6 +321,26 @@ export default function LevelIncomeTreePage() {
       </header>
 
       <main className={styles.mainContent} style={{ flex: 1, padding: '2rem 1rem', maxWidth: '100%' }}>
+        {/* 2 Directs Requirement Warning */}
+        <div style={{
+          background: 'rgba(239, 68, 68, 0.1)',
+          border: '1px solid rgba(239, 68, 68, 0.3)',
+          borderRadius: '12px',
+          padding: '1rem 1.5rem',
+          marginBottom: '2rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          color: '#f87171'
+        }}>
+          <span style={{ fontSize: '1.5rem' }}>⚠️</span>
+          <div>
+            <h4 style={{ margin: '0 0 0.25rem 0', fontWeight: 700, color: '#fff' }}>Eligibility Requirement</h4>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
+              You must have at least <strong>2 Direct Members</strong> to qualify for Level Income. If you have fewer than 2 direct members, the 30% commission from your downline upgrades will skip you and pass up to the next qualified sponsor.
+            </p>
+          </div>
+        </div>
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
