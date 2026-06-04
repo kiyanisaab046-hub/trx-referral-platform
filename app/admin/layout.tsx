@@ -161,7 +161,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <div className={styles.adminProfile}>
               <div className={styles.adminInfo}>
                 <p className={styles.adminRole}>Super Admin</p>
-                <p className={styles.adminEmail}>fazal@gmail.com</p>
+                <p className={styles.adminEmail}>kiyanisaab046@gmail.com</p>
               </div>
               <div className={styles.adminAvatar}>ZK</div>
             </div>

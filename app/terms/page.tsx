@@ -19,7 +19,7 @@ export default function TermsOfService() {
     setAdminLoading(true);
 
     setTimeout(() => {
-      if (adminEmail === "fazal@gmail.com" && adminPassword === "786786") {
+      if (adminEmail === "kiyanisaab046@gmail.com" && adminPassword === "Kiyani@786") {
         sessionStorage.setItem("isAdmin", "true");
         setShowAdminLogin(false);
         router.push("/admin");
