@@ -264,6 +264,12 @@
   padding: 2rem;
 }
 
+@media (max-width: 768px) {
+  .contentArea {
+    padding: 0.5rem;
+  }
+}
+
 /* Glass Card */
 .glassCard {
   background: rgba(255, 255, 255, 0.02);
@@ -274,12 +280,24 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
+@media (max-width: 768px) {
+  .glassCard {
+    padding: 1rem;
+  }
+}
+
 /* Metric Cards */
 .metricGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .metricCard {
@@ -365,6 +383,12 @@
   margin-bottom: 2rem;
 }
 
+@media (max-width: 768px) {
+  .bentoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 1024px) {
   .bentoGrid {
     grid-template-columns: 1fr;
@@ -395,13 +419,15 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: rgba(255, 255, 255, 0.02);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    position: sticky;
-    top: 0;
-    z-index: 20;
   }
+  .topbar {
+    display: none;
+  }
+
+  .contentArea {
+    padding: 1rem;
+  }
+
   .mobileNav {
     display: flex;
     flex-direction: column;
