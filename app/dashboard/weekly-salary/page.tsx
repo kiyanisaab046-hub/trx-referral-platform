@@ -262,6 +262,22 @@ export default function WeeklySalaryPage() {
                 <div className={styles.yourRankName} style={{ color: SALARY_RANKS.find(r => r.id === userRank)?.color }}>
                   {SALARY_RANKS.find(r => r.id === userRank)?.name}
                 </div>
+
+                {/* Single global directs badge */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '0.6rem' }}>
+                  <div style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '6px',
+                    padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 700,
+                    background: directsCount >= 2 ? 'rgba(46,204,113,0.15)' : 'rgba(231,76,60,0.15)',
+                    border: `1px solid ${directsCount >= 2 ? 'rgba(46,204,113,0.5)' : 'rgba(231,76,60,0.5)'}`,
+                    color: directsCount >= 2 ? '#2ecc71' : '#ff6b6b'
+                  }}>
+                    <span style={{ fontSize: '0.9rem' }}>{directsCount >= 2 ? '✅' : '⚠️'}</span>
+                    Direct Members: {directsCount}/2
+                    {directsCount >= 2 ? ' — All Ranks Unlocked!' : ' — Required to Claim'}
+                  </div>
+                </div>
+
                 {totalPending > 0 ? (
                   <div style={{ marginTop: '1rem' }}>
                     
@@ -377,6 +393,21 @@ export default function WeeklySalaryPage() {
                   {userRank ? `Rank ${userRank}` : 'No Rank Yet'}
                 </div>
                 <span className={styles.yourRankSub}>Reach Rank 5 (ADVANCER) to start earning weekly income!</span>
+
+                {/* Global directs badge for all users */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '0.6rem' }}>
+                  <div style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '6px',
+                    padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 700,
+                    background: directsCount >= 2 ? 'rgba(46,204,113,0.15)' : 'rgba(231,76,60,0.15)',
+                    border: `1px solid ${directsCount >= 2 ? 'rgba(46,204,113,0.5)' : 'rgba(231,76,60,0.5)'}`,
+                    color: directsCount >= 2 ? '#2ecc71' : '#ff6b6b'
+                  }}>
+                    <span style={{ fontSize: '0.9rem' }}>{directsCount >= 2 ? '✅' : '⚠️'}</span>
+                    Direct Members: {directsCount}/2
+                    {directsCount >= 2 ? ' — All Ranks Unlocked!' : ' — Required to Claim'}
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -399,8 +430,8 @@ export default function WeeklySalaryPage() {
                     </div>
                     <div>
                       <span className={styles.rankName} style={{ color: rank.color }}>{rank.name}</span>
-                      
-                      {statusData && statusData.status !== 'locked' && (
+
+                      {statusData && statusData.status !== 'locked' && directsCount >= 2 && (
                         <div style={{ fontSize: '0.75rem', marginTop: '4px', color: '#8892b0' }}>
                           Status: <span style={{ 
                             color: statusData.status === 'completed' ? '#2ecc71' : '#00d2ff',
@@ -413,9 +444,14 @@ export default function WeeklySalaryPage() {
                           </span>
                         </div>
                       )}
-                      {statusData && statusData.pendingAmount > 0 && (
+                      {statusData && statusData.pendingAmount > 0 && directsCount >= 2 && (
                         <div style={{ fontSize: '0.75rem', marginTop: '2px', color: '#f39c12', fontWeight: 'bold' }}>
                           + ${statusData.pendingAmount.toFixed(2)} Pending
+                        </div>
+                      )}
+                      {directsCount < 2 && statusData && statusData.status !== 'locked' && (
+                        <div style={{ fontSize: '0.72rem', marginTop: '4px', color: '#ff6b6b' }}>
+                          🔒 Need 2 direct members to claim
                         </div>
                       )}
                     </div>

@@ -115,6 +115,16 @@ export async function POST(req: Request) {
       
     if (ranksError) throw ranksError;
 
+    // 5b. Fetch direct members count per user
+    const { data: directsData, error: directsError } = await supabase
+      .from('user_directs')
+      .select('user_id');
+    if (directsError) throw directsError;
+    const userDirectsCount: Record<string, number> = {};
+    directsData?.forEach(row => {
+      userDirectsCount[row.user_id] = (userDirectsCount[row.user_id] ?? 0) + 1;
+    });
+    // Existing: map of highest rank per user
     const userHighestRank: Record<string, number> = {};
     allRanks?.forEach(r => {
       if (!userHighestRank[r.user_id] || r.rank > userHighestRank[r.user_id]) {
@@ -128,6 +138,8 @@ export async function POST(req: Request) {
     };
 
     Object.entries(userHighestRank).forEach(([userId, maxRank]) => {
+      // Only include users who have at least 2 direct members
+      if ((userDirectsCount[userId] || 0) < 2) return;
       // User participates in ALL ranks from 5 up to their max rank
       for (let r = 5; r <= Math.min(maxRank, 10); r++) {
         const earned = userEarningsByRank[userId]?.[r] || 0;
