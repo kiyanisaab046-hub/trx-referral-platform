@@ -1,7 +1,7 @@
 "use client";
 export const dynamic = 'force-dynamic';
 
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 import { Search, Filter, Ban, MoreVertical, ShieldAlert } from "lucide-react";
 import styles from "../admin.module.css";
@@ -27,8 +27,7 @@ export default function AdminUsers() {
   const [upgradeData, setUpgradeData] = useState({ rank: 1, balance: 0 });
   const [upgradeLoading, setUpgradeLoading] = useState(false);
   const [showOldDeleteModal, setShowOldDeleteModal] = useState(false);
-  // Capture the timestamp when the admin panel is first opened – only users created after this moment are shown
-  const newMemberCutoff = useRef<string>(new Date().toISOString());
+
 
   const [createUserModal, setCreateUserModal] = useState(false);
   const [newUser, setNewUser] = useState({ name: "", email: "", role: "anon", referral_code: "" });
@@ -42,17 +41,11 @@ export default function AdminUsers() {
   );
 
   // Helper to determine if a user is "new" based on the selected filter
-  const isNewUser = (createdAt: string) => {
-    const created = new Date(createdAt);
-    const cutoff = new Date(newMemberCutoff.current);
-    return created >= cutoff;
-  };
-
   const filteredUsers = users.filter(user => 
     (user.name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) || 
     (user.email?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
     (user.referral_code?.toLowerCase() || "").includes(searchTerm.toLowerCase())
-  ).filter(user => isNewUser(user.created_at));
+  );
 
   const openUpgradeModal = async (userId: string) => {
     setUpgradeUserId(userId);
@@ -144,6 +137,7 @@ export default function AdminUsers() {
       alert('User created successfully');
       setCreateUserModal(false);
       setNewUser({ name: "", email: "", role: "anon", referral_code: "" });
+      window.location.reload();
     }
     setUpgradeLoading(false);
   };
