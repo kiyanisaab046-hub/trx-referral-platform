@@ -1,16 +1,18 @@
 'use client';
 
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../../../lib/supabase/client';
 import styles from '../dashboard.module.css';
 
-interface MatrixNode {
+interface BinaryNode {
   id: string;
   name: string;
   numeric_id: string;
   isDirect: boolean;
   level: number;
+  left: BinaryNode | null;
+  right: BinaryNode | null;
 }
 
 export default function MobileMatrixTreePage() {
@@ -19,20 +21,32 @@ export default function MobileMatrixTreePage() {
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const [allReferrals, setAllReferrals] = useState<any[]>([]);
-  const [userMap, setUserMap] = useState<Record<string, { name: string; numericId: string }>>({});
+  const [tree, setTree] = useState<BinaryNode | null>(null);
   const [authUserId, setAuthUserId] = useState<string>('');
+  
+  // Active root for drill-down navigation
+  const [activeRootId, setActiveRootId] = useState<string | null>(null);
+
   // Modal handling for node details
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [modalData, setModalData] = useState<any>(null);
   const [modalLoading, setModalLoading] = useState(false);
 
+  // All users map (for building the tree)
+  const [allUsers, setAllUsers] = useState<Record<string, {
+    id: string;
+    name: string;
+    numericId: string;
+    left_child_id: string | null;
+    right_child_id: string | null;
+    sponsor_id: string | null;
+  }>>({});
+
+  // Direct referral set (for blue/red coloring)
+  const [directReferralIds, setDirectReferralIds] = useState<Set<string>>(new Set());
+
   const handleNodeSelect = async (id: string) => {
-    setSelectedNodeId(id);
     setModalLoading(true);
     try {
-      // Fetch user basic info (no 'rank' column on users table)
       const { data: user, error: userErr } = await supabase
         .from('users')
         .select('id, full_name, numeric_id, activation_date, sponsor_id')
@@ -40,7 +54,6 @@ export default function MobileMatrixTreePage() {
         .single();
       if (userErr) throw userErr;
 
-      // Fetch sponsor's numeric_id for display
       let sponsorNumericId: string | null = null;
       if (user.sponsor_id) {
         const { data: sponsor } = await supabase
@@ -51,13 +64,11 @@ export default function MobileMatrixTreePage() {
         sponsorNumericId = sponsor?.numeric_id ?? null;
       }
 
-      // Direct referral count
       const { count: directCount } = await supabase
         .from('referrals')
         .select('referred_id', { count: 'exact', head: true })
         .eq('sponsor_id', id);
 
-      // Rank from user_ranks table
       const { data: rankData } = await supabase
         .from('user_ranks')
         .select('rank')
@@ -66,7 +77,6 @@ export default function MobileMatrixTreePage() {
         .limit(1)
         .maybeSingle();
 
-      // Map rank number to name
       const rankNames: Record<number, string> = {
         0: 'Unranked', 1: 'Starter', 2: 'Builder', 3: 'Grower', 4: 'Achiever',
         5: 'Advancer', 6: 'Progressor', 7: 'Leader', 8: 'Pioneer',
@@ -74,21 +84,26 @@ export default function MobileMatrixTreePage() {
       };
       const rankLabel = rankData?.rank ? (rankNames[rankData.rank] || `Rank ${rankData.rank}`) : null;
 
-      // Community size via BFS
+      // Count community size via binary tree BFS
       let communitySize = 0;
       const visited = new Set<string>();
       const queue = [id];
       while (queue.length > 0) {
         const cur = queue.shift()!;
-        const children = allReferrals.filter(r => r.sponsor_id === cur).map(r => r.referred_id);
-        children.forEach(c => {
-          if (!visited.has(c)) {
-            visited.add(c);
-            queue.push(c);
+        const userData = allUsers[cur];
+        if (userData) {
+          if (userData.left_child_id && !visited.has(userData.left_child_id)) {
+            visited.add(userData.left_child_id);
+            communitySize++;
+            queue.push(userData.left_child_id);
           }
-        });
+          if (userData.right_child_id && !visited.has(userData.right_child_id)) {
+            visited.add(userData.right_child_id);
+            communitySize++;
+            queue.push(userData.right_child_id);
+          }
+        }
       }
-      communitySize = visited.size;
 
       setModalData({
         name: user.full_name,
@@ -114,7 +129,6 @@ export default function MobileMatrixTreePage() {
   const [scrollLeft, setScrollLeft] = useState(0);
   const [scrollTop, setScrollTop] = useState(0);
 
-  // Pan/Zoom Drag Logic
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!containerRef.current) return;
     setIsDragging(true);
@@ -133,35 +147,27 @@ export default function MobileMatrixTreePage() {
     setScrollTop(containerRef.current.scrollTop);
   };
 
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
+  const handleMouseLeave = () => setIsDragging(false);
+  const handleMouseUp = () => setIsDragging(false);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !containerRef.current) return;
     e.preventDefault();
     const x = e.pageX - containerRef.current.offsetLeft;
     const y = e.pageY - containerRef.current.offsetTop;
-    const walkX = (x - startX) * 1.5; 
-    const walkY = (y - startY) * 1.5;
-    containerRef.current.scrollLeft = scrollLeft - walkX;
-    containerRef.current.scrollTop = scrollTop - walkY;
+    containerRef.current.scrollLeft = scrollLeft - (x - startX) * 1.5;
+    containerRef.current.scrollTop = scrollTop - (y - startY) * 1.5;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging || !containerRef.current) return;
     const x = e.touches[0].pageX - containerRef.current.offsetLeft;
     const y = e.touches[0].pageY - containerRef.current.offsetTop;
-    const walkX = (x - startX) * 1.5; 
-    const walkY = (y - startY) * 1.5;
-    containerRef.current.scrollLeft = scrollLeft - walkX;
-    containerRef.current.scrollTop = scrollTop - walkY;
+    containerRef.current.scrollLeft = scrollLeft - (x - startX) * 1.5;
+    containerRef.current.scrollTop = scrollTop - (y - startY) * 1.5;
   };
 
+  // Fetch all users with their binary tree pointers
   useEffect(() => {
     const fetchTree = async () => {
       try {
@@ -172,30 +178,47 @@ export default function MobileMatrixTreePage() {
         }
         
         setAuthUserId(authUser.id);
+        setActiveRootId(authUser.id);
 
-        const { data: allRefs, error: refsError } = await supabase
-          .from('referrals')
-          .select('sponsor_id, referred_id, joined_at')
-          .order('joined_at', { ascending: true });
-
-        if (refsError) throw refsError;
-
+        // Fetch all users with binary tree columns
         const { data: usersData, error: usersError } = await supabase
           .from('users')
-          .select('id, full_name, numeric_id');
+          .select('id, full_name, numeric_id, left_child_id, right_child_id, sponsor_id');
           
         if (usersError) throw usersError;
 
-        const uMap: Record<string, { name: string; numericId: string }> = {};
+        const uMap: Record<string, {
+          id: string;
+          name: string;
+          numericId: string;
+          left_child_id: string | null;
+          right_child_id: string | null;
+          sponsor_id: string | null;
+        }> = {};
+        
         usersData?.forEach(u => { 
           uMap[u.id] = { 
+            id: u.id,
             name: u.full_name || 'User',
-            numericId: u.numeric_id || 'N/A'
+            numericId: u.numeric_id || 'N/A',
+            left_child_id: u.left_child_id,
+            right_child_id: u.right_child_id,
+            sponsor_id: u.sponsor_id
           }; 
         });
 
-        setAllReferrals(allRefs || []);
-        setUserMap(uMap);
+        setAllUsers(uMap);
+
+        // Get direct referrals for the logged-in user (for blue coloring)
+        const { data: directRefs } = await supabase
+          .from('referrals')
+          .select('referred_id')
+          .eq('sponsor_id', authUser.id);
+
+        const directSet = new Set<string>();
+        directRefs?.forEach(r => directSet.add(r.referred_id));
+        setDirectReferralIds(directSet);
+
       } catch (err: any) {
         console.error('Error fetching tree data:', err);
         setError(err.message || 'Failed to load network');
@@ -207,127 +230,98 @@ export default function MobileMatrixTreePage() {
     fetchTree();
   }, [router, supabase]);
 
-  // Build the strict array-based matrix up to Level 10
-  const matrixArray = useMemo(() => {
-    if (!authUserId || allReferrals.length === 0) return [];
+  // Build the REAL binary tree from left_child_id / right_child_id columns
+  // This is the actual physical placement — top-to-bottom, left-to-right
+  useEffect(() => {
+    if (!activeRootId || Object.keys(allUsers).length === 0) return;
 
-    const indexMap = new Map<string, number>();
-    indexMap.set(authUserId, 0);
-    
-    const matrixMap = new Map<number, MatrixNode>();
-    matrixMap.set(0, {
-      id: authUserId,
-      name: userMap[authUserId]?.name || 'User',
-      numeric_id: userMap[authUserId]?.numericId || 'N/A',
-      isDirect: false,
-      level: 0
-    });
-    
-    // Iterate over chronologically sorted referrals
-    // If the sponsor is within the local matrix, place the user under them
-    for (const ref of allReferrals) {
-      if (indexMap.has(ref.sponsor_id)) {
-        const sponsorIndex = indexMap.get(ref.sponsor_id)!;
-        
-        let assignedIndex = -1;
-        const queue = [sponsorIndex];
-        
-        // BFS to find the first strict vacant spot under this specific sponsor's leg
-        while (queue.length > 0) {
-          const curr = queue.shift()!;
-          const left = 2 * curr + 1;
-          const right = 2 * curr + 2;
-          
-          if (!matrixMap.has(left)) {
-            assignedIndex = left;
-            break;
-          } else {
-            queue.push(left);
-          }
-          
-          if (!matrixMap.has(right)) {
-            assignedIndex = right;
-            break;
-          } else {
-            queue.push(right);
-          }
-        }
-        
-        if (assignedIndex !== -1) {
-          const level = Math.floor(Math.log2(assignedIndex + 1));
-          if (level <= 10) {
-            indexMap.set(ref.referred_id, assignedIndex);
-            matrixMap.set(assignedIndex, {
-              id: ref.referred_id,
-              name: userMap[ref.referred_id]?.name || 'User',
-              numeric_id: userMap[ref.referred_id]?.numericId || 'N/A',
-              isDirect: ref.sponsor_id === authUserId,
-              level
-            });
-          }
-        }
+    const buildBinaryTree = (nodeId: string, depth: number): BinaryNode | null => {
+      const userData = allUsers[nodeId];
+      if (!userData) return null;
+      if (depth > 10) return null; // Limit to 10 levels
+
+      const node: BinaryNode = {
+        id: nodeId,
+        name: userData.name,
+        numeric_id: userData.numericId,
+        isDirect: directReferralIds.has(nodeId),
+        level: depth,
+        left: null,
+        right: null,
+      };
+
+      // Follow the ACTUAL binary tree pointers
+      if (userData.left_child_id) {
+        node.left = buildBinaryTree(userData.left_child_id, depth + 1);
       }
-    }
-    
-    // Convert Map back to array with nulls for empty slots to maintain strict geometry
-    let maxIndex = -1;
-    for (const idx of matrixMap.keys()) {
-      if (idx > maxIndex) maxIndex = idx;
-    }
-    
-    const finalArray: (MatrixNode | null)[] = [];
-    for (let i = 0; i <= maxIndex; i++) {
-      finalArray.push(matrixMap.get(i) || null);
-    }
-    
-    return finalArray;
-  }, [allReferrals, userMap, authUserId]);
+      if (userData.right_child_id) {
+        node.right = buildBinaryTree(userData.right_child_id, depth + 1);
+      }
 
-  // Recursive function to render array index as a binary tree
-  const renderMatrixTree = (index: number) => {
-    if (index >= matrixArray.length) return null;
-    
-    const node = matrixArray[index];
+      return node;
+    };
+
+    const builtTree = buildBinaryTree(activeRootId, 0);
+    setTree(builtTree);
+  }, [activeRootId, allUsers, directReferralIds]);
+
+  const handleReset = () => {
+    if (authUserId) setActiveRootId(authUserId);
+  };
+
+  // Render a binary node recursively (always exactly 2 branches: left & right)
+  const renderBinaryNode = (node: BinaryNode | null, isRoot: boolean = false): React.ReactNode => {
     if (!node) return null;
-    const leftChildIndex = 2 * index + 1;
-    const rightChildIndex = 2 * index + 2;
-
-    const hasLeft = leftChildIndex < matrixArray.length;
-    const hasRight = rightChildIndex < matrixArray.length;
 
     let circleClasses = 'w-14 h-14 rounded-full flex items-center justify-center border-[3px] bg-gray-800 z-10 relative shrink-0';
     
-    if (index === 0) {
-       circleClasses += ' border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.8)]'; // Root (YOU)
+    if (isRoot && node.id === authUserId) {
+       circleClasses += ' border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.8)]';
     } else if (node.isDirect) {
-       circleClasses += ' border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.8)]'; // Direct
+       circleClasses += ' border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.8)]';
     } else {
-       circleClasses += ' border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.8)]'; // Indirect
+       circleClasses += ' border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.8)]';
     }
 
+    const hasChildren = node.left !== null || node.right !== null;
+
     return (
-      <li key={node.id} onClick={(e) => { e.stopPropagation(); handleNodeSelect(node.id); }} className="cursor-pointer">
-        <div className="flex flex-col items-center relative z-10 w-24 mx-auto group">
+      <li key={node.id}>
+        <div 
+          className="flex flex-col items-center cursor-pointer relative z-10 w-24 mx-auto group"
+          onClick={(e) => { e.stopPropagation(); handleNodeSelect(node.id); }}
+        >
           <div className={circleClasses}>
             <span className="text-xl font-bold text-white uppercase">
               {node.name ? node.name.charAt(0) : '?'}
             </span>
-            {index !== 0 && (
+            {!isRoot && (
                <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-gray-900 ${node.isDirect ? 'bg-blue-500 shadow-[0_0_5px_rgba(59,130,246,0.8)]' : 'bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.8)]'}`} />
             )}
           </div>
           
           <div className="mt-2 text-center bg-gray-900/60 rounded px-2 py-0.5 border border-gray-700">
-            <span className="text-[10px] text-gray-300 font-bold block">{index === 0 ? 'YOU' : `ID: ${node.numeric_id}`}</span>
-            {/* Displaying row depth */}
+            <span className="text-[10px] text-gray-300 font-bold block">
+              {isRoot && node.id === authUserId ? 'YOU' : `ID: ${node.numeric_id}`}
+            </span>
             <span className="text-[8px] text-gray-500">Lv {node.level}</span>
           </div>
+
+          {/* Drill-down button */}
+          {hasChildren && (
+            <button 
+              className="mt-1 text-[9px] text-cyan-400 hover:text-cyan-300 font-semibold"
+              onClick={(e) => { e.stopPropagation(); setActiveRootId(node.id); }}
+            >
+              ▼ Drill Down
+            </button>
+          )}
         </div>
 
-        {(hasLeft || hasRight) && node.level < 10 && (
+        {hasChildren && node.level < 10 && (
           <ul>
-            {hasLeft && renderMatrixTree(leftChildIndex)}
-            {hasRight && renderMatrixTree(rightChildIndex)}
+            {node.left && renderBinaryNode(node.left)}
+            {node.right && renderBinaryNode(node.right)}
           </ul>
         )}
       </li>
@@ -337,7 +331,7 @@ export default function MobileMatrixTreePage() {
   return (
     <div className={styles.dashboardContainer} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
-      {/* SVG-based tree logic styles */}
+      {/* Tree connector styles */}
       <style dangerouslySetInnerHTML={{__html: `
         .org-tree {
           display: flex;
@@ -420,7 +414,16 @@ export default function MobileMatrixTreePage() {
             <span className={styles.logoSlogan}>Auto-Spillover Forced Matrix</span>
           </div>
         </div>
-        <div className={styles.profileHeader}>
+        <div className={styles.profileHeader} style={{ display: 'flex', gap: '0.5rem' }}>
+          {authUserId && activeRootId !== authUserId && (
+            <button 
+              className={styles.homeBtn} 
+              onClick={handleReset}
+              style={{ background: 'linear-gradient(135deg, #10b981, #059669)', border: 'none', color: '#fff', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}
+            >
+              🔄 Reset to My Tree
+            </button>
+          )}
           <button className={styles.homeBtn} onClick={() => router.push('/dashboard')}>
             🔙 Back
           </button>
@@ -437,18 +440,25 @@ export default function MobileMatrixTreePage() {
             <h2>Error Loading Matrix</h2>
             <p>{error}</p>
           </div>
-        ) : matrixArray.length > 0 ? (
+        ) : tree ? (
           <div className="w-full h-full flex flex-col flex-1 bg-gray-950/40 rounded-2xl border border-gray-800 shadow-2xl overflow-hidden relative">
              <div className="absolute top-4 left-4 flex flex-col gap-2 z-20 pointer-events-none">
                <div className="flex gap-4 text-[10px] font-semibold bg-gray-900/80 px-3 py-1.5 rounded-lg backdrop-blur-md border border-gray-800 pointer-events-auto">
+                  <div className="flex items-center gap-1.5">
+                     <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
+                     <span className="text-gray-300">You (Root)</span>
+                  </div>
                   <div className="flex items-center gap-1.5">
                      <div className="w-2.5 h-2.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div>
                      <span className="text-gray-300">Direct</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                      <div className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></div>
-                     <span className="text-gray-300">Indirect</span>
+                     <span className="text-gray-300">Spillover</span>
                   </div>
+               </div>
+               <div className="text-[10px] text-gray-400 bg-gray-900/60 px-3 py-1.5 rounded-lg border border-gray-800/50 backdrop-blur-md w-fit pointer-events-auto">
+                 Perfect Binary Matrix: Left → Right, Top → Bottom
                </div>
              </div>
              
@@ -465,7 +475,7 @@ export default function MobileMatrixTreePage() {
                 onTouchMove={handleTouchMove}
              >
                <ul style={{ minWidth: 'max-content', padding: '40px' }}>
-                 {renderMatrixTree(0)}
+                 {renderBinaryNode(tree, true)}
                </ul>
              </div>
           </div>
@@ -494,7 +504,7 @@ export default function MobileMatrixTreePage() {
 
       {/* Detail popup modal */}
       {modalData && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm" onClick={() => { setSelectedNodeId(null); setModalData(null); }}>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm" onClick={() => { setModalData(null); }}>
           <div className="bg-gray-900 border border-gray-700 p-6 rounded-2xl w-[320px] shadow-2xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white text-xl font-bold uppercase">
@@ -527,11 +537,10 @@ export default function MobileMatrixTreePage() {
                 <span className="text-white font-semibold">{modalData.activation_date ? new Date(modalData.activation_date).toLocaleDateString() : '—'}</span>
               </div>
             </div>
-            <button className="mt-5 w-full py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity" onClick={() => { setSelectedNodeId(null); setModalData(null); }}>Close</button>
+            <button className="mt-5 w-full py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity" onClick={() => { setModalData(null); }}>Close</button>
           </div>
         </div>
       )}
     </div>
   );
 }
-
