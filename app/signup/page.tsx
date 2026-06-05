@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '../../lib/supabase/client';
 import { Input } from '../../components/Input';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { Button } from '../../components/Button';
 import styles from './signup.module.css';
 import Link from 'next/link';
@@ -40,6 +41,7 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [sponsorCode, setSponsorCode] = useState('');
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -251,14 +253,34 @@ export default function SignUp() {
                 </motion.div>
 
                 <motion.div variants={itemVariants}>
-                  <Input
-                    label="Password"
-                    type="password"
-                    placeholder="Create a highly secure password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
+                  <div className={styles.passwordWrapper} style={{ position: 'relative' }}>
+                    <Input
+                      label="Password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Create a highly secure password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className={styles.showPasswordBtn}
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#00d4ff',
+                        cursor: 'pointer',
+                      }}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeSlashIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
+                    </button>
+                  </div>
                 </motion.div>
 
                 <motion.div variants={itemVariants}>

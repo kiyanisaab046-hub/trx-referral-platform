@@ -132,7 +132,7 @@ export default function Hero() {
               ✦ Welcome To ✦
             </span>
           </div>
-        </motion.div>
+        
 
         {/* ── Main headline with letter-by-letter animation ── */}
         <div className="font-display font-black uppercase tracking-tight leading-[0.95] mb-8 text-[clamp(2.5rem,7vw,6rem)] max-w-4xl perspective-[800px]">

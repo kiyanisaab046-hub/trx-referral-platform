@@ -349,3 +349,19 @@
   font-size: 1rem;
   outline: none;
 }
+
+.passwordWrapper {
+  position: relative;
+}
+
+.showPasswordBtn {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: #00d4ff;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}

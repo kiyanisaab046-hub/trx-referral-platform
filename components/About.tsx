@@ -120,9 +120,9 @@ export default function About() {
               />
 
               {/* Logo centered in the orb */}
-              <motion.div 
-                animate={{ rotateX: [0, 10, 0], rotateY: [0, -10, 0] }}
-                transition={{ duration: 5, ease: "easeInOut" }}
+              <motion.div
+                animate={{ rotate: 360, rotateX: [0, 10, 0], rotateY: [0, -10, 0] }}
+                transition={{ duration: 5, ease: "easeInOut", repeat: Infinity }}
                 className="absolute w-full h-full rounded-full flex items-center justify-center transform-gpu overflow-hidden"
               >
                 <img src="https://i.postimg.cc/WzxMqLg3/Gemini-Generated-Image-3bzs523bzs523bzs-clean-modified-modified.png" alt="UIP Logo" className="w-full h-full object-cover rounded-full" style={{ transform: 'scale(1.2)' }} />
