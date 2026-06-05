@@ -47,7 +47,7 @@ export default function IncomeTypes() {
             x: [0, 50, 0],
             y: [0, -30, 0]
           }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 10, ease: "easeInOut" }}
           className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-primary/20 rounded-full blur-[150px]"
         />
         <motion.div
@@ -57,7 +57,7 @@ export default function IncomeTypes() {
             x: [0, -40, 0],
             y: [0, 40, 0]
           }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          transition={{ duration: 12, ease: "easeInOut", delay: 1 }}
           className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-accent/20 rounded-full blur-[140px]"
         />
       </div>

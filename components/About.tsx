@@ -100,7 +100,7 @@ export default function About() {
             {/* Core glowing sphere */}
             <motion.div 
               animate={{ y: [-15, 15, -15] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              transition={{ duration: 6, ease: "easeInOut" }}
               className="relative w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-tr from-primary via-secondary to-accent/40 shadow-[0_0_80px_rgba(0,212,255,0.25)] flex items-center justify-center"
             >
               <div className="absolute inset-0 bg-black/30 rounded-full mix-blend-overlay" />
@@ -108,21 +108,21 @@ export default function About() {
               {/* Orbiting Ring 1 */}
               <motion.div 
                 animate={{ rotate: 360 }}
-                transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 25, ease: "linear" }}
                 className="absolute w-[130%] h-[130%] rounded-full border-[1px] border-primary/10 border-t-primary/80 border-r-primary/30" 
               />
               
               {/* Orbiting Ring 2 */}
               <motion.div 
                 animate={{ rotate: -360 }}
-                transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 35, ease: "linear" }}
                 className="absolute w-[160%] h-[160%] rounded-full border-[1px] border-accent/10 border-b-accent/50 border-l-primary/40" 
               />
 
               {/* Logo centered in the orb */}
               <motion.div 
                 animate={{ rotateX: [0, 10, 0], rotateY: [0, -10, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                transition={{ duration: 5, ease: "easeInOut" }}
                 className="absolute w-full h-full rounded-full flex items-center justify-center transform-gpu overflow-hidden"
               >
                 <img src="https://i.postimg.cc/WzxMqLg3/Gemini-Generated-Image-3bzs523bzs523bzs-clean-modified-modified.png" alt="UIP Logo" className="w-full h-full object-cover rounded-full" style={{ transform: 'scale(1.2)' }} />

@@ -67,7 +67,7 @@ export default function Mission() {
             {/* Continuously Rotating Logo */}
             <motion.div 
               animate={{ rotate: 360 }}
-              transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 12, ease: "linear" }}
               className="relative w-44 h-44 rounded-full shadow-[0_0_60px_rgba(255,154,134,0.3)] flex items-center justify-center"
             >
               <img 
@@ -79,7 +79,7 @@ export default function Mission() {
               {/* Outer rotating ring for extra dynamic effect */}
               <motion.div 
                 animate={{ rotate: -360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 20, ease: "linear" }}
                 className="absolute w-[140%] h-[140%] rounded-full border border-white/5 border-t-primary/50 pointer-events-none" 
               />
             </motion.div>

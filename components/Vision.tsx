@@ -104,7 +104,7 @@ export default function Vision() {
             {/* Spinning decorative background sphere */}
             <motion.div 
               animate={{ rotate: 360 }}
-              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 30, ease: "linear" }}
               className="absolute w-44 h-44 rounded-full border border-primary/5 border-t-primary/20 flex items-center justify-center pointer-events-none"
             >
               <div className="w-36 h-36 rounded-full border border-primary/5 border-b-primary/20" />

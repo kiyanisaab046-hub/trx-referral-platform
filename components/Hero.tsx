@@ -126,7 +126,7 @@ export default function Hero() {
         {/* ── Welcome badge ── */}
         <motion.div
           animate={{ y: [0, -10, 0] }}
-          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+          transition={{  duration: 4, ease: "easeInOut" }}
           className="mb-8"
         >
           <span

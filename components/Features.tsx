@@ -39,7 +39,7 @@ export default function Features() {
             x: [0, 60, 0],
             y: [0, -40, 0]
           }}
-          transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 11, ease: "easeInOut" }}
           className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[150px]"
         />
         <motion.div
@@ -49,7 +49,7 @@ export default function Features() {
             x: [0, -50, 0],
             y: [0, 50, 0]
           }}
-          transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+          transition={{ duration: 13, ease: "easeInOut", delay: 2 }}
           className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-accent/20 rounded-full blur-[140px]"
         />
       </div>
