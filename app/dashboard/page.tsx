@@ -100,7 +100,12 @@ const weeklySalarySum = useMemo(() => {
   const weekStart = weekAgo.toISOString().split('T')[0];
   return transactions.filter(t => t.type === 'commission_salary' && t.created_at >= weekStart).reduce((acc, cur) => acc + Number(cur.amount), 0);
 }, [transactions]);
-const dailyIncome = useMemo(() => {
+          const dailyIncome = useMemo(() => {
+            const today = new Date().toISOString().split('T')[0];
+            return transactions
+              .filter(t => t.created_at.startsWith(today))
+              .reduce((a, c) => a + Number(c.amount), 0);
+          }, [transactions]);
   const today = new Date().toISOString().split('T')[0];
   const directToday = transactions.filter(t => t.type === 'commission_direct' && t.created_at.startsWith(today)).reduce((a, c) => a + Number(c.amount), 0);
   const lvlToday = transactions.filter(t => t.type === 'commission_level' && t.created_at.startsWith(today)).reduce((a, c) => a + Number(c.amount), 0);

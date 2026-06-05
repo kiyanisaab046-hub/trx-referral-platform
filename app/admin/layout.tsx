@@ -21,6 +21,7 @@ import {
 import styles from "./admin.module.css";
 
 const navItems = [
+  { name: "Dashboard", path: "/admin", icon: LayoutDashboard },
   { name: "Users", path: "/admin/users", icon: Users },
   { name: "Payments", path: "/admin/payments", icon: CreditCard },
   { name: "Distribution", path: "/admin/distribution", icon: Layers },
