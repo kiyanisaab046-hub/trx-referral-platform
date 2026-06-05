@@ -22,8 +22,10 @@
   align-items: center;
   padding: 1rem 2rem;
   background: transparent;
-  border-bottom: 1px solid rgba(0, 210, 255, 0.15);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
 }
 
 .logoArea {
@@ -831,7 +833,8 @@
   border: 1px solid rgba(0, 210, 255, 0.15);
   border-radius: 16px;
   padding: 1.25rem 1.5rem;
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(0, 210, 255, 0.08);
 }
 

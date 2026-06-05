@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 export default function FloatingBackground() {
@@ -31,53 +30,24 @@ export default function FloatingBackground() {
       />
 
       {/* Teal/Cyan Glow (Top-Left) */}
-      <motion.div
-        animate={{
-          x: ["-5%", "5%", "-5%"],
-          y: ["-5%", "5%", "-5%"],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 15,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full opacity-50 blur-[100px] md:blur-[150px]"
+      <div
+        className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full opacity-30 blur-[100px]"
         style={{
           background: "radial-gradient(circle, rgba(0, 180, 220, 0.45) 0%, rgba(0, 100, 160, 0) 70%)"
         }}
       />
 
-      {/* Amber/Orange Glow (Bottom-Right) — the warm side in the reference */}
-      <motion.div
-        animate={{
-          x: ["5%", "-5%", "5%"],
-          y: ["5%", "-5%", "5%"],
-          scale: [1, 1.2, 1],
-        }}
-        transition={{
-          duration: 18,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute -bottom-[10%] -right-[5%] w-[65%] h-[65%] rounded-full opacity-55 blur-[100px] md:blur-[150px]"
+      {/* Amber/Orange Glow (Bottom-Right) */}
+      <div
+        className="absolute -bottom-[10%] -right-[5%] w-[65%] h-[65%] rounded-full opacity-30 blur-[100px]"
         style={{
           background: "radial-gradient(circle, rgba(180, 90, 10, 0.65) 0%, rgba(100, 40, 0, 0) 70%)"
         }}
       />
 
       {/* Deep navy center ambient */}
-      <motion.div
-        animate={{
-          x: ["0%", "10%", "-10%", "0%"],
-          y: ["10%", "-10%", "10%", "10%"],
-        }}
-        transition={{
-          duration: 25,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute top-[20%] left-[20%] w-[65%] h-[65%] rounded-full opacity-30 blur-[80px] md:blur-[130px]"
+      <div
+        className="absolute top-[20%] left-[20%] w-[65%] h-[65%] rounded-full opacity-20 blur-[80px]"
         style={{
           background: "radial-gradient(circle, rgba(0, 80, 120, 0.4) 0%, rgba(0, 40, 80, 0) 70%)"
         }}

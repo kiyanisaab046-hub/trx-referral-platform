@@ -41,12 +41,6 @@
   --color-deep-black: rgba(5, 10, 20, 0.6);
   --color-background-dark: #070e1a;
   --color-background-gradient: linear-gradient(135deg, #070e1a, #0d1b2a);
-  --animation-pulse: pulse 8s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
 }
 
 
@@ -114,8 +108,9 @@ body {
   box-shadow: 0 0 16px rgba(0, 212, 255, 0.35);
 }
 .glass-card {
-  backdrop-filter: blur(14px);
-  background: rgba(0, 30, 60, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 30, 60, 0.85);
   box-shadow: 0 4px 20px rgba(0,0,0,0.4);
   border: 1px solid rgba(0, 212, 255, 0.15);
 }
