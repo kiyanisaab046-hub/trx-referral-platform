@@ -87,24 +87,32 @@ export default function Dashboard() {
     });
   };
 
-const directSum = useMemo(() => transactions.filter(t => t.type === 'commission_direct').reduce((acc, cur) => acc + Number(cur.amount), 0), [transactions]);
-const levelSum = useMemo(() => transactions.filter(t => t.type === 'commission_level').reduce((acc, cur) => acc + Number(cur.amount), 0), [transactions]);
-const teamSum = useMemo(() => transactions.filter(t => t.type === 'commission_team').reduce((acc, cur) => acc + Number(cur.amount), 0), [transactions]);
-const salarySum = useMemo(() => transactions.filter(t => t.type === 'commission_salary').reduce((acc, cur) => acc + Number(cur.amount), 0), [transactions]);
-const rewardSum = useMemo(() => transactions.filter(t => t.type === 'commission_reward').reduce((acc, cur) => acc + Number(cur.amount), 0), [transactions]);
+const directSum = useMemo(() => Math.max(0, transactions.filter(t => t.type === 'commission_direct' && Number(t.amount) > 0).reduce((acc, cur) => acc + Number(cur.amount), 0)), [transactions]);
+const levelSum = useMemo(() => Math.max(0, transactions.filter(t => t.type === 'commission_level' && Number(t.amount) > 0).reduce((acc, cur) => acc + Number(cur.amount), 0)), [transactions]);
+const teamSum = useMemo(() => Math.max(0, transactions.filter(t => t.type === 'commission_team' && Number(t.amount) > 0).reduce((acc, cur) => acc + Number(cur.amount), 0)), [transactions]);
+const salarySum = useMemo(() => Math.max(0, transactions.filter(t => t.type === 'commission_salary' && Number(t.amount) > 0).reduce((acc, cur) => acc + Number(cur.amount), 0)), [transactions]);
+const rewardSum = useMemo(() => Math.max(0, transactions.filter(t => t.type === 'commission_reward' && Number(t.amount) > 0).reduce((acc, cur) => acc + Number(cur.amount), 0)), [transactions]);
 const [teamBusiness, setTeamBusiness] = useState(0);
 const weeklySalarySum = useMemo(() => {
   const now = new Date();
   const weekAgo = new Date();
   weekAgo.setDate(now.getDate() - 6);
   const weekStart = weekAgo.toISOString().split('T')[0];
-  return transactions.filter(t => t.type === 'commission_salary' && t.created_at >= weekStart).reduce((acc, cur) => acc + Number(cur.amount), 0);
+  return Math.max(0, transactions.filter(t => t.type === 'commission_salary' && t.created_at >= weekStart && Number(t.amount) > 0).reduce((acc, cur) => acc + Number(cur.amount), 0));
 }, [transactions]);
           const dailyIncome = useMemo(() => {
             const today = new Date().toISOString().split('T')[0];
-            return transactions
-              .filter(t => t.created_at.startsWith(today))
-              .reduce((a, c) => a + Number(c.amount), 0);
+            const incomeTypes = [
+              'commission_direct',
+              'commission_level',
+              'commission_team',
+              'commission_salary',
+              'commission_reward',
+              'commission_maintenance'
+            ];
+            return Math.max(0, transactions
+              .filter(t => t.created_at.startsWith(today) && incomeTypes.includes(t.type) && Number(t.amount) > 0)
+              .reduce((a, c) => a + Number(c.amount), 0));
           }, [transactions]);
 
   const [communityTree, setCommunityTree] = useState<Array<{id:string; name:string; level:number}>>([]);
@@ -458,7 +466,7 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
       }
     : baseRankInfo;
   
-  const totalEarnings = directSum + levelSum + teamSum + salarySum + rewardSum;
+  const totalEarnings = Math.max(0, directSum + levelSum + teamSum + salarySum + rewardSum);
   const currentSliderIndex = mobileSliderIndex === -1 ? Math.max(0, rankInfo.rank - 1) : mobileSliderIndex;
 
   const handleAchieveRank = async (rank: typeof ranks[0]) => {
