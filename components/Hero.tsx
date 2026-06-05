@@ -66,16 +66,9 @@ export default function Hero() {
           0%, 100% { opacity: 0.4; transform: scaleX(0.6); }
           50%       { opacity: 1;   transform: scaleX(1.0); box-shadow: 0 0 20px rgba(0,212,255,0.6); }
         }
-        .hero-unique {
-           color: #ffffff;
-           animation: glow-pulse 3s ease-in-out infinite;
-           display: inline-block;
-         }
-        .hero-income {
-           color: #ffffff;
-           animation: glow-pulse-2 2.5s ease-in-out infinite 0.5s;
-           display: inline-block;
-         }
+        /* Removed infinite glow animations for better performance */
+        /* .hero-unique { color: #ffffff; display: inline-block; } */
+        /* .hero-income { color: #ffffff; display: inline-block; } */
         .shimmer-text {
           background: linear-gradient(
             90deg,
@@ -99,13 +92,13 @@ export default function Hero() {
         }
       `}</style>
 
-      {/* ── Core ambient glow (STATIC) ── */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div
-          className="w-[900px] h-[900px] rounded-full blur-[150px] opacity-10"
-          style={{ background: "rgba(0,180,220,1)" }}
-        />
-      </div>
+        {/* ── Core ambient glow (STATIC, reduced) ── */}
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div
+            className="w-[500px] h-[500px] rounded-full blur-[80px] opacity-10"
+            style={{ background: "rgba(0,180,220,1)" }}
+          />
+        </div>
 
       {/* ── Extra glow orbs behind the headline (STATIC) ── */}
       <div
@@ -117,29 +110,28 @@ export default function Hero() {
         style={{ background: "rgba(180,90,10,1)" }}
       />
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-10 flex flex-col items-center text-center px-6 max-w-5xl mx-auto"
-      >
-        {/* ── Welcome badge ── */}
         <motion.div
-          animate={{ y: [0, -10, 0] }}
-          transition={{  duration: 4, ease: "easeInOut" }}
-          className="mb-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="relative z-10 flex flex-col items-center text-center px-6 max-w-5xl mx-auto"
         >
-          <span
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.3em] backdrop-blur-sm"
-            style={{
-              color: "#00d4ff",
-               background: "rgba(0,212,255,0.08)",
-               border: "1.5px solid rgba(0,212,255,0.3)",
-               boxShadow: "0 0 15px rgba(0,212,255,0.2)"
-            }}
+        {/* ── Welcome badge ── */}
+          <div
+            className="mb-8"
           >
-            ✦ Welcome To ✦
-          </span>
+            <span
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.3em] backdrop-blur-sm"
+              style={{
+                color: "#00d4ff",
+                background: "rgba(0,212,255,0.08)",
+                border: "1.5px solid rgba(0,212,255,0.3)",
+                boxShadow: "0 0 15px rgba(0,212,255,0.2)"
+              }}
+            >
+              ✦ Welcome To ✦
+            </span>
+          </div>
         </motion.div>
 
         {/* ── Main headline with letter-by-letter animation ── */}
