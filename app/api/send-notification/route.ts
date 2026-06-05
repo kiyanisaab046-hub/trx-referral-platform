@@ -4,7 +4,7 @@ import nodemailer from 'nodemailer';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { type, title, message, amount, manualName, receiptUrl, timestamp } = body;
+    const { type, title, message, amount, manualName, manualNumber, receiptUrl, timestamp } = body;
     const timeString = timestamp || new Date().toLocaleString();
 
     // Check if credentials are set
@@ -36,6 +36,7 @@ export async function POST(request: Request) {
             <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 20px;">
               <p style="margin: 5px 0; color: #333;"><strong>Amount:</strong> $${amount}</p>
               <p style="margin: 5px 0; color: #333;"><strong>User:</strong> ${manualName}</p>
+              <p style="margin: 5px 0; color: #333;"><strong>Number:</strong> ${manualNumber || 'N/A'}</p>
               <p style="margin: 5px 0; color: #333;"><strong>Type:</strong> ${type}</p>
               <p style="margin: 5px 0; color: #333;"><strong>Time:</strong> ${timeString}</p>
             </div>
