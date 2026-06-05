@@ -77,7 +77,7 @@ export const MemberModal: React.FC<MemberModalProps> = ({ memberId, memberName, 
         let teamSize = 0;
         try {
           const { data: teamData } = await supabase
-            .rpc('get_team_size', { user_uuid: memberId });
+            .rpc('get_matrix_team_size', { user_uuid: memberId });
           teamSize = teamData || 0;
         } catch {
           teamSize = 0;

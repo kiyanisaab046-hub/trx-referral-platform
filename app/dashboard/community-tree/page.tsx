@@ -8,10 +8,7 @@ import UserDetailsModal from '../../components/UserDetailsModal';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import styles from '../dashboard.module.css';
 
-// Modal handling moved inside component
-
 export default function CommunityTreePage() {
-  // Modal handling
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const handleNodeClick = (id: string) => {
@@ -42,91 +39,69 @@ export default function CommunityTreePage() {
           .eq('id', authUser.id)
           .single();
 
-        // Fetch all referrals
-        // RLS will ensure we only get the downline 
-        const { data: allRefs, error: refsError } = await supabase
-          .from('referrals')
-          .select('sponsor_id, referred_id');
-
-        if (refsError) throw refsError;
-
-        // Fetch all users to map names
+        // Fetch all users with binary pointers
         const { data: usersData, error: usersError } = await supabase
           .from('users')
-          .select('id, full_name');
+          .select('id, full_name, left_child_id, right_child_id');
           
         if (usersError) throw usersError;
 
-        const userMap: Record<string, string> = {};
-        usersData?.forEach(u => { userMap[u.id] = u.full_name; });
+        // Fetch direct referrals to mark isDirect
+        const { data: directRefs } = await supabase
+          .from('referrals')
+          .select('referred_id')
+          .eq('sponsor_id', authUser.id);
+        const directSet = new Set<string>();
+        directRefs?.forEach(r => directSet.add(r.referred_id));
 
-        // Build a map of all users (including current user) to TreeNode objects
-        const nodeMap: Record<string, TreeNode> = {};
+        const userMap: Record<string, any> = {};
+        usersData?.forEach(u => { userMap[u.id] = u; });
 
-        // Root node (current user)
-        const rootNode: TreeNode = {
-          id: authUser.id,
-          name: currentUserProfile?.full_name || 'Me',
-          level: 0,
-          isDirect: false,
-          children: []
-        };
-        nodeMap[authUser.id] = rootNode;
+        // Build a physical matrix tree
+        const buildTree = (nodeId: string, depth: number): TreeNode | null => {
+          const u = userMap[nodeId];
+          if (!u) return null;
+          if (depth > 10) return null; // limit depth for UI
+          
+          const node: TreeNode = {
+            id: u.id,
+            name: u.full_name || 'User',
+            level: depth,
+            isDirect: directSet.has(u.id),
+            children: []
+          };
 
-        const allRefsSafe = allRefs || [];
-
-        // Ensure a node exists for every referred user and sponsor
-        allRefsSafe.forEach(ref => {
-          if (!nodeMap[ref.referred_id]) {
-            nodeMap[ref.referred_id] = {
-              id: ref.referred_id,
-              name: userMap[ref.referred_id] || 'User',
-              level: 0,
-              isDirect: false,
-              children: []
-            };
+          if (u.left_child_id) {
+            const leftChild = buildTree(u.left_child_id, depth + 1);
+            if (leftChild) node.children.push(leftChild);
           }
-          if (!nodeMap[ref.sponsor_id]) {
-            nodeMap[ref.sponsor_id] = {
-              id: ref.sponsor_id,
-              name: userMap[ref.sponsor_id] || 'User',
-              level: 0,
-              isDirect: false,
-              children: []
-            };
+          if (u.right_child_id) {
+            const rightChild = buildTree(u.right_child_id, depth + 1);
+            if (rightChild) node.children.push(rightChild);
           }
-        });
 
-        // Attach children based on referral relationships
-        allRefsSafe.forEach(ref => {
-          const sponsorNode = nodeMap[ref.sponsor_id];
-          const childNode = nodeMap[ref.referred_id];
-          // Mark direct referrals (children of the current user)
-          childNode.isDirect = ref.sponsor_id === authUser.id;
-          sponsorNode.children.push(childNode);
-        });
-
-        // Recursively compute depth levels for rendering
-        const computeLevels = (node: TreeNode, depth: number) => {
-          node.level = depth;
-          node.children.forEach(child => computeLevels(child, depth + 1));
+          return node;
         };
-        computeLevels(rootNode, 0);
+
+        const rootNode = buildTree(authUser.id, 0);
 
         setTreeData(rootNode);
-        // Compute per‑level stats for the mobile summary cards
+
+        // Compute per‑level stats
         const statsArray = Array.from({ length: 10 }, () => ({ people: 0, cumulative: 0 }));
-        const traverse = (node: TreeNode, depth: number) => {
-          if (depth >= 10) return;
-          statsArray[depth].people += 1;
-          statsArray[depth].cumulative = statsArray.slice(0, depth + 1).reduce((sum, s) => sum + s.people, 0);
-          node.children.forEach(child => traverse(child, depth + 1));
-        };
-        traverse(rootNode, 0);
+        if (rootNode) {
+            const traverse = (node: TreeNode, depth: number) => {
+            if (depth >= 10) return;
+            statsArray[depth].people += 1;
+            statsArray[depth].cumulative = statsArray.slice(0, depth + 1).reduce((sum, s) => sum + s.people, 0);
+            node.children.forEach(child => traverse(child, depth + 1));
+            };
+            traverse(rootNode, 0);
+        }
         setLevelStats(statsArray);
       } catch (err: any) {
         console.error('Error fetching tree:', err);
-        setError(err.message || 'Failed to load level income network');
+        setError(err.message || 'Failed to load community network');
       } finally {
         setLoading(false);
       }
@@ -143,8 +118,8 @@ export default function CommunityTreePage() {
             <img src="https://i.postimg.cc/hGhQX5YR/ZMhoi-O-modified.png" alt="Logo" className={styles.logoBadge} style={{ padding: 0, background: 'none', objectFit: 'cover', width: '40px', height: '40px', borderRadius: '50%' }} />
           </div>
           <div className={styles.logoTitles}>
-            <h2 className={styles.logoText}>Level Income</h2>
-            <span className={styles.logoSlogan}>Level-wise Downline</span>
+            <h2 className={styles.logoText}>Community Tree</h2>
+            <span className={styles.logoSlogan}>Physical Matrix Downline</span>
           </div>
         </div>
         <div className={styles.profileHeader}>
@@ -170,16 +145,14 @@ export default function CommunityTreePage() {
           {/* Mobile‑only analytic cards */}
           <div className="mt-4 block md:hidden">
             <div className="grid grid-cols-1 gap-2">
-              {/* LEVEL INCOME TREE table */}
               <div className="bg-gray-800 p-4 rounded">
-                <h3 className="text-white mb-2">LEVEL INCOME TREE</h3>
+                <h3 className="text-white mb-2">MATRIX COMMUNITY TREE</h3>
                 <table className="w-full text-sm text-left text-gray-300">
                   <thead>
                     <tr>
                       <th className="pr-2">Level</th>
                       <th className="pr-2">People</th>
                       <th className="pr-2">Cumulative</th>
-                      <th>Earning</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -188,28 +161,18 @@ export default function CommunityTreePage() {
                         <td className="pr-2">{i + 1}</td>
                         <td className="pr-2">{s.people}</td>
                         <td className="pr-2">{s.cumulative}</td>
-                        <td>{"$0"}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-              </div>
-              {/* LEVEL WISE INCOME SUMMARY list */}
-              <div className="bg-gray-800 p-4 rounded">
-                <h3 className="text-white mb-2">LEVEL WISE INCOME SUMMARY</h3>
-                <ul className="space-y-1 text-gray-300 text-sm">
-                  {levelStats.map((_, i) => (
-                    <li key={i}>Level {i + 1}: $0</li>
-                  ))}
-                </ul>
               </div>
             </div>
           </div>
           </div>
         ) : (
           <div style={{ textAlign: 'center', color: '#888', padding: '4rem 2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px' }}>
-            <h2>No Level Members Yet</h2>
-            <p>Share your referral link to start building your level income network!</p>
+            <h2>No Community Members Yet</h2>
+            <p>Share your referral link to start building your community network!</p>
           </div>
         )}
         {modalOpen && selectedUserId && (

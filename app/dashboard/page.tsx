@@ -221,7 +221,7 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
             .eq('level', 1);
 
           const { data: teamCount, error: teamError } = await supabase
-            .rpc('get_team_size', { user_uuid: authUser.id });
+            .rpc('get_matrix_team_size', { user_uuid: authUser.id });
 
           if (refError || teamError) {
             const errMsg = (refError?.message || '') + (teamError?.message || '');
