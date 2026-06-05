@@ -99,28 +99,22 @@ export default function Hero() {
         }
       `}</style>
 
-      {/* ── Core ambient glow ── */}
+      {/* ── Core ambient glow (STATIC) ── */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <motion.div
-          animate={{ scale: [1, 1.12, 1], opacity: [0.04, 0.09, 0.04] }}
-          transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-          className="w-[900px] h-[900px] rounded-full blur-[180px]"
-          style={{ background: "rgba(0,180,220,0.25)" }}
+        <div
+          className="w-[900px] h-[900px] rounded-full blur-[150px] opacity-10"
+          style={{ background: "rgba(0,180,220,1)" }}
         />
       </div>
 
-      {/* ── Extra glow orbs behind the headline ── */}
-      <motion.div
-        animate={{ x: [-20, 20, -20], y: [-10, 10, -10] }}
-        transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
-        className="pointer-events-none absolute top-1/3 left-1/4 w-72 h-72 rounded-full blur-[120px]"
-        style={{ background: "rgba(0,160,210,0.1)" }}
+      {/* ── Extra glow orbs behind the headline (STATIC) ── */}
+      <div
+        className="pointer-events-none absolute top-1/3 left-1/4 w-72 h-72 rounded-full blur-[100px] opacity-10"
+        style={{ background: "rgba(0,160,210,1)" }}
       />
-      <motion.div
-        animate={{ x: [20, -20, 20], y: [10, -10, 10] }}
-        transition={{ repeat: Infinity, duration: 7, ease: "easeInOut", delay: 1 }}
-        className="pointer-events-none absolute top-1/3 right-1/4 w-72 h-72 rounded-full blur-[120px]"
-        style={{ background: "rgba(180,90,10,0.12)" }}
+      <div
+        className="pointer-events-none absolute top-1/3 right-1/4 w-72 h-72 rounded-full blur-[100px] opacity-10"
+        style={{ background: "rgba(180,90,10,1)" }}
       />
 
       <motion.div
@@ -132,15 +126,16 @@ export default function Hero() {
         {/* ── Welcome badge ── */}
         <motion.div
           animate={{ y: [0, -10, 0] }}
-          transition={{ repeat: Infinity, duration: 3.5, ease: "easeInOut" }}
+          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
           className="mb-8"
         >
           <span
-            className="badge-animated inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.3em] backdrop-blur-sm"
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-bold uppercase tracking-[0.3em] backdrop-blur-sm"
             style={{
               color: "#00d4ff",
                background: "rgba(0,212,255,0.08)",
                border: "1.5px solid rgba(0,212,255,0.3)",
+               boxShadow: "0 0 15px rgba(0,212,255,0.2)"
             }}
           >
             ✦ Welcome To ✦
@@ -150,8 +145,8 @@ export default function Hero() {
         {/* ── Main headline with letter-by-letter animation ── */}
         <div className="font-display font-black uppercase tracking-tight leading-[0.95] mb-8 text-[clamp(2.5rem,7vw,6rem)] max-w-4xl perspective-[800px]">
 
-          {/* "UNIQUE" — letter split with glow */}
-          <div className="flex justify-center flex-wrap mb-1">
+          {/* "UNIQUE" — letter split with static glow */}
+          <div className="flex justify-center flex-wrap mb-1" style={{ textShadow: "0 0 25px rgba(0,212,255,0.4), 0 2px 10px rgba(0,0,0,0.4)" }}>
             {UNIQUE_LETTERS.map((char, i) => (
               <motion.span
                 key={i}
@@ -159,15 +154,15 @@ export default function Hero() {
                 variants={letterVariants as any}
                 initial="hidden"
                 animate="visible"
-                className="hero-unique"
+                className="text-white"
               >
                 {char === " " ? "\u00A0" : char}
               </motion.span>
             ))}
           </div>
 
-          {/* "INCOME PLANE" — shimmer sweep effect */}
-          <div className="flex justify-center flex-wrap">
+          {/* "INCOME PLANE" — static glow */}
+          <div className="flex justify-center flex-wrap" style={{ textShadow: "0 0 35px rgba(0,212,255,0.5), 0 2px 10px rgba(0,0,0,0.4)" }}>
             {INCOME_LETTERS.map((char, i) => (
               <motion.span
                 key={i}
@@ -175,7 +170,7 @@ export default function Hero() {
                 variants={letterVariants}
                 initial="hidden"
                 animate="visible"
-                className="hero-income"
+                className="text-white"
               >
                 {char === " " ? "\u00A0" : char}
               </motion.span>
@@ -186,7 +181,7 @@ export default function Hero() {
         {/* ── Subtitle shimmer ── */}
         <motion.p
           variants={itemVariants}
-          className="text-lg md:text-xl font-sans italic mb-6 tracking-wide max-w-xl font-semibold shimmer-text"
+          className="text-lg md:text-xl font-sans italic mb-6 tracking-wide max-w-xl font-semibold text-cyan-200"
         >
           "Ek Plan – Multiple Income – Life Change"
         </motion.p>
@@ -195,14 +190,6 @@ export default function Hero() {
         {/* ── BUILD SMART tagline with pulsing border ── */}
         <motion.p
           variants={itemVariants}
-          animate={{
-            boxShadow: [
-              "0 0 0px rgba(0,212,255,0)",
-              "0 0 18px rgba(0,212,255,0.25)",
-              "0 0 0px rgba(0,212,255,0)",
-            ],
-          }}
-          transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
           className="text-xs md:text-sm font-black uppercase tracking-[0.35em] mb-16 px-6 py-2 rounded-full"
           style={{ color: "#a0e8ff", background: "rgba(0,212,255,0.07)", border: "1.5px solid rgba(0,212,255,0.2)" }}
         >
@@ -222,32 +209,15 @@ export default function Hero() {
                 boxShadow: "0 0 30px rgba(0,212,255,0.4)",
                 borderColor: "rgba(0,212,255,0.7)",
               }}
-              animate={{
-                boxShadow: [
-                  "0 0 0px rgba(0,212,255,0.05)",
-                  "0 0 20px rgba(0,212,255,0.2)",
-                  "0 0 0px rgba(0,212,255,0.05)",
-                ],
-              }}
-              transition={{
-                boxShadow: {
-                  repeat: Infinity,
-                  duration: 3,
-                  ease: "easeInOut",
-                  delay: idx * 0.4,
-                },
-              }}
-              className="flex flex-col items-center justify-center py-8 px-6 rounded-2xl backdrop-blur-sm transition-all duration-300 cursor-default"
-              style={{ background: "rgba(0,20,50,0.65)", border: "1.5px solid rgba(0,212,255,0.2)" }}
+              className="flex flex-col items-center justify-center py-8 px-6 rounded-2xl transition-all duration-300 cursor-default"
+              style={{ background: "rgba(0,20,50,0.65)", border: "1.5px solid rgba(0,212,255,0.2)", boxShadow: "0 0 10px rgba(0,212,255,0.05)" }}
             >
-              <motion.span
-                animate={{ scale: [1, 1.06, 1] }}
-                transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut", delay: idx * 0.3 }}
+              <div
                 className="text-3xl md:text-4xl font-display font-black mb-2"
                 style={{ color: "#00d4ff", textShadow: "0 0 20px rgba(0,212,255,0.55)" }}
               >
                 {s.value}
-              </motion.span>
+              </div>
               <span
                 className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-center"
                 style={{ color: "#00d4ff" }}
@@ -264,17 +234,7 @@ export default function Hero() {
             href="#join"
             whileHover={{ scale: 1.05, boxShadow: "0 0 50px rgba(245,197,24,0.6)" }}
             whileTap={{ scale: 0.97 }}
-            animate={{
-              boxShadow: [
-                "0 0 20px rgba(245,197,24,0.2)",
-                "0 0 40px rgba(245,197,24,0.5)",
-                "0 0 20px rgba(245,197,24,0.2)",
-              ],
-            }}
-            transition={{
-              boxShadow: { repeat: Infinity, duration: 2.5, ease: "easeInOut" },
-            }}
-            className="inline-block px-12 py-5 rounded-full text-[#111] text-base font-display font-black uppercase tracking-[0.25em] transition-all duration-300"
+            className="inline-block px-12 py-5 rounded-full text-[#111] text-base font-display font-black uppercase tracking-[0.25em] transition-all duration-300 shadow-[0_0_20px_rgba(245,197,24,0.3)]"
             style={{ background: "linear-gradient(90deg, #f5c518, #ffe066, #e6a817)" }}
           >
             Join Now — Just $3
