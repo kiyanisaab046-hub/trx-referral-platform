@@ -106,11 +106,7 @@ const weeklySalarySum = useMemo(() => {
               .filter(t => t.created_at.startsWith(today))
               .reduce((a, c) => a + Number(c.amount), 0);
           }, [transactions]);
-  const today = new Date().toISOString().split('T')[0];
-  const directToday = transactions.filter(t => t.type === 'commission_direct' && t.created_at.startsWith(today)).reduce((a, c) => a + Number(c.amount), 0);
-  const lvlToday = transactions.filter(t => t.type === 'commission_level' && t.created_at.startsWith(today)).reduce((a, c) => a + Number(c.amount), 0);
-  return directToday + lvlToday;
-}, [transactions]);
+
   const [communityTree, setCommunityTree] = useState<Array<{id:string; name:string; level:number}>>([]);
   const [myDirectMembers, setMyDirectMembers] = useState<Array<{id:string; name:string}>>([]);
   const [showCommunityTree, setShowCommunityTree] = useState(false);
