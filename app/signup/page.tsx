@@ -102,13 +102,16 @@ export default function SignUp() {
           console.error('Sponsor lookup error:', sponsorErr);
         }
         if (sponsorUser?.id) {
-          const { error: refErr } = await supabase
-            .from('referrals')
-            .insert({
+        const { error: refErr } = await supabase
+          .from('referrals')
+          .upsert(
+            {
               sponsor_id: sponsorUser.id,
               referred_id: userId,
               level: 1,
-            });
+            },
+            { onConflict: 'referred_id' }
+          );
           if (refErr) {
             console.error('Referral insertion error:', refErr);
           }
