@@ -748,6 +748,21 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
         </section>
 
         <section className={styles.metricsGrid}>
+
+          {/* Mobile Only Summary Cards */}
+          <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className={styles.metricHeader} style={{ marginBottom: 0 }}>
+              <span className={styles.metricTitle}>Total Direct Members</span>
+            </div>
+            <h3 className={styles.metricValue} style={{ color: '#00d2ff', margin: 0 }}>{myDirectMembers.length}</h3>
+          </Card>
+
+          <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className={styles.metricHeader} style={{ marginBottom: 0 }}>
+              <span className={styles.metricTitle}>Total Community Members</span>
+            </div>
+            <h3 className={styles.metricValue} style={{ color: '#00d2ff', margin: 0 }}>{communityTree.length}</h3>
+          </Card>
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
               <span className={styles.metricTitle}>Total Earnings</span>
@@ -769,19 +784,7 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
             <h3 className={styles.metricValue}>${directSum.toFixed(2)}</h3>
           </Card>
 
-          <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`}>
-            <div className={styles.metricHeader}>
-              <span className={styles.metricTitle}>Total Direct Members</span>
-            </div>
-            <h3 className={styles.metricValue}>{myDirectMembers.length}</h3>
-          </Card>
 
-          <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`}>
-            <div className={styles.metricHeader}>
-              <span className={styles.metricTitle}>Total Community Members</span>
-            </div>
-            <h3 className={styles.metricValue}>{communityTree.length}</h3>
-          </Card>
 
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
