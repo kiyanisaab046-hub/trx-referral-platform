@@ -707,6 +707,13 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
 
           <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
             <div className={styles.statusMeta}>
+              <span className={styles.statusLabel}>Total Direct Members</span>
+              <span className={styles.statusTextVal}>{myDirectMembers.length}</span>
+            </div>
+          </Card>
+
+          <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
+            <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>Community</span>
               <span className={styles.statusTextVal}>{communityTree.length} total</span>
             </div>
