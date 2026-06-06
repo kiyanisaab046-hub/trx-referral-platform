@@ -265,12 +265,16 @@
   transform: translateY(-2px);
 }
 
-.metricHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
+.metricHeaderVertical {
+  display: block;
+  margin-bottom: 0.25rem;
 }
+
+.metricValueSmall {
+  font-size: 1rem;
+  color: #00d2ff;
+}
+
 
 .metricTitle {
   font-size: 0.85rem;
