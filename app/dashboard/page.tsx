@@ -704,31 +704,6 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
       <main className={styles.mainContent}>
         <section className={styles.statusRow}>
 
-          <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
-            <div className={styles.statusMeta}>
-              <span className={styles.statusLabel}>Level Income</span>
-              <span className={styles.statusBadge}>{myDirectMembers.length} Direct</span>
-            </div>
-            {communityTree.length === 0 ? (
-              <p style={{ margin: 0, fontSize: '0.85rem', color: '#888' }}>No direct members yet.</p>
-            ) : (
-              <div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}>
-                <span style={{ fontSize:'0.75rem', color:'#ff7f50', fontWeight:600 }}>{communityTree.length - myDirectMembers.length > 0 ? `+${communityTree.length - myDirectMembers.length} Spillover` : ''}</span>
-                <button onClick={() => router.push('/dashboard/level-income')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em'}}>View Levels</button>
-              </div>
-            )}
-          </Card>
-
-          <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
-            <div className={styles.statusMeta}>
-              <span className={styles.statusLabel}>My Team</span>
-              <span className={styles.statusTextVal}>{communityTree.length} members</span>
-            </div>
-            <div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}>
-              <span className={styles.statusBadge}>All</span>
-              <button onClick={() => router.push('/dashboard/my-team-tree')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View Tree</button>
-            </div>
-          </Card>
 
           <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
             <div className={styles.statusMeta}>
@@ -759,7 +734,7 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
 
           <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
             <div className={styles.statusMeta}>
-              <span className={styles.statusLabel}>Matrix Tree</span>
+              <span className={styles.statusLabel}>Binary Tree</span>
               <span className={styles.statusTextVal}>Spillover Network</span>
             </div>
             <button onClick={() => router.push('/dashboard/matrix-tree')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View Tree</button>
