@@ -605,6 +605,9 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
           </div>
         </div>
         <div className={styles.profileHeader}>
+          <button className={styles.homeBtn} onClick={() => router.push('/dashboard/matrix-tree')}>
+            🌳 Tree
+          </button>
           <button className={styles.homeBtn} onClick={() => router.push('/')}>
             🏠 Back to Website
           </button>
@@ -701,7 +704,7 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
       <main className={styles.mainContent}>
         <section className={styles.statusRow}>
 
-          <Card className={styles.statusCard}>
+          <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>Level Income</span>
               <span className={styles.statusBadge}>{myDirectMembers.length} Direct</span>
@@ -716,7 +719,7 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
             )}
           </Card>
 
-          <Card className={styles.statusCard}>
+          <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
             <div className={styles.statusMeta}>
               <span className={styles.statusLabel}>My Team</span>
               <span className={styles.statusTextVal}>{communityTree.length} members</span>
@@ -752,6 +755,14 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
               <span className={styles.statusTextVal}>${rewardSum.toFixed(2)}</span>
             </div>
             <button onClick={() => router.push('/dashboard/reward-details')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #9b59b6, #8e44ad)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>Detail</button>
+          </Card>
+
+          <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
+            <div className={styles.statusMeta}>
+              <span className={styles.statusLabel}>Matrix Tree</span>
+              <span className={styles.statusTextVal}>Spillover Network</span>
+            </div>
+            <button onClick={() => router.push('/dashboard/matrix-tree')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em',whiteSpace:'nowrap'}}>View Tree</button>
           </Card>
         </section>
 
