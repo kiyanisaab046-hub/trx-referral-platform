@@ -6,6 +6,10 @@
   background: transparent;
 }
 
+.hideOnDesktop {
+  display: none !important;
+}
+
 .dashboardContainer {
   min-height: 100vh;
   background: transparent;
@@ -1079,10 +1083,6 @@
   .hideOnDesktop {
     display: flex !important;
   }
-}
-
-.hideOnDesktop {
-  display: none !important;
 }
 
 
