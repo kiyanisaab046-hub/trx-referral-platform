@@ -287,20 +287,51 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
             if (txData) {
               // Redundant daily income calculation removed; dailyIncome is derived via useMemo
 
-                // Fetch direct members for current user (from referrals table)
-                const { data: directRefs } = await supabase
+                // Fetch My Team: referral chain up to 10 levels deep
+                // (your directs + their directs + ... following referred_by, NOT binary tree)
+                const { data: allRefs } = await supabase
                   .from('referrals')
-                  .select('referred_id')
-                  .eq('sponsor_id', authUser.id)
-                  .eq('level', 1);
-                if (directRefs) {
-                  const directIds = directRefs.map(r => r.referred_id);
-                  const { data: directUsers } = await supabase
-                    .from('users')
-                    .select('id, full_name')
-                    .in('id', directIds);
-                  const directList = directUsers?.map(u => ({ id: u.id, name: u.full_name })) || [];
-                  setMyDirectMembers(directList);
+                  .select('sponsor_id, referred_id');
+                if (allRefs) {
+                  // Build a map: sponsor_id -> [referred_ids]
+                  const sponsorMap: Record<string, string[]> = {};
+                  allRefs.forEach(r => {
+                    if (!sponsorMap[r.sponsor_id]) sponsorMap[r.sponsor_id] = [];
+                    sponsorMap[r.sponsor_id].push(r.referred_id);
+                  });
+
+                  // BFS through referral chain up to 10 levels
+                  const teamIds: string[] = [];
+                  let currentLevel = [authUser.id];
+                  const visitedTeam = new Set<string>([authUser.id]);
+
+                  for (let lvl = 0; lvl < 10; lvl++) {
+                    const nextLevel: string[] = [];
+                    for (const sid of currentLevel) {
+                      const children = sponsorMap[sid] || [];
+                      for (const cid of children) {
+                        if (!visitedTeam.has(cid)) {
+                          visitedTeam.add(cid);
+                          teamIds.push(cid);
+                          nextLevel.push(cid);
+                        }
+                      }
+                    }
+                    if (nextLevel.length === 0) break;
+                    currentLevel = nextLevel;
+                  }
+
+                  // Fetch user names for team members
+                  if (teamIds.length > 0) {
+                    const { data: teamUsers } = await supabase
+                      .from('users')
+                      .select('id, full_name')
+                      .in('id', teamIds);
+                    const teamList = teamUsers?.map(u => ({ id: u.id, name: u.full_name })) || [];
+                    setMyDirectMembers(teamList);
+                  } else {
+                    setMyDirectMembers([]);
+                  }
                 }
 
                 // Build community tree from BINARY TREE (left_child_id/right_child_id)
