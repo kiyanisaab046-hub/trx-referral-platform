@@ -1,13 +1,18 @@
 -- distribute_level_income.sql
 -- =========================================================================
 -- Distributes the 30% Level Income dynamically based on the rank being purchased.
--- Implements recursive validation and upward skipping for unqualified users.
+-- Parameter names match JS RPC call exactly (no p_ prefix).
+-- Uses 'commission_level' enum value for transaction type.
 -- =========================================================================
 
+-- Drop old version first to allow parameter rename
+DROP FUNCTION IF EXISTS public.distribute_level_income(UUID, INTEGER, NUMERIC);
+DROP FUNCTION IF EXISTS public.distribute_level_income(UUID, INTEGER, DECIMAL);
+
 CREATE OR REPLACE FUNCTION public.distribute_level_income(
-    p_upgrader_id UUID,
-    p_new_rank_id INTEGER,
-    p_total_upgrade_fee DECIMAL
+    upgrader_id UUID,
+    new_rank_id INTEGER,
+    total_upgrade_fee DECIMAL
 ) RETURNS VOID AS $$
 DECLARE
     v_payout_amount DECIMAL;
@@ -21,18 +26,25 @@ DECLARE
     i INTEGER;
 BEGIN
     -- 1. Calculate the 30% payout
-    v_payout_amount := p_total_upgrade_fee * 0.30;
+    v_payout_amount := total_upgrade_fee * 0.30;
     
     -- Get upgrader numeric ID for transaction logs
-    SELECT numeric_id INTO v_upgrader_numeric FROM public.users WHERE id = p_upgrader_id;
+    SELECT numeric_id INTO v_upgrader_numeric FROM public.users WHERE id = upgrader_id;
     IF v_upgrader_numeric IS NULL THEN v_upgrader_numeric := 'Unknown'; END IF;
 
     -- =========================================================================
-    -- CRITICAL EXCEPTION: Level 1 Upgrades
+    -- PHASE 1: Level 1 (Starter) — straight to sponsor, zero conditions
     -- =========================================================================
-    IF p_new_rank_id = 1 THEN
-        -- Instantly flow entirely to the direct sponsor_id (ignores Rule A & B)
-        SELECT sponsor_id INTO v_sponsor_id FROM public.users WHERE id = p_upgrader_id;
+    IF new_rank_id = 1 THEN
+        -- Try users.sponsor_id first
+        SELECT sponsor_id INTO v_sponsor_id FROM public.users WHERE id = upgrader_id;
+        -- Fallback: referrals table
+        IF v_sponsor_id IS NULL THEN
+            SELECT sponsor_id INTO v_sponsor_id 
+            FROM public.referrals 
+            WHERE referred_id = upgrader_id AND level = 1 
+            LIMIT 1;
+        END IF;
         
         IF v_sponsor_id IS NOT NULL THEN
             UPDATE public.wallets 
@@ -45,7 +57,7 @@ BEGIN
             VALUES (
                 v_sponsor_id, 
                 v_payout_amount, 
-                'level_income', 
+                'commission_level', 
                 'Level Income: Level 1 Upgrade from User ' || v_upgrader_numeric, 
                 NOW()
             );
@@ -55,46 +67,37 @@ BEGIN
     END IF;
 
     -- =========================================================================
-    -- SUBSEQUENT UPGRADES (Level >= 2)
+    -- PHASE 2+: Level >= 2 — climb tree then validate
     -- =========================================================================
+    v_current_node := upgrader_id;
     
-    -- Step 1: Traverse UP the placement tree (binary tree) exactly `p_new_rank_id` times
-    v_current_node := p_upgrader_id;
-    
-    FOR i IN 1..p_new_rank_id LOOP
+    FOR i IN 1..new_rank_id LOOP
         SELECT id INTO v_next_parent 
         FROM public.users 
         WHERE left_child_id = v_current_node OR right_child_id = v_current_node 
         LIMIT 1;
         
-        IF v_next_parent IS NULL THEN
-            -- Hit the absolute top of the tree before reaching the target depth.
-            -- The top admin user becomes the target.
-            EXIT;
-        END IF;
-        
+        IF v_next_parent IS NULL THEN EXIT; END IF;
         v_current_node := v_next_parent;
     END LOOP;
     
     v_target_id := v_current_node;
 
-    -- Step 2: Recursive Validation Loop (Rules A & B)
     LOOP
-        -- Check Rule A: At least 2 active direct referrals
+        -- Rule A: At least 2 direct referrals
         SELECT COUNT(*) INTO v_direct_count 
         FROM public.referrals 
         WHERE sponsor_id = v_target_id AND level = 1;
 
-        -- Check Rule B: Target's Rank >= Purchased Rank
+        -- Rule B: Target rank >= purchased rank
         SELECT rank INTO v_target_rank 
         FROM public.user_ranks 
         WHERE user_id = v_target_id;
         
         IF v_target_rank IS NULL THEN v_target_rank := 0; END IF;
 
-        -- Evaluate Rules
-        IF v_direct_count >= 2 AND v_target_rank >= p_new_rank_id THEN
-            -- QUALIFIED! Pay them and exit loop.
+        IF v_direct_count >= 2 AND v_target_rank >= new_rank_id THEN
+            -- QUALIFIED — pay them
             UPDATE public.wallets 
             SET main_balance = main_balance + v_payout_amount,
                 income_balance = income_balance + v_payout_amount,
@@ -105,22 +108,20 @@ BEGIN
             VALUES (
                 v_target_id, 
                 v_payout_amount, 
-                'level_income', 
-                'Level Income: Level ' || p_new_rank_id || ' Upgrade from User ' || v_upgrader_numeric, 
+                'commission_level', 
+                'Level Income: Level ' || new_rank_id || ' Upgrade from User ' || v_upgrader_numeric, 
                 NOW()
             );
-            EXIT; -- Success, end of script.
+            EXIT;
         ELSE
-            -- DISQUALIFIED! 
-            
-            -- Step 3: Check if we are at the absolute top of the tree
+            -- DISQUALIFIED — check if at top of tree
             SELECT id INTO v_next_parent 
             FROM public.users 
             WHERE left_child_id = v_target_id OR right_child_id = v_target_id 
             LIMIT 1;
 
             IF v_next_parent IS NULL THEN
-                -- Final Safety Net: Force-allocate to this top system account to prevent lost funds.
+                -- Safety Net: force-allocate to root
                 UPDATE public.wallets 
                 SET main_balance = main_balance + v_payout_amount,
                     income_balance = income_balance + v_payout_amount,
@@ -131,23 +132,22 @@ BEGIN
                 VALUES (
                     v_target_id, 
                     v_payout_amount, 
-                    'level_income', 
-                    'Level Income (Safety Net): Level ' || p_new_rank_id || ' Upgrade from User ' || v_upgrader_numeric, 
+                    'commission_level', 
+                    'Level Income (Safety Net): Level ' || new_rank_id || ' Upgrade from User ' || v_upgrader_numeric, 
                     NOW()
                 );
                 EXIT;
             ELSE
-                -- Log the skipped $0 transaction for motivation
+                -- Log skip with $0 for motivation
                 INSERT INTO public.transactions (user_id, amount, type, description, created_at)
                 VALUES (
                     v_target_id, 
                     0, 
-                    'level_income', 
-                    'Skipped Level ' || p_new_rank_id || ' Income: Missing qualifications (Directs: ' || v_direct_count || ', Rank: ' || v_target_rank || ')', 
+                    'commission_level', 
+                    'Skipped Level ' || new_rank_id || ' Income: Missing qualifications (Directs: ' || v_direct_count || ', Rank: ' || v_target_rank || ')', 
                     NOW()
                 );
                 
-                -- Move exactly one level higher and re-evaluate
                 v_target_id := v_next_parent;
             END IF;
         END IF;
@@ -155,4 +155,5 @@ BEGIN
     END LOOP;
 
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
