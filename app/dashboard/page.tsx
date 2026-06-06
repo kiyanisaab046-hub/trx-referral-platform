@@ -287,7 +287,7 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
             if (txData) {
               // Redundant daily income calculation removed; dailyIncome is derived via useMemo
 
-                // Fetch direct members for current user
+                // Fetch direct members for current user (from referrals table)
                 const { data: directRefs } = await supabase
                   .from('referrals')
                   .select('referred_id')
@@ -303,56 +303,56 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
                   setMyDirectMembers(directList);
                 }
 
-                const { data: allRefs } = await supabase
-                  .from('referrals')
-                  .select('sponsor_id, referred_id, level')
-                  .order('level', { ascending: true });
-                if (allRefs) {
-                  // Compute full team (direct + indirect) hierarchy
-                  const computeTeam = (rootId: string, allRefs: any[]) => {
-                    const visited = new Set<string>();
-                    const stack = [rootId];
-                    while (stack.length) {
-                      const cur = stack.pop()!;
-                      const children = allRefs.filter(r => r.sponsor_id === cur);
-                      children.forEach(r => {
-                        if (!visited.has(r.referred_id)) {
-                          visited.add(r.referred_id);
-                          stack.push(r.referred_id);
-                        }
-                      });
-                    }
-                    return Array.from(visited);
-                  };
-                  if (authUser) {
-                    const teamIds = computeTeam(authUser.id, allRefs);
-                    const teamRefs = allRefs.filter(r => teamIds.includes(r.referred_id));
-                    
-                    const referredIds = teamRefs.map(r => r.referred_id);
-                    const { data: usersData } = await supabase
-                      .from('users')
-                      .select('id, full_name')
-                      .in('id', referredIds);
-                      
-                    const userMap: Record<string, string> = {};
-                    usersData?.forEach(u => { userMap[u.id] = u.full_name; });
-                    
-                    const tree = teamRefs.map(r => ({
-                      id: r.referred_id,
-                      name: userMap[r.referred_id] || 'User',
-                      level: r.level
-                    }));
-                    setCommunityTree(tree);
+                // Build community tree from BINARY TREE (left_child_id/right_child_id)
+                // This includes both direct referrals AND spillover users
+                const { data: allUsersForTree } = await supabase
+                  .from('users')
+                  .select('id, full_name, left_child_id, right_child_id');
 
-                    // Fetch Team Business using secure server-side RPC (bypasses RLS)
-                    const { data: businessData, error: businessError } = await supabase
-                      .rpc('get_team_business', { root_user_id: authUser.id });
-                      
-                    if (businessError) {
-                      console.error("Team Business Fetch Error:", businessError);
-                    } else {
-                      setTeamBusiness(Number(businessData) || 0);
+                if (allUsersForTree) {
+                  const usersMapBT: Record<string, any> = {};
+                  allUsersForTree.forEach(u => { usersMapBT[u.id] = u; });
+
+                  // BFS through binary tree to find all downline
+                  const visited = new Set<string>();
+                  const bfsQueue = [authUser.id];
+                  visited.add(authUser.id);
+                  let levelNum = 0;
+                  const treeMembers: Array<{id: string; name: string; level: number}> = [];
+
+                  while (bfsQueue.length > 0) {
+                    const levelSize = bfsQueue.length;
+                    levelNum++;
+                    for (let i = 0; i < levelSize; i++) {
+                      const cur = bfsQueue.shift()!;
+                      const userData = usersMapBT[cur];
+                      if (!userData) continue;
+
+                      const children = [userData.left_child_id, userData.right_child_id].filter(Boolean);
+                      for (const childId of children) {
+                        if (childId && !visited.has(childId)) {
+                          visited.add(childId);
+                          bfsQueue.push(childId);
+                          treeMembers.push({
+                            id: childId,
+                            name: usersMapBT[childId]?.full_name || 'User',
+                            level: levelNum
+                          });
+                        }
+                      }
                     }
+                  }
+
+                  setCommunityTree(treeMembers);
+
+                  // Fetch Team Business using secure server-side RPC (bypasses RLS)
+                  const { data: businessData, error: businessError } = await supabase
+                    .rpc('get_team_business', { root_user_id: authUser.id });
+                    
+                  if (businessError) {
+                    console.error("Team Business Fetch Error:", businessError);
+                  } else {
+                    setTeamBusiness(Number(businessData) || 0);
                   }
                 }
             }
@@ -706,10 +706,13 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
               <span className={styles.statusLabel}>Level Income</span>
               <span className={styles.statusBadge}>{myDirectMembers.length} Direct</span>
             </div>
-            {myDirectMembers.length === 0 ? (
+            {communityTree.length === 0 ? (
               <p style={{ margin: 0, fontSize: '0.85rem', color: '#888' }}>No direct members yet.</p>
             ) : (
-                <button onClick={() => router.push('/dashboard/level-income')} style={{marginTop:'0.4rem',fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em'}}>View Levels</button>
+              <div style={{display:'flex',alignItems:'center',gap:'0.4rem',marginTop:'0.25rem'}}>
+                <span style={{ fontSize:'0.75rem', color:'#ff7f50', fontWeight:600 }}>{communityTree.length - myDirectMembers.length > 0 ? `+${communityTree.length - myDirectMembers.length} Spillover` : ''}</span>
+                <button onClick={() => router.push('/dashboard/level-income')} style={{fontSize:'0.7rem',background:'linear-gradient(135deg, #00d2ff, #0080ff)',border:'none',borderRadius:'4px',padding:'3px 8px',color:'#fff',cursor:'pointer',fontWeight:600,letterSpacing:'0.02em'}}>View Levels</button>
+              </div>
             )}
           </Card>
 
