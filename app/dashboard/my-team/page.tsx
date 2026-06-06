@@ -73,10 +73,6 @@ export default function MyTeamPage() {
           }
           return total;
         };
-        // Compute total descendants for all visited users (downline)
-        visited.forEach(id => {
-          totalDescendantsMap[id] = countDescendants(id);
-        });
 
         // 3. Generation Logic (Strict Referral Loop via BFS)
         const resultLevels: Record<number, TeamMember[]> = {};
@@ -117,6 +113,8 @@ export default function MyTeamPage() {
           setLoading(false);
           return; // No downline
         }
+
+        
 
         // Collect all IDs needed for data fetching
         const allDownlineIds = Array.from(visited).filter(id => id !== authUser.id);
