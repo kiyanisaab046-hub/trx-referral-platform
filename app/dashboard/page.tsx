@@ -780,14 +780,14 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
 
         <section className={styles.metricsGrid}>
 
-          <Card className={styles.metricCard}>
+          <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`}>
             <div className={styles.metricHeaderVertical}>
               <span className={styles.metricTitle}>Total Direct Members</span>
             </div>
             <h3 className={styles.metricValueSmall}>{myDirectMembers.length}</h3>
           </Card>
 
-          <Card className={styles.metricCard}>
+          <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`}>
             <div className={styles.metricHeaderVertical}>
               <span className={styles.metricTitle}>Total Community Members</span>
             </div>
