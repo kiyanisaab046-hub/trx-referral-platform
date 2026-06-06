@@ -11,6 +11,7 @@ const METHOD_COLORS: Record<string, string> = {
   easypaisa: '#2ecc71',
   jazzcash: '#e74c3c',
   sadapay: '#8e44ad',
+  nbp: '#3498db',
   crypto: '#00d2ff',
   manual: '#FFC371',
 };
@@ -88,7 +89,7 @@ export default function AdminPayments() {
       .from("payments")
       .select("*")
       .eq("status", "pending")
-      .in("payment_method", ["easypaisa", "jazzcash", "sadapay", "manual"])
+      .in("payment_method", ["easypaisa", "jazzcash", "sadapay", "nbp", "manual"])
       .order("created_at", { ascending: false });
 
     if (depData) {

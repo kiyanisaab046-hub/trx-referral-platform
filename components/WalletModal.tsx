@@ -10,12 +10,13 @@ interface WalletModalProps {
   onClose: () => void;
 }
 
-type PayMethod = 'crypto' | 'easypaisa' | 'jazzcash' | 'sadapay';
+type PayMethod = 'crypto' | 'easypaisa' | 'jazzcash' | 'sadapay' | 'nbp';
 
 const PAYMENT_ACCOUNTS: Record<Exclude<PayMethod, 'crypto'>, { label: string; number: string; name: string; color: string }> = {
   easypaisa: { label: 'Easypaisa', number: '03499197936', name: 'Muhammad Banaras', color: '#2ecc71' },
   jazzcash:  { label: 'JazzCash',  number: '03165870442', name: 'Muhammad Banaras', color: '#e74c3c' },
   sadapay:   { label: 'SadaPay',   number: '03345872858', name: 'Muhammad Banaras', color: '#8e44ad' },
+  nbp:       { label: 'National Bank', number: 'P07NBPA0557004254824718', name: 'Muhammad Banaras', color: '#3498db' },
 };
 
 const WITHDRAW_METHODS = [
@@ -243,6 +244,7 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
     { key: 'easypaisa', label: 'Easypaisa', activeColor: 'bg-[#2ecc71] text-black' },
     { key: 'jazzcash',  label: 'JazzCash',  activeColor: 'bg-[#e74c3c] text-white' },
     { key: 'sadapay',   label: 'SadaPay',   activeColor: 'bg-[#8e44ad] text-white' },
+    { key: 'nbp',       label: 'National Bank', activeColor: 'bg-[#3498db] text-white' },
   ];
 
   // Success screen
