@@ -117,12 +117,13 @@ export async function POST(req: Request) {
 
     // 5b. Fetch direct members count per user
     const { data: directsData, error: directsError } = await supabase
-      .from('user_directs')
-      .select('user_id');
+      .from('referrals')
+      .select('sponsor_id')
+      .eq('level', 1);
     if (directsError) throw directsError;
     const userDirectsCount: Record<string, number> = {};
     directsData?.forEach(row => {
-      userDirectsCount[row.user_id] = (userDirectsCount[row.user_id] ?? 0) + 1;
+      userDirectsCount[row.sponsor_id] = (userDirectsCount[row.sponsor_id] ?? 0) + 1;
     });
     // Existing: map of highest rank per user
     const userHighestRank: Record<string, number> = {};
