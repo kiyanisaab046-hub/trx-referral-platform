@@ -125,19 +125,12 @@ BEGIN
             LIMIT 1;
 
             IF v_next_parent IS NULL THEN
-                -- Safety Net: force-allocate to root
-                UPDATE public.wallets 
-                SET main_balance = main_balance + v_payout_amount,
-                    income_balance = income_balance + v_payout_amount,
-                    updated_at = NOW()
-                WHERE user_id = v_target_id;
-
-                INSERT INTO public.transactions (user_id, amount, type, description, created_at)
+                -- Safety Net: force-allocate to Admin Profit pool (system absorbs the breakage)
+                INSERT INTO public.admin_profits (amount, source_type, description, created_at)
                 VALUES (
-                    v_target_id, 
                     v_payout_amount, 
-                    'commission_level', 
-                    'Level Income (Safety Net): Level ' || new_rank_id || ' Upgrade from User ' || v_upgrader_numeric, 
+                    'commission_level_breakage', 
+                    'Level Income Breakage: Level ' || new_rank_id || ' Upgrade from User ' || v_upgrader_numeric, 
                     NOW()
                 );
                 EXIT;
