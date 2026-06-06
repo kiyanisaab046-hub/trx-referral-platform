@@ -14,6 +14,7 @@ interface CommunityMember {
   currentLevel: number;
   directTeam: number;
   rank: number;
+  spilloverCount: number;
 }
 
 export default function CommunityPage() {
@@ -34,49 +35,61 @@ export default function CommunityPage() {
           return;
         }
 
-        // 1. Fetch all referrals sorted chronologically
+        // 1. Fetch all referrals to map direct counts
         const { data: allRefs, error: refsError } = await supabase
           .from('referrals')
-          .select('sponsor_id, referred_id, joined_at')
-          .order('joined_at', { ascending: true });
+          .select('sponsor_id, referred_id, joined_at');
 
         if (refsError) throw refsError;
 
         const allRefsSafe = allRefs || [];
 
-        // 2. Build the matrix map to get absolute positions
-        const indexMap = new Map<string, number>();
-        indexMap.set(authUser.id, 0);
-        
-        const matrixMap = new Map<number, { id: string, sponsor_id: string }>();
-        matrixMap.set(0, { id: authUser.id, sponsor_id: '' });
+        // 2. Fetch all users to resolve physical binary structure
+        const { data: usersData, error: usersError } = await supabase
+          .from('users')
+          .select('id, full_name, numeric_id, sponsor_id, left_child_id, right_child_id, activation_date');
 
-        for (const ref of allRefsSafe) {
-          if (indexMap.has(ref.sponsor_id)) {
-            const sponsorIndex = indexMap.get(ref.sponsor_id)!;
-            let assignedIndex = -1;
-            const queue = [sponsorIndex];
-            
-            while (queue.length > 0) {
-              const curr = queue.shift()!;
-              const left = 2 * curr + 1;
-              const right = 2 * curr + 2;
-              
-              if (!matrixMap.has(left)) { assignedIndex = left; break; } else { queue.push(left); }
-              if (!matrixMap.has(right)) { assignedIndex = right; break; } else { queue.push(right); }
+        if (usersError) throw usersError;
+
+        const userMap = new Map<string, any>();
+        usersData?.forEach(u => {
+          userMap.set(u.id, u);
+        });
+
+        // 3. Build matrixMap by recursively traversing physical left_child_id and right_child_id pointers starting from authUser.id
+        const matrixMap = new Map<number, { id: string; sponsor_id: string; full_name: string; numeric_id: string; activation_date?: string }>();
+        const queue: { id: string; index: number }[] = [];
+        
+        if (userMap.has(authUser.id)) {
+          queue.push({ id: authUser.id, index: 0 });
+        }
+
+        while (queue.length > 0) {
+          const { id, index } = queue.shift()!;
+          const u = userMap.get(id);
+          if (!u) continue;
+
+          // Store in matrixMap
+          matrixMap.set(index, {
+            id: u.id,
+            sponsor_id: u.sponsor_id || '',
+            full_name: u.full_name || 'Member',
+            numeric_id: u.numeric_id || '',
+            activation_date: u.activation_date
+          });
+
+          const level = Math.floor(Math.log2(index + 1));
+          if (level < 10) {
+            if (u.left_child_id) {
+              queue.push({ id: u.left_child_id, index: 2 * index + 1 });
             }
-            
-            if (assignedIndex !== -1) {
-              const level = Math.floor(Math.log2(assignedIndex + 1));
-              if (level <= 10) {
-                indexMap.set(ref.referred_id, assignedIndex);
-                matrixMap.set(assignedIndex, { id: ref.referred_id, sponsor_id: ref.sponsor_id });
-              }
+            if (u.right_child_id) {
+              queue.push({ id: u.right_child_id, index: 2 * index + 2 });
             }
           }
         }
 
-        // Collect IDs of people in the matrix (downline)
+        // Collect IDs of people in the matrix (excluding the logged-in user at index 0)
         const matrixIds = Array.from(matrixMap.values()).map(m => m.id).filter(id => id !== authUser.id);
         
         if (matrixIds.length === 0) {
@@ -87,22 +100,18 @@ export default function CommunityPage() {
           return;
         }
 
-        // 3. Map direct counts
+        // 4. Map direct counts (direct referrals)
         const directCounts: Record<string, number> = {};
+        const childrenMap: Record<string, string[]> = {};
         allRefsSafe.forEach(ref => {
+          // Direct counts
           directCounts[ref.sponsor_id] = (directCounts[ref.sponsor_id] || 0) + 1;
+          // Build children map for spillover calculations
+          if (!childrenMap[ref.sponsor_id]) {
+            childrenMap[ref.sponsor_id] = [];
+          }
+          childrenMap[ref.sponsor_id].push(ref.referred_id);
         });
-
-        // 4. Fetch User details for matrix downline
-        const { data: usersData, error: usersError } = await supabase
-          .from('users')
-          .select('id, full_name')
-          .in('id', matrixIds);
-          
-        if (usersError) throw usersError;
-
-        const userMap: Record<string, string> = {};
-        usersData?.forEach(u => { userMap[u.id] = u.full_name; });
 
         // 5. Fetch user ranks
         const { data: ranksData, error: ranksError } = await supabase
@@ -125,6 +134,19 @@ export default function CommunityPage() {
         });
 
         // 6. Build the level data exactly showing filled and empty slots
+        // Compute total descendants for spillover calculation
+        const totalDescendantsMap: Record<string, number> = {};
+        const countDescendants = (id: string): number => {
+          const children = childrenMap[id] || [];
+          let total = children.length;
+          for (const child of children) {
+            total += countDescendants(child);
+          }
+          return total;
+        };
+        Object.keys(childrenMap).forEach(id => {
+          totalDescendantsMap[id] = countDescendants(id);
+        });
         const resultLevels: Record<number, (CommunityMember | null)[]> = {};
         for (let i = 1; i <= 10; i++) {
           const startIdx = Math.pow(2, i) - 1;
@@ -137,12 +159,13 @@ export default function CommunityPage() {
               const node = matrixMap.get(idx)!;
               arr[j] = {
                 id: node.id,
-                name: userMap[node.id] || 'Unknown User',
+                name: node.full_name || 'Unknown User',
                 sponsorId: node.sponsor_id,
-                activationDate: userRankInfo[node.id]?.earliestDate || undefined,
+                activationDate: node.activation_date || userRankInfo[node.id]?.earliestDate || undefined,
                 currentLevel: i,
                 directTeam: directCounts[node.id] || 0,
-                rank: userRankInfo[node.id]?.maxRank || 0
+                rank: userRankInfo[node.id]?.maxRank || 0,
+                spilloverCount: (totalDescendantsMap[node.id] || 0) - (directCounts[node.id] || 0)
               };
             }
           }
@@ -167,7 +190,7 @@ export default function CommunityPage() {
     return id.slice(0, 8) + '...' + id.slice(-4);
   };
 
-  const currentLevelData = levelData[activeTab] || { left: [], right: [] };
+  const currentLevelData = levelData[activeTab] || [];
 
   return (
     <div className={styles.dashboardContainer} style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -253,6 +276,7 @@ export default function CommunityPage() {
                           <span><strong style={{color:'#8892b0'}}>ID:</strong> {shortenId(member.id)}</span>
                           <span><strong style={{color:'#8892b0'}}>Sponsor:</strong> {shortenId(member.sponsorId)}</span>
                           <span><strong style={{color:'#8892b0'}}>Directs:</strong> <span style={{color:'#2ecc71'}}>{member.directTeam}</span></span>
+                          <span><strong style={{color:'#8892b0'}}>Spillover:</strong> <span style={{color:'#ff7f50'}}>{member.spilloverCount}</span></span>
                           <span><strong style={{color:'#8892b0'}}>Joined:</strong> {member.activationDate ? new Date(member.activationDate).toLocaleDateString() : '-'}</span>
                         </div>
                       </div>

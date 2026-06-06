@@ -16,6 +16,7 @@ interface TeamMember {
   activationDate?: string;
   currentLevel: number;
   directTeam: number;
+  spilloverCount: number;
 }
 
 export default function MyTeamPage() {
@@ -52,8 +53,29 @@ export default function MyTeamPage() {
 
         // 2. Map direct counts (for "Direct Team" column)
         const directCounts: Record<string, number> = {};
+        const childrenMap: Record<string, string[]> = {};
         allRefsSafe.forEach(ref => {
+          // Direct counts
           directCounts[ref.sponsor_id] = (directCounts[ref.sponsor_id] || 0) + 1;
+          // Build children map for spillover calculations
+          if (!childrenMap[ref.sponsor_id]) {
+            childrenMap[ref.sponsor_id] = [];
+          }
+          childrenMap[ref.sponsor_id].push(ref.referred_id);
+        });
+        // Helper to count total descendants recursively
+        const totalDescendantsMap: Record<string, number> = {};
+        const countDescendants = (id: string): number => {
+          const children = childrenMap[id] || [];
+          let total = children.length;
+          for (const child of children) {
+            total += countDescendants(child);
+          }
+          return total;
+        };
+        // Compute total descendants for all visited users (downline)
+        visited.forEach(id => {
+          totalDescendantsMap[id] = countDescendants(id);
         });
 
         // 3. Generation Logic (Strict Referral Loop via BFS)
@@ -154,7 +176,8 @@ export default function MyTeamPage() {
                  phoneNumber: userMap[uId]?.phone_number || 'N/A',
                  activationDate: userRankInfo[uId]?.earliestDate || undefined,
                  currentLevel: userRankInfo[uId]?.maxRank || 0,
-                 directTeam: directCounts[uId] || 0
+                 directTeam: directCounts[uId] || 0,
+                 spilloverCount: (totalDescendantsMap[uId] || 0) - (directCounts[uId] || 0)
               };
            });
         });
@@ -237,6 +260,7 @@ export default function MyTeamPage() {
                       <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Phone Number</th>
                       <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Current Rank</th>
                       <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Direct Rank</th>
+                      <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Spillover</th>
                       <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Activation Date</th>
                     </tr>
                   </thead>
@@ -250,6 +274,7 @@ export default function MyTeamPage() {
                           <td style={{ padding: '1rem' }}>{member.phoneNumber}</td>
                           <td style={{ padding: '1rem', color: '#00d2ff', fontWeight: 'bold' }}>{member.currentLevel}</td>
                           <td style={{ padding: '1rem', color: '#2ecc71', fontWeight: 'bold' }}>{member.directTeam}</td>
+                          <td style={{ padding: '1rem', color: '#ff7f50', fontWeight: 'bold' }}>{member.spilloverCount}</td>
                           <td style={{ padding: '1rem' }}>
                             {member.activationDate 
                               ? new Date(member.activationDate).toLocaleDateString()
@@ -259,7 +284,7 @@ export default function MyTeamPage() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={7} style={{ padding: '3rem', textAlign: 'center', color: '#8892b0' }}>
+                        <td colSpan={8} style={{ padding: '3rem', textAlign: 'center', color: '#8892b0' }}>
                           No members found in Level {activeTab}.
                         </td>
                       </tr>
