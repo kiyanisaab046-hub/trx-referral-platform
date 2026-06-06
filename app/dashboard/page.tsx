@@ -750,18 +750,18 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
         <section className={styles.metricsGrid}>
 
           {/* Mobile Only Summary Cards */}
-          <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div className={styles.metricHeader} style={{ marginBottom: 0 }}>
+          <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`}>
+            <div className={styles.metricHeader}>
               <span className={styles.metricTitle}>Total Direct Members</span>
             </div>
-            <h3 className={styles.metricValue} style={{ color: '#00d2ff', margin: 0 }}>{myDirectMembers.length}</h3>
+            <h3 className={styles.metricValue} style={{ color: '#00d2ff' }}>{myDirectMembers.length}</h3>
           </Card>
 
-          <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div className={styles.metricHeader} style={{ marginBottom: 0 }}>
+          <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`}>
+            <div className={styles.metricHeader}>
               <span className={styles.metricTitle}>Total Community Members</span>
             </div>
-            <h3 className={styles.metricValue} style={{ color: '#00d2ff', margin: 0 }}>{communityTree.length}</h3>
+            <h3 className={styles.metricValue} style={{ color: '#00d2ff' }}>{communityTree.length}</h3>
           </Card>
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
