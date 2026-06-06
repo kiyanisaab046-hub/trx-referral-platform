@@ -704,6 +704,20 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
       <main className={styles.mainContent}>
         <section className={styles.statusRow}>
 
+          {/* Mobile Only Summary Cards */}
+          <Card className={`${styles.statusCard} ${styles.hideOnDesktop}`}>
+            <div className={styles.statusMeta}>
+              <span className={styles.statusLabel}>Total Direct Members</span>
+              <span className={styles.statusTextVal}>{myDirectMembers.length}</span>
+            </div>
+          </Card>
+
+          <Card className={`${styles.statusCard} ${styles.hideOnDesktop}`}>
+            <div className={styles.statusMeta}>
+              <span className={styles.statusLabel}>Total Community Members</span>
+              <span className={styles.statusTextVal}>{communityTree.length}</span>
+            </div>
+          </Card>
 
           <Card className={`${styles.statusCard} ${styles.hideOnMobile}`}>
             <div className={styles.statusMeta}>

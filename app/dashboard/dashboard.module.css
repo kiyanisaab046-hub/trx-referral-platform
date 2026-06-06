@@ -1076,6 +1076,13 @@
   .hideOnMobile {
     display: none !important;
   }
+  .hideOnDesktop {
+    display: flex !important;
+  }
+}
+
+.hideOnDesktop {
+  display: none !important;
 }
 
 
