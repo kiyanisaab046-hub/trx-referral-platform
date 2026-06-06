@@ -17,6 +17,7 @@ interface TeamMember {
   currentLevel: number;
   directTeam: number;
   spilloverCount: number;
+  isDirect: boolean;
 }
 
 export default function MyTeamPage() {
@@ -42,71 +43,92 @@ export default function MyTeamPage() {
           return;
         }
 
-        // 1. Fetch all referrals
+        // 1. Fetch ALL users with binary tree columns
+        const { data: usersData, error: usersError } = await supabase
+          .from('users')
+          .select('id, full_name, numeric_id, phone_number, left_child_id, right_child_id');
+
+        if (usersError) throw usersError;
+
+        const allUsersMap: Record<string, any> = {};
+        usersData?.forEach(u => { allUsersMap[u.id] = u; });
+
+        // 2. Fetch ALL referrals for direct counts and sponsor identification
         const { data: allRefs, error: refsError } = await supabase
           .from('referrals')
           .select('sponsor_id, referred_id');
 
         if (refsError) throw refsError;
-
         const allRefsSafe = allRefs || [];
 
-        // 2. Map direct counts (for "Direct Team" column)
+        // Direct referral IDs for the logged-in user
+        const myDirectReferralIds = new Set<string>();
+        allRefsSafe.forEach(ref => {
+          if (ref.sponsor_id === authUser.id) {
+            myDirectReferralIds.add(ref.referred_id);
+          }
+        });
+
+        // Direct counts per user (how many people each user directly referred)
         const directCounts: Record<string, number> = {};
+        // Sponsor map: referred_id -> sponsor_id (from referrals table)
+        const sponsorMap: Record<string, string> = {};
+        // Children map for spillover calculation (referral-based)
         const childrenMap: Record<string, string[]> = {};
         allRefsSafe.forEach(ref => {
-          // Direct counts
           directCounts[ref.sponsor_id] = (directCounts[ref.sponsor_id] || 0) + 1;
-          // Build children map for spillover calculations
-          if (!childrenMap[ref.sponsor_id]) {
-            childrenMap[ref.sponsor_id] = [];
-          }
+          sponsorMap[ref.referred_id] = ref.sponsor_id;
+          if (!childrenMap[ref.sponsor_id]) childrenMap[ref.sponsor_id] = [];
           childrenMap[ref.sponsor_id].push(ref.referred_id);
         });
-        // Helper to count total descendants recursively
+
+        // Helper to count total descendants recursively (referral chain)
         const totalDescendantsMap: Record<string, number> = {};
         const countDescendants = (id: string): number => {
+          if (totalDescendantsMap[id] !== undefined) return totalDescendantsMap[id];
           const children = childrenMap[id] || [];
           let total = children.length;
           for (const child of children) {
             total += countDescendants(child);
           }
+          totalDescendantsMap[id] = total;
           return total;
         };
 
-        // 3. Generation Logic (Strict Referral Loop via BFS)
-        const resultLevels: Record<number, TeamMember[]> = {};
-        
-        let currentLevelUsers = [authUser.id];
+        // 3. BFS through BINARY TREE (left_child_id / right_child_id) to find all downline by level
+        // This ensures spillover users placed under you by your upline also appear
+        const resultLevels: Record<number, string[]> = {};
+        let currentLevelUserIds = [authUser.id];
         let currentLevel = 1;
-        
-        // Track visited to prevent infinite loops (though referrals should be a tree)
         const visited = new Set<string>();
         visited.add(authUser.id);
-        
-        // We need to know who sponsored who for mapping later
-        const sponsorMap: Record<string, string> = {}; // referred_id -> sponsor_id
 
-        while (currentLevelUsers.length > 0 && currentLevel <= 20) { // Safety cap at 20 levels
-           const nextLevelUsers: string[] = [];
-           
-           allRefsSafe.forEach(ref => {
-              if (currentLevelUsers.includes(ref.sponsor_id) && !visited.has(ref.referred_id)) {
-                 visited.add(ref.referred_id);
-                 nextLevelUsers.push(ref.referred_id);
-                 sponsorMap[ref.referred_id] = ref.sponsor_id;
-              }
-           });
-           
-           if (nextLevelUsers.length > 0) {
-              // Initialize empty array for this level (will be populated after we fetch user details)
-              resultLevels[currentLevel] = nextLevelUsers.map(id => ({ id } as any));
-           } else {
-              break; // No more downline
-           }
-           
-           currentLevelUsers = nextLevelUsers;
-           currentLevel++;
+        while (currentLevelUserIds.length > 0 && currentLevel <= 20) {
+          const nextLevelUserIds: string[] = [];
+          
+          for (const userId of currentLevelUserIds) {
+            const userData = allUsersMap[userId];
+            if (!userData) continue;
+            
+            // Follow binary tree pointers (left then right)
+            if (userData.left_child_id && !visited.has(userData.left_child_id)) {
+              visited.add(userData.left_child_id);
+              nextLevelUserIds.push(userData.left_child_id);
+            }
+            if (userData.right_child_id && !visited.has(userData.right_child_id)) {
+              visited.add(userData.right_child_id);
+              nextLevelUserIds.push(userData.right_child_id);
+            }
+          }
+          
+          if (nextLevelUserIds.length > 0) {
+            resultLevels[currentLevel] = nextLevelUserIds;
+          } else {
+            break;
+          }
+          
+          currentLevelUserIds = nextLevelUserIds;
+          currentLevel++;
         }
 
         if (Object.keys(resultLevels).length === 0) {
@@ -114,26 +136,15 @@ export default function MyTeamPage() {
           return; // No downline
         }
 
-        
+        // Compute total descendants for all visited users
+        visited.forEach(id => {
+          countDescendants(id);
+        });
 
-        // Collect all IDs needed for data fetching
+        // Collect all IDs for data fetching
         const allDownlineIds = Array.from(visited).filter(id => id !== authUser.id);
-        // We also need sponsor IDs to get their numeric_ids
-        const allSponsorIds = [...new Set(Object.values(sponsorMap))];
-        const allNeededIds = [...new Set([...allDownlineIds, ...allSponsorIds])];
 
-        // 4. Fetch User details (including phone number and numeric ID)
-        const { data: usersData, error: usersError } = await supabase
-          .from('users')
-          .select('id, full_name, numeric_id, phone_number')
-          .in('id', allNeededIds);
-          
-        if (usersError) throw usersError;
-
-        const userMap: Record<string, any> = {};
-        usersData?.forEach(u => { userMap[u.id] = u; });
-
-        // 5. Fetch user ranks for Activation Date and Current Level
+        // 4. Fetch user ranks for Activation Date and Current Level
         const { data: ranksData, error: ranksError } = await supabase
           .from('user_ranks')
           .select('user_id, rank, created_at')
@@ -154,7 +165,7 @@ export default function MyTeamPage() {
           }
         });
 
-        // 6. Populate the final Level Data structure
+        // 5. Populate the final Level Data structure
         const finalLevels: Record<number, TeamMember[]> = {};
         let highestLevel = 1;
 
@@ -162,20 +173,22 @@ export default function MyTeamPage() {
            const levelNum = parseInt(levelStr);
            highestLevel = Math.max(highestLevel, levelNum);
            
-           finalLevels[levelNum] = resultLevels[levelNum].map(placeholder => {
-              const uId = placeholder.id;
-              const sponsorId = sponsorMap[uId];
+           finalLevels[levelNum] = resultLevels[levelNum].map(uId => {
+              const userData = allUsersMap[uId];
+              const refSponsorId = sponsorMap[uId] || '';
+              const isDirect = myDirectReferralIds.has(uId);
               return {
                  id: uId,
-                 name: userMap[uId]?.full_name || 'Unknown',
-                 numericId: userMap[uId]?.numeric_id || 'N/A',
-                 sponsorId: sponsorId,
-                 sponsorNumericId: userMap[sponsorId]?.numeric_id || 'N/A',
-                 phoneNumber: userMap[uId]?.phone_number || 'N/A',
+                 name: userData?.full_name || 'Unknown',
+                 numericId: userData?.numeric_id || 'N/A',
+                 sponsorId: refSponsorId,
+                 sponsorNumericId: allUsersMap[refSponsorId]?.numeric_id || 'N/A',
+                 phoneNumber: userData?.phone_number || 'N/A',
                  activationDate: userRankInfo[uId]?.earliestDate || undefined,
                  currentLevel: userRankInfo[uId]?.maxRank || 0,
                  directTeam: directCounts[uId] || 0,
-                 spilloverCount: (totalDescendantsMap[uId] || 0) - (directCounts[uId] || 0)
+                 spilloverCount: Math.max(0, (totalDescendantsMap[uId] || 0) - (directCounts[uId] || 0)),
+                 isDirect
               };
            });
         });
@@ -249,15 +262,16 @@ export default function MyTeamPage() {
               
               {/* Table */}
               <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px', whiteSpace: 'nowrap' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '900px', whiteSpace: 'nowrap' }}>
                   <thead>
                     <tr style={{ background: 'rgba(0,210,255,0.1)', color: '#00d2ff', fontWeight: 'bold' }}>
                       <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>S.No</th>
+                      <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Type</th>
                       <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>ID</th>
                       <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Sponsor ID</th>
                       <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Phone Number</th>
                       <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Current Rank</th>
-                      <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Direct Rank</th>
+                      <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Direct Team</th>
                       <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Spillover</th>
                       <th style={{ padding: '1rem', borderBottom: '1px solid rgba(0,210,255,0.2)' }}>Activation Date</th>
                     </tr>
@@ -267,6 +281,29 @@ export default function MyTeamPage() {
                       displayedMembers.map((member, index) => (
                         <tr key={member.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', color: '#e2e8f0', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                           <td style={{ padding: '1rem' }}>{index + 1}</td>
+                          <td style={{ padding: '1rem' }}>
+                            {member.isDirect ? (
+                              <span style={{ 
+                                background: 'rgba(59,130,246,0.15)', 
+                                color: '#60a5fa', 
+                                padding: '0.25rem 0.75rem', 
+                                borderRadius: '9999px', 
+                                fontSize: '0.75rem', 
+                                fontWeight: 700,
+                                border: '1px solid rgba(59,130,246,0.3)'
+                              }}>Direct</span>
+                            ) : (
+                              <span style={{ 
+                                background: 'rgba(239,68,68,0.15)', 
+                                color: '#f87171', 
+                                padding: '0.25rem 0.75rem', 
+                                borderRadius: '9999px', 
+                                fontSize: '0.75rem', 
+                                fontWeight: 700,
+                                border: '1px solid rgba(239,68,68,0.3)'
+                              }}>Spillover</span>
+                            )}
+                          </td>
                           <td style={{ padding: '1rem', color: '#fff', fontWeight: '600' }}>{member.numericId}</td>
                           <td style={{ padding: '1rem', color: '#8892b0' }}>{member.sponsorNumericId}</td>
                           <td style={{ padding: '1rem' }}>{member.phoneNumber}</td>
@@ -282,7 +319,7 @@ export default function MyTeamPage() {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={8} style={{ padding: '3rem', textAlign: 'center', color: '#8892b0' }}>
+                        <td colSpan={9} style={{ padding: '3rem', textAlign: 'center', color: '#8892b0' }}>
                           No members found in Level {activeTab}.
                         </td>
                       </tr>

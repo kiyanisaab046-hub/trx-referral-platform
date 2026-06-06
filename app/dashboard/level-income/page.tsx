@@ -21,12 +21,22 @@ export default function LevelIncomeTreePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  const [allReferrals, setAllReferrals] = useState<any[]>([]);
-  const [userMap, setUserMap] = useState<Record<string, { name: string; numericId: string }>>({});
   const [authUserId, setAuthUserId] = useState<string>('');
   
   // The current active root node (changes when user drills down)
   const [activeRootId, setActiveRootId] = useState<string | null>(null);
+
+  // All users with binary tree pointers
+  const [allUsers, setAllUsers] = useState<Record<string, {
+    id: string;
+    name: string;
+    numericId: string;
+    left_child_id: string | null;
+    right_child_id: string | null;
+  }>>({});
+  
+  // Direct referral IDs for coloring (blue = direct, red = spillover)
+  const [directReferralIds, setDirectReferralIds] = useState<Set<string>>(new Set());
 
   // Fetch base data
   useEffect(() => {
@@ -39,32 +49,37 @@ export default function LevelIncomeTreePage() {
         }
         
         setAuthUserId(authUser.id);
+        setActiveRootId(authUser.id);
 
-        // Fetch all referrals
-        const { data: allRefs, error: refsError } = await supabase
-          .from('referrals')
-          .select('sponsor_id, referred_id');
-
-        if (refsError) throw refsError;
-
-        // Fetch all users to map names and IDs
+        // Fetch all users with binary tree columns (left_child_id, right_child_id)
         const { data: usersData, error: usersError } = await supabase
           .from('users')
-          .select('id, full_name, numeric_id');
+          .select('id, full_name, numeric_id, left_child_id, right_child_id');
           
         if (usersError) throw usersError;
 
-        const uMap: Record<string, { name: string; numericId: string }> = {};
+        const uMap: Record<string, { id: string; name: string; numericId: string; left_child_id: string | null; right_child_id: string | null }> = {};
         usersData?.forEach(u => { 
           uMap[u.id] = { 
+            id: u.id,
             name: u.full_name || 'User',
-            numericId: u.numeric_id || 'N/A'
+            numericId: u.numeric_id || 'N/A',
+            left_child_id: u.left_child_id,
+            right_child_id: u.right_child_id
           }; 
         });
 
-        setAllReferrals(allRefs || []);
-        setUserMap(uMap);
-        setActiveRootId(authUser.id);
+        setAllUsers(uMap);
+
+        // Fetch direct referrals for the logged-in user (for blue/red coloring)
+        const { data: directRefs } = await supabase
+          .from('referrals')
+          .select('referred_id')
+          .eq('sponsor_id', authUser.id);
+
+        const directSet = new Set<string>();
+        directRefs?.forEach(r => directSet.add(r.referred_id));
+        setDirectReferralIds(directSet);
         
       } catch (err: any) {
         console.error('Error fetching tree data:', err);
@@ -77,78 +92,40 @@ export default function LevelIncomeTreePage() {
     fetchTree();
   }, [router, supabase]);
 
-  // Dynamically build the auto-spillover binary matrix for the active root
+  // Build the REAL binary tree from left_child_id / right_child_id columns
+  // This shows the actual physical placement — top-to-bottom, left-to-right
   const activeTree = useMemo(() => {
-    if (!activeRootId || !authUserId || Object.keys(userMap).length === 0) return null;
+    if (!activeRootId || Object.keys(allUsers).length === 0) return null;
 
-    // 1. Find all true descendants of activeRootId to form the pool
-    const descendants = new Set<string>();
-    const queue = [activeRootId];
-    while(queue.length > 0) {
-      const cur = queue.shift()!;
-      const children = allReferrals.filter(r => r.sponsor_id === cur).map(r => r.referred_id);
-      children.forEach(c => {
-        if (!descendants.has(c)) {
-          descendants.add(c);
-          queue.push(c);
-        }
-      });
-    }
+    const buildBinaryTree = (nodeId: string, depth: number): TreeNode | null => {
+      const userData = allUsers[nodeId];
+      if (!userData) return null;
+      if (depth > 10) return null; // Limit to 10 levels
 
-    const allDownlineIds = Array.from(descendants);
-    
-    // 2. Sort downline: Directs of the activeRoot first, then Indirects
-    // This satisfies "first row my direct then 3 row there is required 4 users..."
-    const directs = allDownlineIds.filter(id => allReferrals.find(r => r.referred_id === id)?.sponsor_id === activeRootId);
-    const indirects = allDownlineIds.filter(id => allReferrals.find(r => r.referred_id === id)?.sponsor_id !== activeRootId);
-    
-    const pool = [...directs, ...indirects];
+      const node: TreeNode = {
+        id: nodeId,
+        name: userData.name,
+        numeric_id: userData.numericId,
+        level: depth,
+        isDirect: directReferralIds.has(nodeId),
+        children: []
+      };
 
-    // 3. Build the visual binary matrix tree
-    const rootNode: TreeNode = {
-      id: activeRootId,
-      name: userMap[activeRootId]?.name || 'User',
-      numeric_id: userMap[activeRootId]?.numericId || 'N/A',
-      level: 0,
-      isDirect: false, // Root doesn't need border indicator
-      children: []
+      // Follow the ACTUAL binary tree pointers (left then right)
+      if (userData.left_child_id) {
+        const leftChild = buildBinaryTree(userData.left_child_id, depth + 1);
+        if (leftChild) node.children.push(leftChild);
+      }
+      if (userData.right_child_id) {
+        const rightChild = buildBinaryTree(userData.right_child_id, depth + 1);
+        if (rightChild) node.children.push(rightChild);
+      }
+
+      return node;
     };
 
-    if (pool.length === 0) return rootNode;
-
-    let poolIndex = 0;
-    const nodeQueue: TreeNode[] = [rootNode];
-
-    // 4. Fill left-to-right, level-by-level (2 children max per node)
-    while (nodeQueue.length > 0 && poolIndex < pool.length) {
-      const currentParent = nodeQueue.shift()!;
-      
-      // Each parent can take exactly up to 2 children
-      for (let i = 0; i < 2; i++) {
-        if (poolIndex < pool.length) {
-          const childId = pool[poolIndex];
-          
-          // Identity Rule: is the child a true direct referral of the logged-in user?
-          const isTrueDirect = allReferrals.find(r => r.referred_id === childId)?.sponsor_id === authUserId;
-          
-          const childNode: TreeNode = {
-            id: childId,
-            name: userMap[childId]?.name || 'User',
-            numeric_id: userMap[childId]?.numericId || 'N/A',
-            level: currentParent.level + 1,
-            isDirect: isTrueDirect,
-            children: []
-          };
-          
-          currentParent.children.push(childNode);
-          nodeQueue.push(childNode);
-          poolIndex++;
-        }
-      }
-    }
-
-    return rootNode;
-  }, [activeRootId, allReferrals, userMap, authUserId]);
+    return buildBinaryTree(activeRootId, 0);
+  }, [activeRootId, allUsers, directReferralIds]);
 
   const handleNodeClick = (id: string) => {
     setActiveRootId(id);
@@ -360,11 +337,11 @@ export default function LevelIncomeTreePage() {
                   </div>
                   <div className="flex items-center gap-2">
                      <div className="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]"></div>
-                     <span className="text-gray-300">Indirect Downline</span>
+                     <span className="text-gray-300">Spillover</span>
                   </div>
                </div>
                <div className="text-[10px] text-gray-400 bg-gray-900/60 px-3 py-1.5 rounded-lg border border-gray-800/50 backdrop-blur-md w-fit">
-                 Auto-Spillover Matrix: 2 × 4 × 8 × 16
+                 Binary Matrix: Left → Right, Top → Bottom
                </div>
              </div>
              
