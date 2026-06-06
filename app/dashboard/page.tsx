@@ -751,17 +751,17 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
 
           {/* Mobile Only Summary Cards */}
           <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`}>
-            <div className={styles.metricHeader}>
+            <div className={styles.metricHeaderVertical}>
               <span className={styles.metricTitle}>Total Direct Members</span>
             </div>
-            <h3 className={styles.metricValue} style={{ color: '#00d2ff' }}>{myDirectMembers.length}</h3>
+            <h3 className={styles.metricValueSmall}>{myDirectMembers.length}</h3>
           </Card>
 
           <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`}>
-            <div className={styles.metricHeader}>
+            <div className={styles.metricHeaderVertical}>
               <span className={styles.metricTitle}>Total Community Members</span>
             </div>
-            <h3 className={styles.metricValue} style={{ color: '#00d2ff' }}>{communityTree.length}</h3>
+            <h3 className={styles.metricValueSmall}>{communityTree.length}</h3>
           </Card>
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
@@ -783,6 +783,19 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
             </div>
             <h3 className={styles.metricValue}>${directSum.toFixed(2)}</h3>
           </Card>
+{/* Added boxes below Direct Income */}
+<Card className={styles.metricCard}>
+  <div className={styles.metricHeaderVertical}>
+    <span className={styles.metricTitle}>Total Direct Members</span>
+  </div>
+  <h3 className={styles.metricValueSmall}>{myDirectMembers.length}</h3>
+</Card>
+<Card className={styles.metricCard}>
+  <div className={styles.metricHeaderVertical}>
+    <span className={styles.metricTitle}>Total Community Members</span>
+  </div>
+  <h3 className={styles.metricValueSmall}>{communityTree.length}</h3>
+</Card>
 
 
 
