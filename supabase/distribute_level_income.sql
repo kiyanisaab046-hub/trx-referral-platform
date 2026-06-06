@@ -85,9 +85,13 @@ BEGIN
 
     LOOP
         -- Rule A: At least 2 direct referrals
-        SELECT COUNT(*) INTO v_direct_count 
-        FROM public.referrals 
-        WHERE sponsor_id = v_target_id AND level = 1;
+        -- Rule A: At least 2 direct referrals who have upgraded (rank >= 1)
+        SELECT COUNT(*) INTO v_direct_count
+        FROM public.referrals r
+        JOIN public.user_ranks ur ON ur.user_id = r.referred_id
+        WHERE r.sponsor_id = v_target_id
+          AND r.level = 1
+          AND ur.rank >= 1;
 
         -- Rule B: Target rank >= purchased rank
         SELECT rank INTO v_target_rank 
