@@ -749,20 +749,6 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
 
         <section className={styles.metricsGrid}>
 
-          {/* Mobile Only Summary Cards */}
-          <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`}>
-            <div className={styles.metricHeaderVertical}>
-              <span className={styles.metricTitle}>Total Direct Members</span>
-            </div>
-            <h3 className={styles.metricValueSmall}>{myDirectMembers.length}</h3>
-          </Card>
-
-          <Card className={`${styles.metricCard} ${styles.hideOnDesktop}`}>
-            <div className={styles.metricHeaderVertical}>
-              <span className={styles.metricTitle}>Total Community Members</span>
-            </div>
-            <h3 className={styles.metricValueSmall}>{communityTree.length}</h3>
-          </Card>
           <Card className={styles.metricCard}>
             <div className={styles.metricHeader}>
               <span className={styles.metricTitle}>Total Earnings</span>
