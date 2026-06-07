@@ -370,10 +370,10 @@ export default function MobileMatrixTreePage() {
       levels.push(
         <div key={i} className="flex justify-center gap-4 mb-8">
           {levelNodes.map((node, idx) => (
-             <div key={idx} className="flex flex-col items-center">
-               {renderNode(node, i === 0)}
-             </div>
-          ))}
+               <div key={idx} className="flex flex-col items-center">
+                 {renderBinaryNode(node, i === 0)}
+               </div>
+            ))}
         </div>
       );
     }
