@@ -274,25 +274,42 @@ export default function MobileMatrixTreePage() {
     if (authUserId) setActiveRootId(authUserId);
   };
 
+  // Simple non-recursive empty slot placeholder (just a dashed circle, no children)
+  const renderEmptySlot = (key: string): React.ReactNode => (
+    <li key={key} className="empty-slot">
+      <div className="flex flex-col items-center">
+        <div className="w-14 h-14 rounded-full border-[2px] border-dashed border-gray-700 bg-gray-900/30 flex items-center justify-center">
+          <span className="text-gray-700 text-lg">+</span>
+        </div>
+        <div className="mt-2 text-center px-2 py-0.5">
+          <span className="text-[9px] text-gray-700">Empty</span>
+        </div>
+      </div>
+    </li>
+  );
+
   // Render a binary node recursively (always exactly 2 branches: left & right)
   const renderBinaryNode = (node: BinaryNode | null, isRoot: boolean = false): React.ReactNode => {
     if (!node) return null;
 
     let circleClasses = 'w-14 h-14 rounded-full flex items-center justify-center border-[3px] bg-gray-800 z-10 relative shrink-0';
-    
+
     if (isRoot && node.id === authUserId) {
-       circleClasses += ' border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.8)]';
+      circleClasses += ' border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.8)]';
     } else if (node.isDirect) {
-       circleClasses += ' border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.8)]';
+      circleClasses += ' border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.8)]';
     } else {
-       circleClasses += ' border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.8)]';
+      circleClasses += ' border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.8)]';
     }
 
-    const hasChildren = node.left !== null || node.right !== null;
+    // Only show children row if at least one real child exists
+    const hasLeft = node.left !== null;
+    const hasRight = node.right !== null;
+    const hasChildren = hasLeft || hasRight;
 
     return (
       <li key={node.id}>
-        <div 
+        <div
           className="flex flex-col items-center cursor-pointer relative z-10 w-24 mx-auto group"
           onClick={(e) => { e.stopPropagation(); handleNodeSelect(node.id); }}
         >
@@ -301,10 +318,10 @@ export default function MobileMatrixTreePage() {
               {node.name ? node.name.charAt(0) : '?'}
             </span>
             {!isRoot && (
-               <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-gray-900 ${node.isDirect ? 'bg-blue-500 shadow-[0_0_5px_rgba(59,130,246,0.8)]' : 'bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.8)]'}`} />
+              <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-gray-900 ${node.isDirect ? 'bg-blue-500 shadow-[0_0_5px_rgba(59,130,246,0.8)]' : 'bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.8)]'}`} />
             )}
           </div>
-          
+
           <div className="mt-2 text-center bg-gray-900/60 rounded px-2 py-0.5 border border-gray-700">
             <span className="text-[10px] text-gray-300 font-bold block">
               {isRoot && node.id === authUserId ? 'YOU' : `ID: ${node.numeric_id}`}
@@ -312,9 +329,8 @@ export default function MobileMatrixTreePage() {
             <span className="text-[8px] text-gray-500">Lv {node.level}</span>
           </div>
 
-          {/* Drill-down button */}
           {hasChildren && (
-            <button 
+            <button
               className="mt-1 text-[9px] text-cyan-400 hover:text-cyan-300 font-semibold"
               onClick={(e) => { e.stopPropagation(); setActiveRootId(node.id); }}
             >
@@ -323,10 +339,12 @@ export default function MobileMatrixTreePage() {
           )}
         </div>
 
+        {/* Only render children row when there is at least one real child.
+            Always show BOTH slots so siblings are side-by-side. */}
         {hasChildren && node.level < 10 && (
           <ul>
-            {node.left && renderBinaryNode(node.left)}
-            {node.right && renderBinaryNode(node.right)}
+            {hasLeft ? renderBinaryNode(node.left) : renderEmptySlot(`empty-L-${node.id}`)}
+            {hasRight ? renderBinaryNode(node.right) : renderEmptySlot(`empty-R-${node.id}`)}
           </ul>
         )}
       </li>
@@ -340,36 +358,42 @@ export default function MobileMatrixTreePage() {
       <style dangerouslySetInnerHTML={{__html: `
         .org-tree {
           display: flex;
-          justify-content: center;
+          flex-direction: column;
+          align-items: center;
           padding-top: 1rem;
         }
         .org-tree ul {
-          padding-top: 20px;
-          position: relative;
           display: flex;
           justify-content: center;
+          position: relative;
+          padding-top: 20px;
+          gap: 2rem;
+          flex-wrap: nowrap;
         }
         .org-tree li {
-          float: left;
-          text-align: center;
           list-style-type: none;
+          text-align: center;
           position: relative;
-          padding: 20px 5px 0 5px;
+          padding: 0 0.5rem;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          margin-bottom: 2rem; /* space between levels */
         }
-        /* Connecting lines */
-        .org-tree li::before, .org-tree li::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          right: 50%;
-          border-top: 2px solid #4b5563;
-          width: 50%;
-          height: 20px;
-          z-index: 0;
+        .org-tree li > ul {
+          margin-top: 1rem; /* space between parent and child row */
+          display: flex;
+          justify-content: center;
+          gap: 2rem;
         }
+        /* Empty slot: hide connectors so they don't look broken */
+        .org-tree li.empty-slot {
+          opacity: 0.35;
+          pointer-events: none;
+        }
+        /* connecting lines */
+        .org-tree li::before,
         .org-tree li::after {
-          right: auto;
-          left: 50%;
           border-left: 2px solid #4b5563;
         }
         .org-tree li:only-child::after, .org-tree li:only-child::before {
