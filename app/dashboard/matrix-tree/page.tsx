@@ -22,6 +22,7 @@ export default function MobileMatrixTreePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tree, setTree] = useState<BinaryNode | null>(null);
+  const [heapArray, setHeapArray] = useState<(BinaryNode | null)[]>([]);
   const [authUserId, setAuthUserId] = useState<string>('');
   
   // Active root for drill-down navigation
@@ -255,38 +256,38 @@ export default function MobileMatrixTreePage() {
         right: null,
       };
 
-      // Follow the ACTUAL binary tree pointers
       if (userData.left_child_id) {
         node.left = buildBinaryTree(userData.left_child_id, depth + 1);
       }
       if (userData.right_child_id) {
         node.right = buildBinaryTree(userData.right_child_id, depth + 1);
       }
-
       return node;
     };
 
     const builtTree = buildBinaryTree(activeRootId, 0);
     setTree(builtTree);
+
+    // ---- New: flatten to heap array ----
+    const heap: (BinaryNode | null)[] = [];
+    const fillHeap = (node: BinaryNode | null, idx: number) => {
+      heap[idx] = node;
+      if (node) {
+        fillHeap(node.left, idx * 2 + 1);
+        fillHeap(node.right, idx * 2 + 2);
+      }
+    };
+    fillHeap(builtTree, 0);
+    setHeapArray(heap);
+    // -----------------------------------
   }, [activeRootId, allUsers, directReferralIds]);
+
 
   const handleReset = () => {
     if (authUserId) setActiveRootId(authUserId);
   };
 
-  // Simple non-recursive empty slot placeholder (just a dashed circle, no children)
-  const renderEmptySlot = (key: string): React.ReactNode => (
-    <li key={key} className="empty-slot">
-      <div className="flex flex-col items-center">
-        <div className="w-14 h-14 rounded-full border-[2px] border-dashed border-gray-700 bg-gray-900/30 flex items-center justify-center">
-          <span className="text-gray-700 text-lg">+</span>
-        </div>
-        <div className="mt-2 text-center px-2 py-0.5">
-          <span className="text-[9px] text-gray-700">Empty</span>
-        </div>
-      </div>
-    </li>
-  );
+  // Placeholder function removed – we now render only real children.
 
   // Render a binary node recursively (always exactly 2 branches: left & right)
   const renderBinaryNode = (node: BinaryNode | null, isRoot: boolean = false): React.ReactNode => {
@@ -339,16 +340,44 @@ export default function MobileMatrixTreePage() {
           )}
         </div>
 
-        {/* Only render children row when there is at least one real child.
-            Always show BOTH slots so siblings are side-by-side. */}
+        {/* Render children row */}
         {hasChildren && node.level < 10 && (
-          <ul>
-            {hasLeft ? renderBinaryNode(node.left) : renderEmptySlot(`empty-L-${node.id}`)}
-            {hasRight ? renderBinaryNode(node.right) : renderEmptySlot(`empty-R-${node.id}`)}
+          <ul className="children-grid">
+            {(() => {
+              const leftNode = node.left || node.right;
+              const rightNode = node.left && node.right ? node.right : null;
+              return (
+                <>
+                  {leftNode && renderBinaryNode(leftNode)}
+                  {rightNode && renderBinaryNode(rightNode)}
+                </>
+              );
+            })()}
           </ul>
         )}
       </li>
     );
+  };
+
+  const renderLevels = () => {
+    if (!heapArray.length) return null;
+    const maxLevel = 4;
+    const levels = [];
+    for (let i = 0; i < maxLevel; i++) {
+      const start = Math.pow(2, i) - 1;
+      const end = Math.pow(2, i + 1) - 1;
+      const levelNodes = heapArray.slice(start, end);
+      levels.push(
+        <div key={i} className="flex justify-center gap-4 mb-8">
+          {levelNodes.map((node, idx) => (
+             <div key={idx} className="flex flex-col items-center">
+               {renderNode(node, i === 0)}
+             </div>
+          ))}
+        </div>
+      );
+    }
+    return levels;
   };
 
   return (
@@ -364,11 +393,15 @@ export default function MobileMatrixTreePage() {
         }
         .org-tree ul {
           display: flex;
-          justify-content: center;
+          flex-wrap: nowrap;
+          justify-content: flex-start;
+          gap: 1rem;
           position: relative;
           padding-top: 20px;
-          gap: 2rem;
-          flex-wrap: nowrap;
+        }
+        .children-grid {
+          display: flex;
+          gap: 1rem;
         }
         .org-tree li {
           list-style-type: none;
@@ -382,14 +415,6 @@ export default function MobileMatrixTreePage() {
         }
         .org-tree li > ul {
           margin-top: 1rem; /* space between parent and child row */
-          display: flex;
-          justify-content: center;
-          gap: 2rem;
-        }
-        /* Empty slot: hide connectors so they don't look broken */
-        .org-tree li.empty-slot {
-          opacity: 0.35;
-          pointer-events: none;
         }
         /* connecting lines */
         .org-tree li::before,
@@ -399,38 +424,14 @@ export default function MobileMatrixTreePage() {
         .org-tree li:only-child::after, .org-tree li:only-child::before {
           display: none;
         }
-        .org-tree li:only-child {
-          padding-top: 0;
-        }
-        .org-tree li:first-child::before, .org-tree li:last-child::after {
-          border: 0 none;
-        }
-        .org-tree li:last-child::before {
-          border-right: 2px solid #4b5563;
-          border-radius: 0 5px 0 0;
-        }
-        .org-tree li:first-child::after {
-          border-radius: 5px 0 0 0;
-        }
-        .org-tree ul::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 50%;
-          border-left: 2px solid #4b5563;
-          width: 0;
-          height: 20px;
-          z-index: 0;
-        }
-        .org-tree > ul > li::before, .org-tree > ul > li::after {
-          display: none;
-        }
-        .org-tree > ul {
-          padding-top: 0;
-        }
-        .org-tree > ul::before {
-          display: none;
-        }
+        .org-tree li:only-child { padding-top: 0; }
+        .org-tree li:first-child::before, .org-tree li:last-child::after { border: 0 none; }
+        .org-tree li:last-child::before { border-right: 2px solid #4b5563; border-radius: 0 5px 0 0; }
+        .org-tree li:first-child::after { border-radius: 5px 0 0 0; }
+        .org-tree ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid #4b5563; width: 0; height: 20px; z-index: 0; }
+        .org-tree > ul > li::before, .org-tree > ul > li::after { display: none; }
+        .org-tree > ul { padding-top: 0; }
+        .org-tree > ul::before { display: none; }
       `}} />
 
       <header className={styles.header}>
@@ -503,9 +504,9 @@ export default function MobileMatrixTreePage() {
                 onTouchEnd={handleMouseUp}
                 onTouchMove={handleTouchMove}
              >
-               <ul style={{ minWidth: 'max-content', padding: '40px' }}>
-                 {renderBinaryNode(tree, true)}
-               </ul>
+                <div style={{ minWidth: 'max-content', padding: '40px' }}>
+                  {tree && renderBinaryNode(tree, true)}
+                </div>
              </div>
           </div>
         ) : (
