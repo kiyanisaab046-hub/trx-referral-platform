@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { createBrowserClient } from "@supabase/ssr";
-import CryptoPayButton from "./CryptoPayButton";
 
 interface WalletModalProps {
   type: 'deposit' | 'withdraw';
@@ -10,9 +9,9 @@ interface WalletModalProps {
   onClose: () => void;
 }
 
-type PayMethod = 'crypto' | 'easypaisa' | 'jazzcash' | 'sadapay' | 'nbp';
+type PayMethod = 'easypaisa' | 'jazzcash' | 'sadapay' | 'nbp';
 
-const PAYMENT_ACCOUNTS: Record<Exclude<PayMethod, 'crypto'>, { label: string; number: string; name: string; color: string }> = {
+const PAYMENT_ACCOUNTS: Record<PayMethod, { label: string; number: string; name: string; color: string }> = {
   easypaisa: { label: 'Easypaisa', number: '03499197936', name: 'Muhammad Banaras', color: '#2ecc71' },
   jazzcash:  { label: 'JazzCash',  number: '03165870442', name: 'Muhammad Banaras', color: '#e74c3c' },
   sadapay:   { label: 'SadaPay',   number: '03345872858', name: 'Muhammad Banaras', color: '#8e44ad' },
@@ -29,11 +28,10 @@ const WITHDRAW_METHODS = [
   { id: 'ubl', label: 'UBL', accountLabel: 'IBAN / Account Number', placeholder: 'PKXX UNIL XXXXX...' },
   { id: 'mcb', label: 'MCB Bank', accountLabel: 'IBAN / Account Number', placeholder: 'PKXX MUCB XXXXX...' },
   { id: 'allied', label: 'Allied Bank', accountLabel: 'IBAN / Account Number', placeholder: 'PKXX ABPA XXXXX...' },
-  { id: 'crypto', label: 'Crypto Wallet (USDT/BTC/TRX)', accountLabel: 'Wallet Address', placeholder: 'e.g. TRC20 Address' },
 ];
 
 export default function WalletModal({ type, open, onClose }: WalletModalProps) {
-  const [method, setMethod] = useState<PayMethod>('crypto');
+  const [method, setMethod] = useState<PayMethod>('easypaisa');
   const [withdrawMethod, setWithdrawMethod] = useState<string>('easypaisa');
   const [amount, setAmount] = useState(10);
   
@@ -70,8 +68,7 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
 
   if (!open) return null;
 
-  const isManual = method !== 'crypto';
-  const acct = isManual ? PAYMENT_ACCOUNTS[method as Exclude<PayMethod, 'crypto'>] : null;
+  const acct = PAYMENT_ACCOUNTS[method];
   const activeWithdrawMethod = WITHDRAW_METHODS.find(m => m.id === withdrawMethod);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -240,7 +237,6 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
   };
 
   const methodBtns: { key: PayMethod; label: string; activeColor: string }[] = [
-    { key: 'crypto',    label: 'Crypto',    activeColor: 'bg-primary text-black' },
     { key: 'easypaisa', label: 'Easypaisa', activeColor: 'bg-[#2ecc71] text-black' },
     { key: 'jazzcash',  label: 'JazzCash',  activeColor: 'bg-[#e74c3c] text-white' },
     { key: 'sadapay',   label: 'SadaPay',   activeColor: 'bg-[#8e44ad] text-white' },
@@ -305,17 +301,8 @@ export default function WalletModal({ type, open, onClose }: WalletModalProps) {
         </div>
 
         {/* --- DEPOSIT: Crypto --- */}
-        {type === "deposit" && method === "crypto" && (
-          <div className="mt-8 flex justify-end gap-3">
-            <button onClick={onClose} className="flex-1 py-3 rounded-xl bg-transparent border border-white/10 text-soft-gray font-bold hover:bg-white/5 transition">Cancel</button>
-            <div className="flex-1">
-              <CryptoPayButton amount={amount} description={`Deposit ${amount} USD via Crypto`} onSuccess={onClose} />
-            </div>
-          </div>
-        )}
-
-        {/* --- DEPOSIT: Manual (Easypaisa / JazzCash / SadaPay) --- */}
-        {type === "deposit" && isManual && acct && (
+        {/* --- DEPOSIT: Manual (Easypaisa / JazzCash / SadaPay / NBP) --- */}
+        {type === "deposit" && acct && (
           <>
             <div className="mb-4 p-4 rounded-xl text-center" style={{ background: `${acct.color}15`, border: `1px solid ${acct.color}50` }}>
               <p className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: acct.color }}>Send {acct.label} payment to:</p>
