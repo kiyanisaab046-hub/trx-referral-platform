@@ -235,7 +235,12 @@ export default function MyTeamMatrixTreePage() {
   useEffect(() => {
     if (!activeRootId || Object.keys(allUsers).length === 0) return;
 
+    const visited = new Set<string>();
+
     const buildBinaryTree = (nodeId: string, depth: number): BinaryNode | null => {
+      if (visited.has(nodeId)) return null;
+      visited.add(nodeId);
+
       const userData = allUsers[nodeId];
       if (!userData) return null;
       if (depth > 10) return null; // Limit to 10 levels
