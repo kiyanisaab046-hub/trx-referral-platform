@@ -61,7 +61,7 @@ BEGIN
             left_child_id,
             right_child_id,
             0       AS depth,
-            1::BIGINT AS node_order   -- root = 1
+            1::NUMERIC AS node_order   -- root = 1
         FROM public.users
         WHERE id = p_sponsor_id
 
