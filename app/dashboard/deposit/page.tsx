@@ -1,28 +1,20 @@
 "use client";
-import React, { useState } from 'react';
-import CryptoPayButton from '../../../components/CryptoPayButton';
+import React from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function DepositPage() {
-  const [amount, setAmount] = useState(10);
-
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = parseFloat(e.target.value);
-    setAmount(isNaN(val) ? 0 : val);
-  };
+  const router = useRouter();
 
   return (
-    <div style={{ padding: '2rem', textAlign: 'center' }}>
-      <h1>Deposit via Crypto</h1>
-      <p>Choose an amount to add to your deposit balance.</p>
-      <input
-        type="number"
-        min="0"
-        value={amount}
-        onChange={handleAmountChange}
-        style={{ padding: '0.5rem', marginBottom: '1rem', width: '120px' }}
-        placeholder="Amount"
-      />
-      <CryptoPayButton amount={amount} description="Deposit funds" />
+    <div style={{ padding: '4rem', textAlign: 'center', color: 'white' }}>
+      <h2>Deposit Funds</h2>
+      <p style={{ color: '#8892b0', marginBottom: '2rem' }}>Please use the "Deposit" button on your main dashboard to add funds.</p>
+      <button 
+        onClick={() => router.push('/dashboard')}
+        style={{ padding: '0.8rem 1.5rem', background: '#00d2ff', color: 'black', borderRadius: '8px', fontWeight: 'bold', border: 'none', cursor: 'pointer' }}
+      >
+        Go to Dashboard
+      </button>
     </div>
   );
 }
