@@ -61,7 +61,8 @@ BEGIN
             left_child_id,
             right_child_id,
             0       AS depth,
-            1::NUMERIC AS node_order   -- root = 1
+            1::NUMERIC AS node_order,   -- root = 1
+            ARRAY[id] AS path           -- track visited nodes to prevent cycles
         FROM public.users
         WHERE id = p_sponsor_id
 
@@ -75,9 +76,12 @@ BEGIN
             CASE
                 WHEN u.id = b.left_child_id  THEN b.node_order * 2        -- left child
                 WHEN u.id = b.right_child_id THEN b.node_order * 2 + 1    -- right child
-            END
+            END,
+            b.path || u.id
         FROM public.users u
         JOIN bfs b ON u.id = b.left_child_id OR u.id = b.right_child_id
+        WHERE NOT (u.id = ANY(b.path))  -- prevent infinite loop
+          AND b.depth < 1000            -- safety limit on max depth
     )
     SELECT id,
            CASE
