@@ -213,10 +213,13 @@ BEGIN
     INSERT INTO public.wallets (user_id)
     VALUES (NEW.id);
 
-    -- Track recursive referrals if sponsor exists
+    -- Track recursive referrals and place in binary tree if sponsor exists
     IF sponsor_uuid IS NOT NULL THEN
         INSERT INTO public.referrals (sponsor_id, referred_id, level)
         VALUES (sponsor_uuid, NEW.id, 1);
+        
+        -- Place the user in the binary matrix tree
+        PERFORM public.place_user_binary(sponsor_uuid, NEW.id);
     END IF;
 
     RETURN NEW;
