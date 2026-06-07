@@ -56,12 +56,14 @@ export default function CommunityPage() {
           userMap.set(u.id, u);
         });
 
-        // 3. Build matrixMap by recursively traversing physical left_child_id and right_child_id pointers starting from authUser.id
+        // 3. Build matrixMap by recursively traversing physical left_child_id and right_child_id pointers
         const matrixMap = new Map<number, { id: string; sponsor_id: string; full_name: string; numeric_id: string; activation_date?: string }>();
         const queue: { id: string; index: number }[] = [];
+        const visited = new Set<string>();
         
         if (userMap.has(authUser.id)) {
           queue.push({ id: authUser.id, index: 0 });
+          visited.add(authUser.id);
         }
 
         while (queue.length > 0) {
@@ -80,10 +82,12 @@ export default function CommunityPage() {
 
           const level = Math.floor(Math.log2(index + 1));
           if (level < 10) {
-            if (u.left_child_id) {
+            if (u.left_child_id && !visited.has(u.left_child_id)) {
+              visited.add(u.left_child_id);
               queue.push({ id: u.left_child_id, index: 2 * index + 1 });
             }
-            if (u.right_child_id) {
+            if (u.right_child_id && !visited.has(u.right_child_id)) {
+              visited.add(u.right_child_id);
               queue.push({ id: u.right_child_id, index: 2 * index + 2 });
             }
           }
