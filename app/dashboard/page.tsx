@@ -261,7 +261,7 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
           } else {
             let combinedTx = txData ? [...txData] as Transaction[] : [];
             
-            // Fetch withdrawals
+            // Fetch pending withdrawals only
             const { data: withdrawalsData } = await supabase
               .from('withdrawals')
               .select('id, amount, status, created_at')
@@ -412,7 +412,7 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
   // Real-time subscription for new transactions
   useEffect(() => {
     if (!authUserId) return;
-    const channel = supabase
+    const txChannel = supabase
       .channel('public:transactions')
       .on(
         'postgres_changes',
@@ -428,8 +428,42 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
         }
       )
       .subscribe();
+    const withdrawChannel = supabase
+      .channel('public:withdrawals-updates')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'withdrawals', filter: `user_id=eq.${authUserId}` },
+        async () => {
+          // Re-fetch all withdrawals for this user and merge into transactions
+          const { data: freshWithdrawals } = await supabase
+            .from('withdrawals')
+            .select('id, amount, status, created_at')
+            .eq('user_id', authUserId)
+            .order('created_at', { ascending: false })
+            .limit(10);
+
+          if (freshWithdrawals) {
+            const mappedW: Transaction[] = freshWithdrawals.map(w => ({
+              id: w.id,
+              amount: -Number(w.amount),
+              type: 'withdrawal',
+              description: `Withdrawal (${w.status})`,
+              created_at: w.created_at
+            }));
+            setTransactions(prev => {
+              // Keep only non-withdrawal entries, then merge fresh withdrawal data
+              const nonWithdrawals = prev.filter(t => t.type !== 'withdrawal');
+              const merged = [...nonWithdrawals, ...mappedW];
+              merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+              return merged;
+            });
+          }
+        }
+      )
+      .subscribe();
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(txChannel);
+      supabase.removeChannel(withdrawChannel);
     };
   }, [authUserId, supabase]);
 
@@ -1033,15 +1067,41 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
               </div>
             ) : (
               <div className={styles.activityList}>
-                {transactions.map((tx) => (
-                  <div key={tx.id} className={styles.activityRow}>
+                {transactions.map((tx) => {
+                  const isWithdrawal = tx.type === 'withdrawal';
+                  const isPending = isWithdrawal && tx.description.toLowerCase().includes('pending');
+                  const isCompleted = isWithdrawal && tx.description.toLowerCase().includes('completed');
+                  
+                  return (
+                  <div key={tx.id} className={styles.activityRow} style={isWithdrawal ? { borderLeft: `3px solid ${isPending ? '#ff4757' : isCompleted ? '#2ecc71' : 'transparent'}`, paddingLeft: '1rem' } : undefined}>
                     <div className={styles.activityMeta}>
-                      <span className={styles.activityIcon}>⚡</span>
+                      <span className={styles.activityIcon} style={isWithdrawal ? { background: isPending ? 'rgba(255,71,87,0.1)' : 'rgba(46,204,113,0.1)', borderColor: isPending ? 'rgba(255,71,87,0.3)' : 'rgba(46,204,113,0.3)', color: isPending ? '#ff4757' : '#2ecc71' } : undefined}>
+                        {isWithdrawal ? (isPending ? '🔴' : '✅') : '⚡'}
+                      </span>
                       <div className={styles.activityDetails}>
                         <span className={styles.activityTitle}>
                           {tx.type.replace('commission_', 'Earn ').replace('_', ' ').toUpperCase()}
                         </span>
-                        <span className={styles.activityDesc}>{tx.description}</span>
+                        <span className={styles.activityDesc}>
+                          {tx.description}
+                          {isWithdrawal && (
+                            <span style={{
+                              display: 'inline-block',
+                              marginLeft: '0.5rem',
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              fontSize: '0.65rem',
+                              fontWeight: 800,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.05em',
+                              background: isPending ? 'rgba(255,71,87,0.15)' : 'rgba(46,204,113,0.15)',
+                              color: isPending ? '#ff4757' : '#2ecc71',
+                              border: `1px solid ${isPending ? 'rgba(255,71,87,0.3)' : 'rgba(46,204,113,0.3)'}`,
+                            }}>
+                              {isPending ? 'PENDING' : isCompleted ? 'COMPLETED' : tx.description.match(/\((\w+)\)/)?.[1]?.toUpperCase() || ''}
+                            </span>
+                          )}
+                        </span>
                       </div>
                     </div>
                     <div className={styles.activityValueCol}>
@@ -1053,7 +1113,8 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
                       </span>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </Card>

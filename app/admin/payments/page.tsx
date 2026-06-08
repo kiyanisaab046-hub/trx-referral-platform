@@ -102,13 +102,14 @@ export default function AdminPayments() {
       setDeposits(enriched);
     }
 
-    // Fetch ALL pending withdrawals
+    // Fetch pending withdrawals only
     const { data: withData } = await supabase
       .from("withdrawals")
       .select("*")
       .eq("status", "pending")
       .order("created_at", { ascending: false });
 
+    // Enrich withdrawals with user info
     if (withData) {
       const userIds = [...new Set(withData.map((w: any) => w.user_id))];
       const { data: usersData } = await supabase.from("users").select("id, name, email").in("id", userIds.length ? userIds : ['none']);

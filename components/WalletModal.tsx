@@ -15,7 +15,7 @@ const PAYMENT_ACCOUNTS: Record<PayMethod, { label: string; number: string; name:
   easypaisa: { label: 'Easypaisa', number: '03499197936', name: 'Muhammad Banaras', color: '#2ecc71' },
   jazzcash:  { label: 'JazzCash',  number: '03165870442', name: 'Muhammad Banaras', color: '#e74c3c' },
   sadapay:   { label: 'SadaPay',   number: '03345872858', name: 'Muhammad Banaras', color: '#8e44ad' },
-  nbp:       { label: 'National Bank', number: '254824718', name: 'Muhammad Banaras', color: '#3498db' },
+  nbp:       { label: 'National Bank', number: 'P07NBPA0557004254824718', name: 'Muhammad Banaras', color: '#3498db' },
 };
 
 const WITHDRAW_METHODS = [
