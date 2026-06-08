@@ -195,23 +195,37 @@ export default function AdminPayments() {
     fetchPayments();
   };
 
-  // ---- WITHDRAWAL ACTIONS ----
   const handleApproveWithdrawal = async (withdrawId: string) => {
     if (!confirm("Mark this withdrawal as paid/completed?")) return;
     setActionLoading(withdrawId);
-    // Fetch withdrawal details to get amount and userId
-    const { data: withdrawal } = await supabase.from("withdrawals").select("amount, user_id").eq("id", withdrawId).single();
-    if (withdrawal) {
-      // Update status to completed
-      await supabase.from("withdrawals").update({ status: "completed" }).eq("id", withdrawId);
-      // Deduct amount from user's wallet main_balance
-      const { data: wallet } = await supabase.from("wallets").select("main_balance").eq("user_id", withdrawal.user_id).single();
-      if (wallet) {
-        await supabase.from("wallets").update({ main_balance: wallet.main_balance - withdrawal.amount }).eq("user_id", withdrawal.user_id);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session.session?.access_token;
+      
+      if (!token) {
+        throw new Error("You must be logged in to perform this action.");
       }
+
+      const response = await fetch('/api/admin/approve-withdrawal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ withdrawId })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to approve withdrawal');
+      }
+
+      // Remove the approved withdrawal from local state
+      setWithdrawals((prev) => prev.filter((w) => w.id !== withdrawId));
+    } catch (err: any) {
+      alert("Error approving withdrawal: " + err.message);
+      console.error(err);
     }
-    // Remove the approved withdrawal from local state
-    setWithdrawals((prev) => prev.filter((w) => w.id !== withdrawId));
     setActionLoading(null);
   };
 
