@@ -3,9 +3,9 @@ import { createClient } from '@supabase/supabase-js';
 
 export async function POST(req: Request) {
   try {
-    const { withdrawId } = await req.json();
-    if (!withdrawId) {
-      return NextResponse.json({ error: 'Missing withdrawId' }, { status: 400 });
+    const { withdrawId, userId, amount } = await req.json();
+    if (!withdrawId || !userId || amount === undefined) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -40,10 +40,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Forbidden: Admins only' }, { status: 403 });
     }
 
-    // 2. Fetch withdrawal details
+    // 2. Fetch withdrawal to check status
     const { data: withdrawal, error: fetchError } = await supabase
       .from('withdrawals')
-      .select('amount, user_id, status')
+      .select('status')
       .eq('id', withdrawId)
       .single();
 
@@ -51,22 +51,40 @@ export async function POST(req: Request) {
     if (!withdrawal) {
       return NextResponse.json({ error: 'Withdrawal not found' }, { status: 404 });
     }
-    if (withdrawal.status === 'approved') {
-       return NextResponse.json({ error: 'Withdrawal already approved' }, { status: 400 });
+    if (withdrawal.status !== 'pending') {
+       return NextResponse.json({ error: `Withdrawal already ${withdrawal.status}` }, { status: 400 });
     }
 
-    // 3. Update status to approved
+    // 3. Mark as rejected
     const { error: updateError } = await supabase
       .from('withdrawals')
-      .update({ status: 'approved' })
+      .update({ status: 'rejected' })
       .eq('id', withdrawId);
       
     if (updateError) throw updateError;
 
+    // 4. Refund wallet
+    const { data: wallet, error: walletFetchError } = await supabase
+      .from('wallets')
+      .select('main_balance')
+      .eq('user_id', userId)
+      .single();
+
+    if (walletFetchError) throw walletFetchError;
+
+    if (wallet) {
+      const { error: walletError } = await supabase
+        .from('wallets')
+        .update({ main_balance: wallet.main_balance + amount })
+        .eq('user_id', userId);
+      
+      if (walletError) throw walletError;
+    }
+
     return NextResponse.json({ success: true });
 
   } catch (error: any) {
-    console.error('Approve withdrawal error:', error);
+    console.error('Reject withdrawal error:', error);
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -232,18 +232,34 @@ export default function AdminPayments() {
   const handleRejectWithdrawal = async (withdrawId: string, userId: string, amount: number) => {
     if (!confirm(`Reject this withdrawal and refund $${amount.toFixed(2)} back to the user?`)) return;
     setActionLoading(withdrawId);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session.session?.access_token;
+      
+      if (!token) {
+        throw new Error("You must be logged in to perform this action.");
+      }
 
-    // 1. Mark as rejected
-    await supabase.from("withdrawals").update({ status: "rejected" }).eq("id", withdrawId);
+      const response = await fetch('/api/admin/reject-withdrawal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ withdrawId, userId, amount })
+      });
 
-    // 2. Refund wallet
-    const { data: wallet } = await supabase.from("wallets").select("main_balance").eq("user_id", userId).single();
-    if (wallet) {
-      await supabase.from("wallets").update({ main_balance: wallet.main_balance + amount }).eq("user_id", userId);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to reject withdrawal');
+      }
+
+      setWithdrawals((prev) => prev.filter((w) => w.id !== withdrawId));
+    } catch (err: any) {
+      alert("Error rejecting withdrawal: " + err.message);
+      console.error(err);
     }
-
     setActionLoading(null);
-    fetchPayments();
   };
 
   const getMethodBadge = (method: string) => {

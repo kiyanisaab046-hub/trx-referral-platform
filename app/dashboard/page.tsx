@@ -1069,8 +1069,9 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
               <div className={styles.activityList}>
                 {transactions.map((tx) => {
                   const isWithdrawal = tx.type === 'withdrawal';
-                  const isPending = isWithdrawal && tx.description.toLowerCase().includes('pending');
-                  const isCompleted = isWithdrawal && tx.description.toLowerCase().includes('completed');
+                  const txDescLower = tx.description.toLowerCase();
+                  const isPending = isWithdrawal && txDescLower.includes('pending');
+                  const isCompleted = isWithdrawal && (txDescLower.includes('completed') || txDescLower.includes('approved'));
                   
                   return (
                   <div key={tx.id} className={styles.activityRow} style={isWithdrawal ? { borderLeft: `3px solid ${isPending ? '#ff4757' : isCompleted ? '#2ecc71' : 'transparent'}`, paddingLeft: '1rem' } : undefined}>
