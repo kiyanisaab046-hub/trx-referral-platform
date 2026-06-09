@@ -145,7 +145,23 @@ export default function AdminUsers() {
   const handleUpgradeSubmit = async () => {
     if (!upgradeUserId) return;
     setUpgradeLoading(true);
-    await supabase.from('user_ranks').upsert({ user_id: upgradeUserId, rank: upgradeData.rank }, { onConflict: 'user_id' });
+    // Insert a new rank entry – do not delete previous rows
+    // Prevent duplicate rows for the same rank
+    const { data: existing } = await supabase
+      .from('user_ranks')
+      .select('id')
+      .eq('user_id', upgradeUserId)
+      .eq('rank', upgradeData.rank)
+      .single();
+
+    if (!existing) {
+      await supabase.from('user_ranks').insert({
+        user_id: upgradeUserId,
+        rank: upgradeData.rank,
+        created_at: new Date().toISOString()
+      });
+    }
+
     await supabase.from('wallets').update({ main_balance: upgradeData.balance }).eq('user_id', upgradeUserId);
     setUpgradeUserId(null);
     setUpgradeLoading(false);
