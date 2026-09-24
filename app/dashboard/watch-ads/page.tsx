@@ -218,7 +218,7 @@ export default function WatchAdsPage() {
     // Open sponsor ad in a new tab
     const adUrl = settings.ad_network_url && settings.ad_network_url.startsWith('http')
       ? settings.ad_network_url
-      : 'https://5gvci.com';
+      : 'https://omg10.com/4/11881517';
 
     window.open(adUrl, '_blank', 'noopener,noreferrer');
   };

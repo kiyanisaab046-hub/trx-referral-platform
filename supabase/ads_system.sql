@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS public.ad_settings (
 
 -- Insert initial settings if not existing
 INSERT INTO public.ad_settings (id, is_enabled, daily_limit_per_user, cooldown_seconds, reward_amount, watch_duration_seconds, ad_network_url)
-VALUES (1, TRUE, 10, 30, 0.0500, 15, 'https://5gvci.com')
-ON CONFLICT (id) DO NOTHING;
+VALUES (1, TRUE, 10, 30, 0.0500, 15, 'https://omg10.com/4/11881517')
+ON CONFLICT (id) DO UPDATE SET ad_network_url = 'https://omg10.com/4/11881517';
 
 -- 2. AD VIEWS TABLE (Tracking Every Ad Claim For Limits & Anti-Cheat)
 CREATE TABLE IF NOT EXISTS public.ad_views (

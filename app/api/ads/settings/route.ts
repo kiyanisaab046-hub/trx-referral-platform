@@ -32,7 +32,7 @@ export async function GET(req: Request) {
       cooldown_seconds: 30,
       reward_amount: 0.05,
       watch_duration_seconds: 15,
-      ad_network_url: 'https://5gvci.com'
+      ad_network_url: 'https://omg10.com/4/11881517'
     };
 
     const currentSettings = settings || defaultSettings;
