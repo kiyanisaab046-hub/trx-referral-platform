@@ -1,0 +1,67 @@
+.container {
+  margin-top: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.title {
+  margin: 0 0 16px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.emptyMessage {
+  color: #888;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.memberCard {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.memberHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.memberName {
+  font-weight: 600;
+  color: #00d2ff;
+  font-size: 0.95rem;
+}
+
+.memberLevel {
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.memberBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.memberId {
+  font-size: 0.8rem;
+  color: #a0aec0;
+}

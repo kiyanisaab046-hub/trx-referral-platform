@@ -1,0 +1,74 @@
+/* Archiver page styles */
+.archiverContainer {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sectionTitle {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.rankSection {
+  margin-bottom: 2rem;
+  background: rgba(20, 25, 40, 0.9);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.rankHeader {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #00d2ff;
+  margin-bottom: 0.8rem;
+  text-align: center;
+}
+
+.achieversGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.achieverCard {
+  background: rgba(30, 35, 50, 0.85);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 0.75rem;
+  text-align: center;
+  color: #fff;
+  transition: transform 0.2s;
+}
+
+.achieverCard:hover {
+  transform: translateY(-3px);
+  border-color: rgba(0,210,255,0.6);
+}
+
+.achieverAvatar {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 0.4rem;
+  border-radius: 50%;
+  background: #00d2ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #000;
+}
+
+.achieverName {
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+
+.achieverId {
+  font-size: 0.75rem;
+  color: #888;
+}

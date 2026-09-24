@@ -1,0 +1,38 @@
+import type { Metadata } from "next";
+// Font imports removed due to Turbopack build issue
+import "./globals.css";
+import SmoothScroll from "@/components/SmoothScroll";
+import "@/lib/performance";
+import FloatingBackground from "../components/FloatingBackground";
+
+
+
+
+export const metadata: Metadata = {
+  title: "Unique Income Plane | Better Life",
+  description: "A premium financial empowerment ecosystem — 5 income types, 10 ranks, starting at just $3.",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en">
+      <head>
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,300,400&f[]=clash-display@200,400,700,500,600,300&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="antialiased selection:bg-primary selection:text-black">
+        <FloatingBackground />
+        <SmoothScroll>
+          <main className="flex-1">{children}</main>
+        </SmoothScroll>
+      </body>
+    </html>
+  );
+}

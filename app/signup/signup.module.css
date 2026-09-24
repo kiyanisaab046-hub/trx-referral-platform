@@ -1,0 +1,367 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  background-color: #050505;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Luxury Warm Gold Background Blobs */
+.glowBlob1 {
+  position: absolute;
+  top: 5%;
+  right: 15%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.035) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  z-index: 2;
+}
+
+.glowBlob2 {
+  position: absolute;
+  bottom: 5%;
+  left: 15%;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(199, 145, 60, 0.035) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(90px);
+  z-index: 2;
+}
+
+.cardWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  z-index: 10;
+}
+
+/* Glassmorphism Luxury Container Card */
+.card {
+  width: 100%;
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  border-radius: 1.5rem;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9),
+              0 0 50px rgba(212, 175, 55, 0.05);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.card:hover {
+  border-color: rgba(0, 210, 255, 0.3);
+  box-shadow: 0 30px 75px rgba(0, 0, 0, 0.95),
+              0 0 60px rgba(0, 210, 255, 0.08);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), var(--color-highlight), transparent);
+}
+
+.badgeWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Pulsing premium package badge */
+.badge {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 30%, var(--color-highlight) 70%, var(--color-accent) 100%);
+  color: #050505;
+  font-size: 0.75rem;
+  font-weight: 900;
+  padding: 0.45rem 1.4rem;
+  border-radius: 9999px;
+  box-shadow: 0 4px 20px rgba(0, 210, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: inline-block;
+  animation: badgePulse 2s infinite alternate;
+}
+
+@keyframes badgePulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+  }
+  100% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(0, 210, 255, 0.5);
+  }
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2.1rem;
+  font-weight: 900;
+  font-family: var(--font-display), "Clash Display", sans-serif;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, #ffffff 40%, #c7c7c7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0 0 0.5rem 0;
+}
+
+.subtitle {
+  color: #8c8c8c;
+  font-size: 0.88rem;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.checkboxWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.2rem 0;
+}
+
+.checkbox {
+  accent-color: var(--color-primary);
+  width: 1.1rem;
+  height: 1.1rem;
+  cursor: pointer;
+}
+
+.checkboxLabel {
+  color: #a3a3a3;
+  font-size: 0.82rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.termsLink {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.termsLink:hover {
+  color: var(--color-secondary);
+  text-decoration: underline;
+}
+
+.submitBtn {
+  margin-top: 1rem;
+  width: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-highlight)) !important;
+  border: none !important;
+  color: #050505 !important;
+  font-weight: 900 !important;
+  font-family: var(--font-display), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 9999px !important;
+  padding: 0.95rem !important;
+  box-shadow: 0 4px 25px rgba(0, 210, 255, 0.25) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer;
+}
+
+.submitBtn:hover {
+  background: linear-gradient(90deg, var(--color-secondary), var(--color-primary)) !important;
+  box-shadow: 0 8px 30px rgba(0, 210, 255, 0.5) !important;
+  transform: translateY(-3px) !important;
+}
+
+.backBtn {
+  width: 100%;
+  border-radius: 9999px !important;
+  padding: 0.95rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  background: transparent !important;
+  font-weight: 700 !important;
+  font-family: var(--font-display), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  cursor: pointer;
+}
+
+.backBtn:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+  transform: translateY(-3px) !important;
+}
+
+.error {
+  color: #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.08);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  padding: 0.9rem;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* Success Message Box styles */
+.successMessage {
+  text-align: center;
+  background-color: rgba(46, 204, 113, 0.08);
+  border: 1px solid rgba(46, 204, 113, 0.25);
+  padding: 2.5rem;
+  border-radius: 1.25rem;
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(46, 204, 113, 0.1);
+}
+
+.successIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.successMessage h3 {
+  color: #2ecc71;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 900;
+  font-size: 1.6rem;
+  margin: 0 0 0.8rem 0;
+}
+
+.successMessage p {
+  color: #b3b3b3;
+  margin-bottom: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 2.2rem;
+  color: #8c8c8c;
+  font-size: 0.85rem;
+}
+
+.link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 700;
+  margin-left: 0.35rem;
+  transition: color 0.3s ease;
+}
+
+.link:hover {
+  color: var(--color-secondary);
+  text-decoration: underline;
+}
+
+.selectWrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.2rem;
+}
+
+.selectLabel {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.select {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #333;
+  background-color: #111;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ccc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+  padding-right: 2.5rem;
+}
+
+.select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.2);
+}
+
+.phoneInputGroup {
+  display: flex;
+  border: 1px solid #333;
+  background-color: #111;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.phoneInputGroup:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.2);
+}
+
+.phonePrefix {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.75rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-right: 1px solid #222;
+  color: #c9b896;
+  font-weight: 600;
+  font-size: 0.95rem;
+  user-select: none;
+  min-width: 4.5rem;
+}
+
+.phoneInput {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  background-color: transparent;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+}
+
+.passwordWrapper {
+  position: relative;
+}
+
+.showPasswordBtn {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: #00d4ff;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}

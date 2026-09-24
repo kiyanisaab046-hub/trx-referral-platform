@@ -1,0 +1,17 @@
+/* Blue/gray glass‑morphism style for the Tree view */
+.container {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Hover effect for nodes – uses NetworkTree button styling */
+.node {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 120, 255, 0.2);
+}
