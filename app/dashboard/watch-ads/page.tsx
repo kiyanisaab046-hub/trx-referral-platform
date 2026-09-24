@@ -252,7 +252,7 @@ export default function WatchAdsPage() {
       // Success! Update local state
       setStatusMessage({
         type: 'success',
-        text: `🎉 Success! +${data.rewardCredited} TRX credited to your Income Wallet!`
+        text: `🎉 Success! +$${data.rewardCredited} credited to your Income Wallet!`
       });
 
       // Update balances
@@ -364,7 +364,7 @@ export default function WatchAdsPage() {
             <div>
               <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Income Wallet</span>
               <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#fff', margin: 0 }}>
-                {wallet ? Number(wallet.income_balance).toFixed(2) : '0.00'} <span style={{ fontSize: '0.85rem', color: '#FF7E67' }}>TRX</span>
+                ${wallet ? Number(wallet.income_balance).toFixed(2) : '0.00'}
               </h3>
             </div>
           </div>
@@ -406,7 +406,7 @@ export default function WatchAdsPage() {
             <div>
               <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Reward Per Ad</span>
               <h3 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#10B981', margin: 0 }}>
-                +{settings?.reward_amount ?? '0.05'} <span style={{ fontSize: '0.85rem' }}>TRX</span>
+                +${settings?.reward_amount ?? '0.05'}
               </h3>
             </div>
           </div>
@@ -526,7 +526,7 @@ export default function WatchAdsPage() {
                   transition: '0.2s'
                 }}
               >
-                <CheckCircle2 size={22} /> Claim +{settings?.reward_amount ?? '0.05'} TRX Reward
+                <CheckCircle2 size={22} /> Claim +${settings?.reward_amount ?? '0.05'} Reward
               </button>
             </div>
           )}
@@ -581,10 +581,10 @@ export default function WatchAdsPage() {
                   </div>
                   <div>
                     <h2 style={{ fontSize: '1.8rem', fontWeight: '900', color: '#fff', margin: 0 }}>
-                      Watch Ad & Earn TRX
+                      Watch Ad & Earn Dollars
                     </h2>
                     <p style={{ color: 'rgba(255,255,255,0.6)', marginTop: '0.4rem', fontSize: '0.95rem' }}>
-                      Watch a sponsor promotion for {settings?.watch_duration_seconds || 15} seconds to earn <strong style={{ color: '#FFC371' }}>+{settings?.reward_amount ?? '0.05'} TRX</strong>.
+                      Watch a sponsor promotion for {settings?.watch_duration_seconds || 15} seconds to earn <strong style={{ color: '#FFC371' }}>+${settings?.reward_amount ?? '0.05'}</strong>.
                     </p>
                   </div>
 
@@ -646,7 +646,7 @@ export default function WatchAdsPage() {
               <Clock size={18} style={{ color: '#FF7E67' }} /> Recent Ad Rewards
             </h3>
             <span style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)' }}>
-              Total Earned: <strong style={{ color: '#10B981' }}>{stats.totalEarned} TRX</strong>
+              Total Earned: <strong style={{ color: '#10B981' }}>${stats.totalEarned}</strong>
             </span>
           </div>
 
@@ -675,7 +675,7 @@ export default function WatchAdsPage() {
                         {item.duration_watched}s
                       </td>
                       <td style={{ padding: '0.8rem', color: '#10B981', fontWeight: '700' }}>
-                        +{item.reward_amount} TRX
+                        +${item.reward_amount}
                       </td>
                       <td style={{ padding: '0.8rem' }}>
                         <span style={{

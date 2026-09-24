@@ -789,10 +789,10 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
           </div>
           <div>
             <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#fff' }}>
-              Watch Ads & Earn TRX Income
+              Watch Ads & Earn Dollar Income ($)
             </h4>
             <p style={{ margin: '0.2rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
-              Watch sponsor promotions daily to earn TRX rewards credited directly to your Income Wallet.
+              Watch sponsor promotions daily to earn dollar rewards credited directly to your Income Wallet.
             </p>
           </div>
         </div>

@@ -262,11 +262,11 @@ export default function AdminAdsPage() {
           gap: '0.5rem'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: 'rgba(255,255,255,0.6)' }}>
-            <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>TOTAL TRX DISTRIBUTED</span>
+            <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>TOTAL DOLLARS DISTRIBUTED</span>
             <DollarSign size={18} style={{ color: '#F59E0B' }} />
           </div>
           <h2 style={{ fontSize: '2rem', fontWeight: '900', color: '#F59E0B', margin: 0 }}>
-            {totalTrxPaid.toLocaleString()} TRX
+            ${totalTrxPaid.toLocaleString()}
           </h2>
           <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>Credited directly to user wallets</span>
         </div>
@@ -322,7 +322,7 @@ export default function AdminAdsPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '700', color: '#F7E1D7', marginBottom: '0.4rem' }}>
-                  Reward Per Ad (TRX)
+                  Reward Per Ad ($ USD)
                 </label>
                 <input
                   type="number"
@@ -490,8 +490,8 @@ export default function AdminAdsPage() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-              <span style={{ color: 'rgba(255,255,255,0.6)' }}>You Pay to Users ({sampleViews} × {rewardNum} TRX):</span>
-              <strong style={{ color: '#F59E0B' }}>{userCostTrx.toFixed(2)} TRX</strong>
+              <span style={{ color: 'rgba(255,255,255,0.6)' }}>You Pay to Users ({sampleViews} × ${rewardNum}):</span>
+              <strong style={{ color: '#F59E0B' }}>${userCostTrx.toFixed(2)}</strong>
             </div>
 
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '0.8rem', display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem' }}>
@@ -509,7 +509,7 @@ export default function AdminAdsPage() {
             color: 'rgba(255,255,255,0.6)',
             lineHeight: 1.5
           }}>
-            💡 <strong style={{ color: '#fff' }}>Best Practice Tip</strong>: If you set the reward to <span style={{ color: '#FFC371' }}>0.05 TRX</span> (~$0.01) and daily limit to <span style={{ color: '#FFC371' }}>10 ads</span>, users can earn <span style={{ color: '#FFC371' }}>0.5 TRX/day</span>. This keeps them highly engaged daily while you generate continuous CPM revenue in Monetag!
+            💡 <strong style={{ color: '#fff' }}>Best Practice Tip</strong>: If you set the reward to <span style={{ color: '#FFC371' }}>$0.01 to $0.05</span> and daily limit to <span style={{ color: '#FFC371' }}>10 ads</span>, users can earn <span style={{ color: '#FFC371' }}>$0.10 to $0.50/day</span>. This keeps them active daily while you generate continuous CPM revenue in Monetag!
           </div>
         </div>
 

@@ -136,7 +136,7 @@ export async function POST(req: Request) {
         user_id: user.id,
         amount: rewardAmount,
         type: 'commission_reward',
-        description: `Watch & Earn Ad Reward (+${rewardAmount} TRX)`
+        description: `Watch & Earn Ad Reward (+$${rewardAmount})`
       });
 
     return NextResponse.json({
