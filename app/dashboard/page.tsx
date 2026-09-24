@@ -755,64 +755,6 @@ const [authUserId, setAuthUserId] = useState<string | null>(null);
         </div>
       </div>
 
-      {/* Watch & Earn Callout Card */}
-      <div 
-        onClick={() => router.push('/dashboard/watch-ads')}
-        style={{
-          margin: '1.2rem 2rem 0',
-          padding: '1.2rem 1.5rem',
-          borderRadius: '16px',
-          background: 'linear-gradient(135deg, rgba(255, 126, 103, 0.15) 0%, rgba(255, 195, 113, 0.08) 100%)',
-          border: '1px solid rgba(255, 126, 103, 0.35)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          cursor: 'pointer',
-          boxShadow: '0 4px 20px rgba(255, 126, 103, 0.15)',
-          transition: 'all 0.3s ease',
-          flexWrap: 'wrap',
-          gap: '1rem'
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{
-            background: 'linear-gradient(135deg, #FF7E67, #FFC371)',
-            width: '45px',
-            height: '45px',
-            borderRadius: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '1.4rem'
-          }}>
-            📺
-          </div>
-          <div>
-            <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 800, color: '#fff' }}>
-              Watch Ads & Earn Dollar Income ($)
-            </h4>
-            <p style={{ margin: '0.2rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
-              Watch sponsor promotions daily to earn dollar rewards credited directly to your Income Wallet.
-            </p>
-          </div>
-        </div>
-        <button
-          onClick={(e) => { e.stopPropagation(); router.push('/dashboard/watch-ads'); }}
-          style={{
-            background: 'linear-gradient(135deg, #FF7E67, #FFC371)',
-            color: '#000',
-            fontWeight: 800,
-            border: 'none',
-            padding: '0.6rem 1.4rem',
-            borderRadius: '10px',
-            cursor: 'pointer',
-            fontSize: '0.85rem'
-          }}
-        >
-          Watch Now ➔
-        </button>
-      </div>
-
       <main className={styles.mainContent}>
         <section className={styles.statusRow}>
 
