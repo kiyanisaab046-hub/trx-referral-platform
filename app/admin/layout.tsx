@@ -16,7 +16,8 @@ import {
   CreditCard,
   Layers,
   Menu,
-  X
+  X,
+  Tv
 } from "lucide-react";
 import styles from "./admin.module.css";
 
@@ -25,6 +26,7 @@ const navItems = [
   { name: "Users", path: "/admin/users", icon: Users },
   { name: "Payments", path: "/admin/payments", icon: CreditCard },
   { name: "Distribution", path: "/admin/distribution", icon: Layers },
+  { name: "Ads & Monetization", path: "/admin/ads", icon: Tv },
   { name: "Design Settings", path: "/admin/settings", icon: Settings },
   { name: "Notifications", path: "/admin/notifications", icon: Bell },
   { name: "Support System", path: "/admin/support", icon: MessageSquare },
